@@ -1,8 +1,12 @@
-module SkywriterClient
-  # Sends out the notice to Hoptoad
-  class Client
+require 'httparty'
 
-    BLURBS_URI = '/notifier_api/v2/notices/'.freeze
+module SkywriterClient
+  # Communicates with the SkyWriter server
+  class Client
+    include HTTParty
+    format :xml
+
+    BLURBS_URI = ''.freeze
 
     def initialize(options = {})
       [:proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol,
@@ -11,13 +15,23 @@ module SkywriterClient
       end
     end
 
+    def create(options = {})
+      self.class.put "#{url}/environments/#{options[:environment]}/blurbs",
+                     :query => { :content => options[:content],
+                                 :key => options[:key] }
+    end
+
+    def get(options = {})
+      self.class.get "#{url}/environments/#{options[:environment]}/blurbs/#{options[:key]}"
+    end
+
     private
 
     attr_reader :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol,
       :host, :port, :secure, :http_open_timeout, :http_read_timeout
 
     def url
-      URI.parse("#{protocol}://#{host}:#{port}").merge(NOTICES_URI)
+      URI.parse("#{protocol}://#{host}:#{port}")
     end
 
     def log(level, message, response = nil)

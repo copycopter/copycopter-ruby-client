@@ -6,7 +6,7 @@ class ClientTest < Test::Unit::TestCase
     reset_config
   end
 
-  def build_sender(opts = {})
+  def build_client(opts = {})
     config = SkywriterClient::Configuration.new
     opts.each {|opt, value| config.send(:"#{opt}=", value) }
     SkywriterClient::Client.new(config)
@@ -36,4 +36,47 @@ class ClientTest < Test::Unit::TestCase
   should "not use ssl if not secure" do
   end
 
+  should "be able to create a blurb for an environment" do
+    reset_webmock
+    stub_request(:put, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
+
+    client = build_client
+    response = client.create(:environment => 'development', 
+                             :key => 'test.key',
+                             :content => 'content')
+
+    assert_equal 200, response.code
+    assert_requested :put, 
+                     "http://getskywriter.com/environments/development/blurbs?key=test.key&content=content",
+                     #:headers => { "X-API-KEY" => "123" },
+                     :times => 1
+  end
+
+  should "be able to get a blurb for an environment" do
+    reset_webmock
+    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "the content")
+
+    client = build_client
+    response = client.get(:environment => 'development', :key => 'test.key')
+
+    assert_equal 200, response.code
+    assert_requested :get, 
+                     "http://getskywriter.com/environments/development/blurbs/test.key?",
+                     #:headers => { "X-API-KEY" => "123" },
+                     :times => 1
+  end
+
+  should "be able to get a blurb that doesn't exist for an environment" do
+    reset_webmock
+    stub_request(:get, /getskywriter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
+
+    client = build_client
+    response = client.get(:environment => 'development', :key => 'test.key')
+
+    assert_equal 404, response.code
+    assert_requested :get, 
+                     "http://getskywriter.com/environments/development/blurbs/test.key?",
+                     #:headers => { "X-API-KEY" => "123" },
+                     :times => 1
+  end
 end

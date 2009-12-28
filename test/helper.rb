@@ -12,6 +12,10 @@ require 'active_record'
 require 'active_record/base'
 require 'active_support'
 require 'nokogiri'
+require 'webmock/test_unit'
+
+include WebMock
+WebMock.disable_net_connect!
 
 require File.join(File.dirname(__FILE__), "..", "lib", "skywriter_client")
 
