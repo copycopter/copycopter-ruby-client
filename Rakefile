@@ -13,11 +13,10 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
-desc 'Generate documentation for the skywriter_client plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'SkywriterClient'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new do |t|
+    t.files   = ['lib/**/*.rb', 'TESTING.rdoc']
+  end
+rescue LoadError
 end
