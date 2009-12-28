@@ -10,7 +10,7 @@ module SkywriterClient
 
     def initialize(options = {})
       [:proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol,
-        :host, :port, :secure, :http_open_timeout, :http_read_timeout].each do |option|
+       :host, :port, :secure, :http_open_timeout, :http_read_timeout].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
     end
@@ -18,7 +18,7 @@ module SkywriterClient
     def create(options = {})
       self.class.put "#{url}/environments/#{options[:environment]}/blurbs",
                      :query => { :content => options[:content],
-                                 :key => options[:key] }
+                                 :key     => options[:key] }
     end
 
     def get(options = {})
