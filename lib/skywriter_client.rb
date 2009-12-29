@@ -84,13 +84,23 @@ module SkywriterClient
         default
       else
         if response["blurb"]
-          response["blurb"]["content"]
+          "#{response["blurb"]["content"]}#{edit_link(response["blurb"]) if !configuration.public?}"
         else
           response.body
         end
       end
     end
     alias_method :s, :sky_write
+
+    private
+
+    def edit_link(blurb)
+      "<a target='_blank' href='#{url}/projects/#{blurb["project_id"]}/blurbs/#{blurb['id']}/edit'>Edit</a>"
+    end
+
+    def url
+      URI.parse("#{configuration[:protocol]}://#{configuration[:host]}:#{configuration[:port]}")
+    end
 
   end
 
