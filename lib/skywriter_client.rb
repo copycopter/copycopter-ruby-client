@@ -4,6 +4,7 @@ require 'rubygems'
 require 'active_support'
 require 'skywriter_client/configuration'
 require 'skywriter_client/client'
+require 'skywriter_client/helper'
 
 # Plugin for applications to store their copy in a remote service to be editable by clients
 module SkywriterClient
