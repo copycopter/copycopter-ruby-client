@@ -88,6 +88,14 @@ class SkywriterclientTest < Test::Unit::TestCase
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
+  should "not include edit link in content in public env" do
+    set_public_env
+    reset_webmock
+    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
+
+    assert_no_match /Edit/, SkywriterClient.sky_write("test.key")
+  end
+
   should "respond to s" do
     assert SkywriterClient.respond_to?(:s)
   end
