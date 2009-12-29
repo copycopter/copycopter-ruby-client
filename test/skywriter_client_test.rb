@@ -60,7 +60,7 @@ class SkywriterclientTest < Test::Unit::TestCase
   should "return the default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
-    stub_request(:put, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
+    stub_request(:post, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
     stub_request(:get, /getskywriter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
     assert_equal "default content", 

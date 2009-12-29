@@ -38,17 +38,17 @@ class ClientTest < Test::Unit::TestCase
 
   should "be able to create a blurb for an environment" do
     reset_webmock
-    stub_request(:put, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
+    stub_request(:post, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
 
-    client = build_client
+    client = build_client(:api_key => '123')
     response = client.create(:environment => 'development', 
                              :key => 'test.key',
                              :content => 'content')
 
     assert_equal 200, response.code
-    assert_requested :put, 
-                     "http://getskywriter.com/environments/development/blurbs?key=test.key&content=content",
-                     #:headers => { "X-API-KEY" => "123" },
+    assert_requested :post, 
+                     "http://getskywriter.com/environments/development/blurbs?",
+                     :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
 
@@ -56,13 +56,13 @@ class ClientTest < Test::Unit::TestCase
     reset_webmock
     stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "the content")
 
-    client = build_client
+    client = build_client(:api_key => '123')
     response = client.get(:environment => 'development', :key => 'test.key')
 
     assert_equal 200, response.code
     assert_requested :get, 
                      "http://getskywriter.com/environments/development/blurbs/test.key?",
-                     #:headers => { "X-API-KEY" => "123" },
+                     :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
 
@@ -70,13 +70,13 @@ class ClientTest < Test::Unit::TestCase
     reset_webmock
     stub_request(:get, /getskywriter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
-    client = build_client
+    client = build_client(:api_key => '123')
     response = client.get(:environment => 'development', :key => 'test.key')
 
     assert_equal 404, response.code
     assert_requested :get, 
                      "http://getskywriter.com/environments/development/blurbs/test.key?",
-                     #:headers => { "X-API-KEY" => "123" },
+                     :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
 end

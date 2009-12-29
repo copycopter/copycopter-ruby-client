@@ -9,16 +9,17 @@ module SkywriterClient
     BLURBS_URI = ''.freeze
 
     def initialize(options = {})
-      [:proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol,
+      [:proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol, :api_key,
        :host, :port, :secure, :http_open_timeout, :http_read_timeout].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
+      self.class.headers("X-API-KEY" => @api_key) if @api_key
     end
 
     def create(options = {})
-      self.class.put "#{url}/environments/#{options[:environment]}/blurbs",
-                     :query => { :content => options[:content],
-                                 :key     => options[:key] }
+      self.class.post "#{url}/environments/#{options[:environment]}/blurbs",
+                      :body => { :blurb => { :content => options[:content],
+                                             :key     => options[:key] }}
     end
 
     def get(options = {})
