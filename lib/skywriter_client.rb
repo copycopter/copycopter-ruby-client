@@ -83,7 +83,11 @@ module SkywriterClient
         response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
         default
       else
-        response.body
+        if response["blurb"]
+          response["blurb"]["content"]
+        else
+          response.body
+        end
       end
     end
     alias_method :s, :sky_write

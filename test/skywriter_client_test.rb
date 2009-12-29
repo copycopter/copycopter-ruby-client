@@ -70,7 +70,7 @@ class SkywriterclientTest < Test::Unit::TestCase
   should "return the content when specifying a key that has content" do
     set_development_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "the content")
+    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
 
     assert_equal "the content", SkywriterClient.sky_write("test.key")
   end
@@ -78,7 +78,7 @@ class SkywriterclientTest < Test::Unit::TestCase
   should "return the content when specifying a key that has content even with a default" do
     set_development_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "the content")
+    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
 
     assert_equal "the content", 
                  SkywriterClient.sky_write("test.key", "default content")
