@@ -5,11 +5,18 @@ module SkywriterClient
   module Helper
 
     def sky_write(key, default=nil)
-      SkywriterClient.sky_write(key, default)
+      SkywriterClient.sky_write(scope_key_by_partial(key), default)
     end
+    alias_method :s, :sky_write
 
-    def s(key, default=nil)
-      SkywriterClient.sky_write(key, default)
+    private
+
+    def scope_key_by_partial(key)
+      if key.to_s.first == "."
+        template.path_without_format_and_extension.gsub(%r{/_?}, ".") + key.to_s
+      else
+        key
+      end
     end
 
   end

@@ -12,4 +12,17 @@ class HelperTest < Test::Unit::TestCase
     assert respond_to?(:s)
   end
 
+  should "prepend current partial when key starts with ." do
+    template = stub
+    template.stubs(:path_without_format_and_extension).returns('controller/action')
+    stubs(:template).returns(template)
+    SkywriterClient.stubs(:sky_write)
+
+    s(".key")
+
+    assert_received(SkywriterClient, :sky_write) do |expect|
+      expect.with("controller.action.key", nil)
+    end
+  end
+
 end
