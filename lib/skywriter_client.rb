@@ -84,7 +84,7 @@ module SkywriterClient
         default
       else
         if response["blurb"]
-          "#{response["blurb"]["content"]}#{edit_link(response["blurb"]) if !configuration.public?}"
+          "#{response["blurb"]["content"]} #{edit_link(response["blurb"]) if !configuration.public?}"
         else
           response.body
         end
