@@ -85,6 +85,7 @@ module SkywriterClient
         response.body
       end
     end
+    alias_method :s, :sky_write
 
   end
 

@@ -84,4 +84,8 @@ class SkywriterclientTest < Test::Unit::TestCase
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
+  should "respond to s" do
+    assert SkywriterClient.respond_to?(:s)
+  end
+
 end
