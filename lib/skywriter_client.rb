@@ -4,7 +4,6 @@ require 'rubygems'
 require 'active_support'
 require 'skywriter_client/configuration'
 require 'skywriter_client/client'
-require 'skywriter_client/helper'
 
 # Plugin for applications to store their copy in a remote service to be editable by clients
 module SkywriterClient
@@ -21,7 +20,7 @@ module SkywriterClient
   class << self
     # The client object is responsible for retrieving and storing information
     # in the SkyWriter server
-    attr_accessor :sender
+    attr_accessor :client
 
     # A SkyWriter configuration object. Must act like a hash and return sensible
     # values for all SkyWriter configuration options. See SkywriterClient::Configuration.
@@ -73,8 +72,18 @@ module SkywriterClient
     def configure(silent = false)
       self.configuration ||= Configuration.new
       yield(configuration)
-      #self.client = Client.new(configuration)
+      self.client = Client.new(configuration)
       report_ready unless silent
+    end
+
+    def sky_write(key, default=nil)
+      response = SkywriterClient.client.get(:key => key, :environment => configuration[:environment_name])
+      if response.code != 200 && default
+        response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
+        default
+      else
+        response.body
+      end
     end
 
   end

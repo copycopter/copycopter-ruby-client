@@ -47,6 +47,14 @@ class Test::Unit::TestCase
       config.api_key = 'abc123'
     end
   end
+
+  def stub_client
+    stub('sender', :create => nil, :get => nil)
+  end
+
+  def stub_client!
+    SkywriterClient.client = stub_client
+  end
 end
 
 module DefinesConstants
