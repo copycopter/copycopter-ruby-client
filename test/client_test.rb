@@ -47,7 +47,7 @@ class ClientTest < Test::Unit::TestCase
 
     assert_equal 200, response.code
     assert_requested :post, 
-                     "http://getskywriter.com/environments/development/blurbs?",
+                     "http://getskywriter.com/api/v1/environments/development/blurbs?",
                      :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
@@ -61,7 +61,7 @@ class ClientTest < Test::Unit::TestCase
 
     assert_equal 200, response.code
     assert_requested :get, 
-                     "http://getskywriter.com/environments/development/blurbs/test.key?",
+                     "http://getskywriter.com/api/v1/environments/development/blurbs/test.key?",
                      :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
@@ -75,7 +75,7 @@ class ClientTest < Test::Unit::TestCase
 
     assert_equal 404, response.code
     assert_requested :get, 
-                     "http://getskywriter.com/environments/development/blurbs/test.key?",
+                     "http://getskywriter.com/api/v1/environments/development/blurbs/test.key?",
                      :headers => { "X-API-KEY" => "123" },
                      :times => 1
   end
