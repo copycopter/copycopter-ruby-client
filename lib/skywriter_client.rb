@@ -37,7 +37,7 @@ module SkywriterClient
       write_verbose_log("Environment Info: #{environment_info}")
     end
 
-    # Prints out the response body from Hoptoad for debugging help
+    # Prints out the response body from SkyWriter for debugging help
     def report_response_body(response)
       write_verbose_log("Response from SkyWriter: \n#{response}")
     end

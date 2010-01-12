@@ -10,10 +10,10 @@ module SkywriterClient
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
 
-    # The host to connect to (defaults to hoptoadapp.com).
+    # The host to connect to (defaults to getskywriter.com).
     attr_accessor :host
 
-    # The port on which your Hoptoad server runs (defaults to 443 for secure
+    # The port on which your SkyWriter server runs (defaults to 443 for secure
     # connections, 80 for insecure connections).
     attr_accessor :port
 
