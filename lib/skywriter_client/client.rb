@@ -32,7 +32,7 @@ module SkywriterClient
       :host, :port, :secure, :http_open_timeout, :http_read_timeout
 
     def url
-      URI.parse("#{protocol}://#{host}:#{port}")
+      URI.parse("#{protocol}://#{host}:#{port}/api/v1")
     end
 
     def log(level, message, response = nil)
