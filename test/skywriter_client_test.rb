@@ -51,7 +51,7 @@ class SkywriterclientTest < Test::Unit::TestCase
   should "return not found text for a key that doesn't exist when no default is specified" do
     set_development_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
     assert_equal "Blurb not found: test.key",
                  SkywriterClient.sky_write("test.key")
@@ -60,38 +60,38 @@ class SkywriterclientTest < Test::Unit::TestCase
   should "return the default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
-    stub_request(:post, /.*getskywriter.*/).to_return(:status => 200, :body => "Posted to test.key")
-    stub_request(:get, /getskywriter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
+    stub_request(:post, /.*skywriterapp.*/).to_return(:status => 200, :body => "Posted to test.key")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
-    assert_equal "default content", 
+    assert_equal "default content",
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
   should "return the editable content when specifying a key that has content" do
     set_development_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
 
     assert_match "the content", SkywriterClient.sky_write("test.key")
-    assert_match "<a target='_blank' href='http://getskywriter.com/projects/1/blurbs/9/edit'>Edit</a>",
+    assert_match "<a target='_blank' href='http://skywriterapp.com/projects/1/blurbs/9/edit'>Edit</a>",
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
   should "return the editable content when specifying a key that has content even with a default" do
     set_development_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
 
-    assert_match "the content", 
+    assert_match "the content",
                  SkywriterClient.sky_write("test.key", "default content")
-    assert_match "<a target='_blank' href='http://getskywriter.com/projects/1/blurbs/9/edit'>Edit</a>",
+    assert_match "<a target='_blank' href='http://skywriterapp.com/projects/1/blurbs/9/edit'>Edit</a>",
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
   should "not include edit link in content in public env" do
     set_public_env
     reset_webmock
-    stub_request(:get, /getskywriter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <created-at type=\"datetime\">2009-12-29T18:47:23Z</created-at>\n  <environment-id type=\"integer\">28</environment-id>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n  <key>test.key</key>\n  <updated-at type=\"datetime\">2009-12-29T18:47:23Z</updated-at>\n</blurb>\n")
 
     assert_no_match /Edit/, SkywriterClient.sky_write("test.key")
   end

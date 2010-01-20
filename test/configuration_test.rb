@@ -10,9 +10,9 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_config_default :environment_name,    nil
     assert_config_default :client_version,      SkywriterClient::VERSION
     assert_config_default :client_name,         'SkyWriter Client'
-    assert_config_default :client_url,          'http://getskywriter.com'
+    assert_config_default :client_url,          'http://skywriterapp.com'
     assert_config_default :secure,              false
-    assert_config_default :host,                'getskywriter.com'
+    assert_config_default :host,                'skywriterapp.com'
     assert_config_default :http_open_timeout,   2
     assert_config_default :http_read_timeout,   5
   end

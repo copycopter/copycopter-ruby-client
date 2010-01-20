@@ -10,7 +10,7 @@ module SkywriterClient
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
 
-    # The host to connect to (defaults to getskywriter.com).
+    # The host to connect to (defaults to skywriterapp.com).
     attr_accessor :host
 
     # The port on which your SkyWriter server runs (defaults to 443 for secure
@@ -57,13 +57,13 @@ module SkywriterClient
 
     def initialize
       @secure                   = false
-      @host                     = 'getskywriter.com'
+      @host                     = 'skywriterapp.com'
       @http_open_timeout        = 2
       @http_read_timeout        = 5
       @development_environments = %w(development test cucumber)
       @client_name              = 'SkyWriter Client'
       @client_version           = VERSION
-      @client_url               = 'http://getskywriter.com'
+      @client_url               = 'http://skywriterapp.com'
     end
 
     # Allows config options to be read like a hash
