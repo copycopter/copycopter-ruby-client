@@ -1,4 +1,4 @@
-require 'httparty'
+require File.expand_path(File.dirname(__FILE__) + '/../../vendor/httparty/lib/httparty')
 
 module SkywriterClient
   # Communicates with the SkyWriter server
