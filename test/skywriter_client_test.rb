@@ -96,6 +96,14 @@ class SkywriterclientTest < Test::Unit::TestCase
     assert_no_match /Edit/, SkywriterClient.sky_write("test.key")
   end
 
+  should "escape HTML entities" do
+    set_public_env
+    reset_webmock
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>&lt;b&gt;the content&lt;/b&gt;</content>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n</blurb>\n")
+
+    assert_equal "<b>the content</b>", SkywriterClient.sky_write("test.key").strip
+  end
+
   should "respond to s" do
     assert SkywriterClient.respond_to?(:s)
   end

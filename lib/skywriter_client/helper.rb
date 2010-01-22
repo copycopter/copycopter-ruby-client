@@ -5,7 +5,9 @@ module SkywriterClient
   module Helper
 
     def sky_write(key, default=nil)
-      SkywriterClient.sky_write(scope_key_by_partial(key), default)
+      result = SkywriterClient.sky_write(scope_key_by_partial(key), default)
+      result = CGI.unescapeHTML(result.to_s)
+      result
     end
     alias_method :s, :sky_write
 
