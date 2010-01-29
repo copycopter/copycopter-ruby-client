@@ -1,4 +1,4 @@
-# Defines deploy:notify_skywriter which will send information about the deploy to Hoptoad.
+# Defines deploy:notify_skywriter which will send information about the deploy to SkyWriter.
 
 Capistrano::Configuration.instance(:must_exist).load do
   after "deploy",            "deploy:notify_skywriter"
