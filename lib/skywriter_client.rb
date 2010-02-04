@@ -77,22 +77,44 @@ module SkywriterClient
       report_ready unless silent
     end
 
-    def sky_write(key, default=nil)
-      response = SkywriterClient.client.get(:key => key, :environment => configuration[:environment_name])
-      if response.code != 200 && default
-        response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
-        default
+    def sky_write(key, default = nil)
+      result = fetch(key, default)
+
+      if result['blurb']
+        "#{result['blurb']['content']} #{edit_link(result['blurb']) if !configuration.public?}"
       else
-        if response["blurb"]
-          "#{response["blurb"]["content"]} #{edit_link(response["blurb"]) if !configuration.public?}"
-        else
-          response.body
-        end
+        result
       end
     end
     alias_method :s, :sky_write
 
     private
+
+    def fetch(key, default = nil)
+      perform_caching(key) do
+        options  = { :key => key, :environment => configuration[:environment_name] }
+        response = SkywriterClient.client.get(options)
+
+        if response.code != 200 && default
+          SkywriterClient.client.create(options.merge(:content => default))
+          default
+        else
+          if response['blurb']
+            response
+          else
+            response.body
+          end
+        end
+      end
+    end
+
+    def perform_caching(key, &block)
+      if configuration.public? && configuration.cache_enabled
+        Rails.cache.fetch("skywriter.#{key}", :expires_in => configuration.cache_expires_in, &block)
+      else
+        yield
+      end
+    end
 
     def edit_link(blurb)
       "<a target='_blank' href='#{url}/projects/#{blurb["project_id"]}/blurbs/#{blurb['id']}/edit'>Edit</a>"

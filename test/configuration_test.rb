@@ -15,6 +15,8 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_config_default :host,                'skywriterapp.com'
     assert_config_default :http_open_timeout,   2
     assert_config_default :http_read_timeout,   5
+    assert_config_default :cache_enabled,       true
+    assert_config_default :cache_expires_in,    nil
   end
 
   should "provide default values for secure connections" do

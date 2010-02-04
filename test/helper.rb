@@ -44,7 +44,8 @@ class Test::Unit::TestCase
   def reset_config
     SkywriterClient.configuration = nil
     SkywriterClient.configure do |config|
-      config.api_key = 'abc123'
+      config.api_key       = 'abc123'
+      config.cache_enabled = false
     end
   end
 

@@ -108,4 +108,19 @@ class SkywriterclientTest < Test::Unit::TestCase
     assert SkywriterClient.respond_to?(:s)
   end
 
+  should "perform caching when sky writing" do
+    cache = mock('Cache')
+    cache.stubs(:fetch).yields.returns("cached-content")
+
+    ::Rails = Class.new
+    ::Rails.stubs(:cache).returns(cache)
+
+    SkywriterClient.configuration.cache_enabled    = true
+    SkywriterClient.configuration.cache_expires_in = 60
+
+    assert_equal "cached-content", SkywriterClient.sky_write("key")
+    assert_received(cache, :fetch) do |expect|
+      expect.with "skywriter.key", { :expires_in => 60 }
+    end
+  end
 end

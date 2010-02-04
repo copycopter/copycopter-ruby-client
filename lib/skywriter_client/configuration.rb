@@ -3,9 +3,10 @@ module SkywriterClient
   class Configuration
 
     OPTIONS = [:api_key, :development_environments, :environment_name, :host,
-        :http_open_timeout, :http_read_timeout, :client_name, :client_url, 
-        :client_version, :port, :protocol, :proxy_host, :proxy_pass, 
-        :proxy_port, :proxy_user, :secure].freeze
+        :http_open_timeout, :http_read_timeout, :client_name, :client_url,
+        :client_version, :port, :protocol, :proxy_host, :proxy_pass,
+        :proxy_port, :proxy_user, :secure, :cache_enabled,
+        :cache_expires_in].freeze
 
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -53,6 +54,12 @@ module SkywriterClient
     # The url of the client library being used
     attr_accessor :client_url
 
+    # +true+ to enable caching, +false+ to disable caching
+    attr_accessor :cache_enabled
+
+    # The time, in seconds, the cache should expire.
+    attr_accessor :cache_expires_in
+
     alias_method :secure?, :secure
 
     def initialize
@@ -64,6 +71,7 @@ module SkywriterClient
       @client_name              = 'SkyWriter Client'
       @client_version           = VERSION
       @client_url               = 'http://skywriterapp.com'
+      @cache_enabled            = true
     end
 
     # Allows config options to be read like a hash
