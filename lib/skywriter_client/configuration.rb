@@ -60,7 +60,7 @@ module SkywriterClient
       @host                     = 'skywriterapp.com'
       @http_open_timeout        = 2
       @http_read_timeout        = 5
-      @development_environments = %w(development test cucumber)
+      @development_environments = %w(development test cucumber staging)
       @client_name              = 'SkyWriter Client'
       @client_version           = VERSION
       @client_url               = 'http://skywriterapp.com'
