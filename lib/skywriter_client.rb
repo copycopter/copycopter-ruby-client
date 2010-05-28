@@ -78,12 +78,16 @@ module SkywriterClient
     end
 
     def sky_write(key, default = nil)
-      result = fetch(key, default)
+      if !configuration.test?
+        result = fetch(key, default)
 
-      if result['blurb']
-        "#{result['blurb']['content']} #{edit_link(result['blurb']) if !configuration.public?}"
+        if result && result['blurb']
+          "#{result['blurb']['content']} #{edit_link(result['blurb']) if !configuration.public?}"
+        else
+          result
+        end
       else
-        result
+        default
       end
     end
     alias_method :s, :sky_write
@@ -95,7 +99,7 @@ module SkywriterClient
         options  = { :key => key, :environment => configuration[:environment_name] }
         response = SkywriterClient.client.get(options)
 
-        if response.code != 200 && default
+        if response.code != 200
           SkywriterClient.client.create(options.merge(:content => default))
           default
         else

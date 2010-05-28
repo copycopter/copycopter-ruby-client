@@ -79,9 +79,21 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_equal hash.merge(:key => 'value'), config.merge(:key => 'value')
   end
 
-  should "use development and test as development environments by default" do
+  should "use development and staging as development environments by default" do
     config = SkywriterClient::Configuration.new
-    assert_same_elements %w(development test cucumber), config.development_environments
+    assert_same_elements %w(development staging), config.development_environments
+  end
+
+  should "use test and cucumber as test environments by default" do
+    config = SkywriterClient::Configuration.new
+    assert_same_elements %w(test cucumber), config.test_environments
+  end
+
+  should "be test in a test environment" do
+    config = SkywriterClient::Configuration.new
+    config.test_environments = %w(test)
+    config.environment_name = 'test'
+    assert config.test?
   end
 
   should "be public in a public environment" do
