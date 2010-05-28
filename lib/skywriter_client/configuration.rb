@@ -75,7 +75,7 @@ module SkywriterClient
       @client_name              = 'SkyWriter Client'
       @client_version           = VERSION
       @client_url               = 'http://skywriterapp.com'
-      @cache_enabled            = true
+      @cache_enabled            = false
     end
 
     # Allows config options to be read like a hash
