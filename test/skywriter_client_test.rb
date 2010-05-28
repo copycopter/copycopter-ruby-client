@@ -52,15 +52,6 @@ class SkywriterclientTest < Test::Unit::TestCase
     assert_equal client, SkywriterClient.client
   end
 
-  should "return not found text for a key that doesn't exist when no default is specified" do
-    set_development_env
-    reset_webmock
-    stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
-
-    assert_equal "Blurb not found: test.key",
-                 SkywriterClient.sky_write("test.key")
-  end
-
   should "return the default content and not contact the server when in a test environment" do
     set_test_env
     reset_webmock
@@ -79,6 +70,16 @@ class SkywriterclientTest < Test::Unit::TestCase
 
     assert_equal "default content",
                  SkywriterClient.sky_write("test.key", "default content")
+  end
+
+  should "return nil when there is no default content when specifying a key that doesn't exist" do
+    set_development_env
+    reset_webmock
+    stub_request(:post, /.*skywriterapp.*/).to_return(:status => 200, :body => "Posted to test.key")
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
+
+    assert_nil SkywriterClient.sky_write("test.key")
+    assert_requested :post, /skywriterapp.*/ 
   end
 
   should "return the editable content when specifying a key that has content" do

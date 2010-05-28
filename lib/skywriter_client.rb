@@ -80,7 +80,7 @@ module SkywriterClient
     def sky_write(key, default=nil)
       unless configuration.test?
         response = SkywriterClient.client.get(:key => key, :environment => configuration[:environment_name])
-        if response.code != 200 && default
+        if response.code != 200
           response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
           default
         else
