@@ -17,6 +17,10 @@ class SkywriterclientTest < Test::Unit::TestCase
     SkywriterClient.configure { |config| config.environment_name = 'development' }
   end
 
+  def set_test_env
+    SkywriterClient.configure { |config| config.environment_name = 'test' }
+  end
+
   should "yield and save a configuration when configuring" do
     yielded_configuration = nil
     SkywriterClient.configure do |config|
@@ -55,6 +59,16 @@ class SkywriterclientTest < Test::Unit::TestCase
 
     assert_equal "Blurb not found: test.key",
                  SkywriterClient.sky_write("test.key")
+  end
+
+  should "return the default content and not contact the server when in a test environment" do
+    set_test_env
+    reset_webmock
+    stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
+
+    assert_equal "default content",
+                 SkywriterClient.sky_write("test.key", "default content")
+    assert_not_requested :get, /skywriterapp.*/ 
   end
 
   should "return the default content when specifying a key that doesn't exist" do

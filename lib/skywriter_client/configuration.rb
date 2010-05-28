@@ -41,6 +41,9 @@ module SkywriterClient
     # A list of environments in content should be editable
     attr_accessor :development_environments
 
+    # A list of environments in which the server should not be contacted
+    attr_accessor :test_environments
+
     # The name of the environment the application is running in
     attr_accessor :environment_name
 
@@ -60,7 +63,8 @@ module SkywriterClient
       @host                     = 'skywriterapp.com'
       @http_open_timeout        = 2
       @http_read_timeout        = 5
-      @development_environments = %w(development test cucumber staging)
+      @development_environments = %w(development staging)
+      @test_environments        = %w(test cucumber)
       @client_name              = 'SkyWriter Client'
       @client_version           = VERSION
       @client_url               = 'http://skywriterapp.com'
@@ -90,7 +94,13 @@ module SkywriterClient
     # Determines if the content will be editable
     # @return [Boolean] Returns +false+ if in a development environment, +true+ otherwise.
     def public?
-      !development_environments.include?(environment_name)
+      !(development_environments + test_environments).include?(environment_name)
+    end
+
+    # Determines if the content will fetched from the server
+    # @return [Boolean] Returns +true+ if in a test environment, +false+ otherwise.
+    def test?
+      test_environments.include?(environment_name)
     end
 
     def port

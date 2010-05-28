@@ -78,16 +78,20 @@ module SkywriterClient
     end
 
     def sky_write(key, default=nil)
-      response = SkywriterClient.client.get(:key => key, :environment => configuration[:environment_name])
-      if response.code != 200 && default
-        response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
-        default
-      else
-        if response["blurb"]
-          "#{response["blurb"]["content"]} #{edit_link(response["blurb"]) if !configuration.public?}"
+      unless configuration.test?
+        response = SkywriterClient.client.get(:key => key, :environment => configuration[:environment_name])
+        if response.code != 200 && default
+          response = SkywriterClient.client.create(:key => key, :content => default, :environment => configuration[:environment_name])
+          default
         else
-          response.body
+          if response["blurb"]
+            "#{response["blurb"]["content"]} #{edit_link(response["blurb"]) if !configuration.public?}"
+          else
+            response.body
+          end
         end
+      else
+        default
       end
     end
     alias_method :s, :sky_write
