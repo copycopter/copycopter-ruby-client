@@ -1,8 +1,6 @@
 require 'test/unit'
 require 'rubygems'
 
-gem 'jferris-mocha', '0.9.5.0.1241126838'
-
 require 'shoulda'
 require 'mocha'
 
@@ -11,7 +9,6 @@ require 'action_controller/test_process'
 require 'active_record'
 require 'active_record/base'
 require 'active_support'
-require 'nokogiri'
 require 'webmock/test_unit'
 
 include WebMock

@@ -1,5 +1,3 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../vendor/httparty/lib/httparty')
-
 module SkywriterClient
   # Helper methods for SkyWriter
   module Helper
