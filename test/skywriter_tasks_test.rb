@@ -35,54 +35,50 @@ class SkywriterTasksTest < Test::Unit::TestCase
       end
 
       context "given valid options" do
-        setup { @options = {:to => "staging", :from => 'development'} }
+        setup do
+          @options = {:to => "staging", :from => 'development'}
+          @http = mock()
+          Net::HTTP.expects(:new).with(any_parameters).returns(@http)
+	end
 
         context "on deploy(options)" do
           setup { @output = SkywriterTasks.deploy(@options) }
 
           before_should "post to http://skywriterapp.com/deploys" do
-            URI.stubs(:parse).with('http://skywriterapp.com/deploys').returns(:uri)
-            Net::HTTP.expects(:post_form).with(:uri, kind_of(Hash)).returns(successful_response)
+            @http.expects(:post).with('/api/v1/deploys', kind_of(String), kind_of(Hash)).returns([successful_response, nil])
           end
 
           before_should "use the project api key" do
-            Net::HTTP.expects(:post_form).
-              with(kind_of(URI), has_entries('api_key' => "1234123412341234")).
-              returns(successful_response)
+            @http.expects(:post).with('/api/v1/deploys', kind_of(String), has_entries('X-API-KEY' => '1234123412341234')).returns([successful_response, nil])
           end
 
           before_should "use the env params" do
-            Net::HTTP.expects(:post_form).
-              with(kind_of(URI), has_entries("deploy[to]" => "staging",
-                                             "deploy[from]" => "development")).
-              returns(successful_response)
+            @http.expects(:post).with('/api/v1/deploys', 'deploy[to]=staging&deploy[from]=development', kind_of(Hash)).returns([successful_response, nil])
           end
 
           before_should "use the :api_key param if it's passed in." do
             @options[:api_key] = "value"
-            Net::HTTP.expects(:post_form).
-              with(kind_of(URI), has_entries("api_key" => "value")).
-              returns(successful_response)
+            @http.expects(:post).with('/api/v1/deploys', kind_of(String), has_entries('X-API-KEY' => 'value')).returns([successful_response, nil])
           end
 
           before_should "puts the response body on success" do
             SkywriterTasks.expects(:puts).with("body")
-            Net::HTTP.expects(:post_form).with(any_parameters).returns(successful_response('body'))
+            @http.expects(:post).with(any_parameters).returns([successful_response('body'), nil])
           end
 
           before_should "puts the response body on failure" do
             SkywriterTasks.expects(:puts).with("body")
-            Net::HTTP.expects(:post_form).with(any_parameters).returns(unsuccessful_response('body'))
+            @http.expects(:post).with(any_parameters).returns([unsuccessful_response('body'), nil])
           end
 
           should "return false on failure", :before => lambda {
-            Net::HTTP.expects(:post_form).with(any_parameters).returns(unsuccessful_response('body'))
+            @http.expects(:post).with(any_parameters).returns([unsuccessful_response('body'), nil])
           } do
             assert !@output
           end
 
           should "return true on success", :before => lambda {
-            Net::HTTP.expects(:post_form).with(any_parameters).returns(successful_response('body'))
+            @http.expects(:post).with(any_parameters).returns([successful_response('body'), nil])
           } do
             assert @output
           end
@@ -96,14 +92,15 @@ class SkywriterTasksTest < Test::Unit::TestCase
           config.api_key = "1234123412341234"
           config.host = "custom.host"
         end
+        @http = mock()
       end
 
       context "on deploy(:to => 'staging', :from => 'development')" do
         setup { @output = SkywriterTasks.deploy(:to => "staging", :from => 'development') }
 
         before_should "post to the custom host" do
-          URI.stubs(:parse).with('http://custom.host/deploys').returns(:uri)
-          Net::HTTP.expects(:post_form).with(:uri, kind_of(Hash)).returns(successful_response)
+          Net::HTTP.expects(:new).with('custom.host').returns(@http)
+	  @http.expects(:post).with('/api/v1/deploys', kind_of(String), kind_of(Hash)).returns([successful_response, nil])
         end
       end
     end
