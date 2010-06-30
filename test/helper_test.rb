@@ -13,9 +13,8 @@ class HelperTest < Test::Unit::TestCase
   end
 
   should "prepend current partial when key starts with . and inside a view" do
-    template = stub
-    template.stubs(:path_without_format_and_extension).returns('controller/action')
-    stubs(:template).returns(template)
+    template = stub(:path_without_format_and_extension => "controller/action")
+    stubs(:template => template)
     SkywriterClient.stubs(:sky_write)
 
     s(".key")
@@ -26,8 +25,7 @@ class HelperTest < Test::Unit::TestCase
   end
 
   should "prepend controller and action when key starts with . and inside a controller" do
-    stubs(:controller_name).returns("controller")
-    stubs(:action_name).returns("action")
+    stubs(:controller_name => "controller", :action_name => "action")
     SkywriterClient.stubs(:sky_write)
 
     s(".key")
