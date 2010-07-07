@@ -4,8 +4,9 @@ When /^I save the following as "([^\"]*)"$/ do |path, string|
 end
 
 When "the rails app is running" do
-  $rails_app ||= ShamRack.at("example.com").rackup do
+  ShamRack.at("example.com").rackup do
     Dir.chdir(CUC_RAILS_ROOT)
+    ENV['RAILS_ENV'] = 'production'
     require "config/environment"
     use Rails::Rack::LogTailer
     run ActionController::Dispatcher.new 

@@ -22,7 +22,7 @@ Feature: Using skywriter in a rails app
     And this plugin is available
     And the rails app is running
     When I visit /users/
-    Then I should see "e:development b:users.index.controller-test"
+    Then I should see "e:production b:users.index.controller-test"
 
   Scenario: Skywriter in some flash messages in the view
     Given I save the following as "app/controllers/users_controller.rb"
@@ -46,5 +46,5 @@ Feature: Using skywriter in a rails app
     And this plugin is available
     And the rails app is running
     When I visit /users/
-    Then I should see "e:development b:users.index.view-test"
+    Then I should see "e:production b:users.index.view-test"
 
