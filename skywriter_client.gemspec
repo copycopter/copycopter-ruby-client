@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'shoulda'
   s.add_development_dependency 'mocha'
+  s.add_development_dependency 'bourne'
   s.add_development_dependency 'activesupport'
   s.add_development_dependency 'activerecord'
   s.add_development_dependency 'activepack'

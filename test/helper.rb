@@ -3,6 +3,7 @@ require 'rubygems'
 
 require 'shoulda'
 require 'mocha'
+require 'bourne'
 
 require 'action_controller'
 require 'action_controller/test_process'
