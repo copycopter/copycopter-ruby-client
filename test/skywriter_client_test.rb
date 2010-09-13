@@ -59,7 +59,7 @@ class SkywriterclientTest < Test::Unit::TestCase
 
     assert_equal "default content",
                  SkywriterClient.sky_write("test.key", "default content")
-    assert_not_requested :get, /skywriterapp.*/ 
+    assert_not_requested :get, /skywriterapp.*/
   end
 
   should "return the default content when specifying a key that doesn't exist" do
@@ -72,6 +72,16 @@ class SkywriterclientTest < Test::Unit::TestCase
                  SkywriterClient.sky_write("test.key", "default content")
   end
 
+  should "return the default content when request raises a rescuable error" do
+    set_development_env
+    [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError].each do |exception|
+      reset_webmock
+      stub_request(:get, /skywriterapp.*/).to_raise(exception)
+      assert_equal "default content",
+                   SkywriterClient.sky_write("test.key", "default content")
+    end
+  end
+
   should "return nil when there is no default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
@@ -79,7 +89,7 @@ class SkywriterclientTest < Test::Unit::TestCase
     stub_request(:get, /skywriterapp.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
     assert_nil SkywriterClient.sky_write("test.key")
-    assert_requested :post, /skywriterapp.*/ 
+    assert_requested :post, /skywriterapp.*/
   end
 
   should "return the editable content when specifying a key that has content" do

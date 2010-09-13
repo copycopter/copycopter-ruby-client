@@ -14,6 +14,8 @@ module SkywriterClient
   API_VERSION = "1.0"
   LOG_PREFIX = "** [SkyWriter] "
 
+  HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError]
+
   HEADERS = {
     'Content-type'             => 'text/xml',
     'Accept'                   => 'text/xml, application/xml'
@@ -90,6 +92,8 @@ module SkywriterClient
       else
         default
       end
+    rescue *HTTP_ERRORS
+      default
     end
     alias_method :s, :sky_write
 
