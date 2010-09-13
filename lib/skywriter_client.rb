@@ -30,6 +30,19 @@ module SkywriterClient
     # values for all SkyWriter configuration options. See SkywriterClient::Configuration.
     attr_accessor :configuration
 
+    def remote_lookup_disabled?
+      Thread.current[:disabled] && Thread.current[:disabled] >= Time.now
+    end
+
+    def disable_remote_lookup
+      Thread.current[:disabled] = Time.now + (5 * 60)
+    end
+
+    def enable_remote_lookup
+      Thread.current[:disabled] = nil
+    end
+
+
     # Tell the log that the client is good to go
     def report_ready
       write_verbose_log("Client #{VERSION} ready")
@@ -81,6 +94,7 @@ module SkywriterClient
     end
 
     def sky_write(key, default = nil)
+      return default if remote_lookup_disabled?
       if !configuration.test?
         result = fetch(key, default)
 
@@ -93,6 +107,7 @@ module SkywriterClient
         default
       end
     rescue *HTTP_ERRORS
+      disable_remote_lookup
       default
     end
     alias_method :s, :sky_write
