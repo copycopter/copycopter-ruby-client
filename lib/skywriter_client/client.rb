@@ -21,7 +21,7 @@ module SkywriterClient
     end
 
     def get(options = {})
-      self.class.get "#{url}/environments/#{options[:environment]}/blurbs/#{options[:key]}"
+      self.class.get "#{url}/environments/#{options[:environment]}/blurbs/#{options[:key]}", :timeout => 2
     end
 
     private

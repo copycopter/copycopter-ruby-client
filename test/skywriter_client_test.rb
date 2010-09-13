@@ -82,6 +82,13 @@ class SkywriterclientTest < Test::Unit::TestCase
     end
   end
 
+  should "timeout after two seconds" do
+    response = mock('response')
+    response.stubs('code' => 200, 'body' => 'test', '[]' => nil)
+    SkywriterClient::Client.expects(:get).with(anything, has_entries(:timeout => 2)).returns(response)
+    SkywriterClient.sky_write("test.key", "default content")
+  end
+
   should "return nil when there is no default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
