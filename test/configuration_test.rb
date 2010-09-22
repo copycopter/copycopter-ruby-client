@@ -8,11 +8,11 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_config_default :proxy_user,          nil
     assert_config_default :proxy_pass,          nil
     assert_config_default :environment_name,    nil
-    assert_config_default :client_version,      SkywriterClient::VERSION
-    assert_config_default :client_name,         'SkyWriter Client'
-    assert_config_default :client_url,          'http://skywriterapp.com'
+    assert_config_default :client_version,      CopycopterClient::VERSION
+    assert_config_default :client_name,         'Copycopter Client'
+    assert_config_default :client_url,          'http://copycopter.com'
     assert_config_default :secure,              false
-    assert_config_default :host,                'skywriterapp.com'
+    assert_config_default :host,                'copycopter.com'
     assert_config_default :http_open_timeout,   2
     assert_config_default :http_read_timeout,   5
     assert_config_default :cache_enabled,       false
@@ -20,21 +20,21 @@ class ConfigurationTest < Test::Unit::TestCase
   end
 
   should "provide default values for secure connections" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.secure = true
     assert_equal 443, config.port
     assert_equal 'https', config.protocol
   end
 
   should "provide default values for insecure connections" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.secure = false
     assert_equal 80, config.port
     assert_equal 'http', config.protocol
   end
 
   should "not cache inferred ports" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.secure = false
     config.port
     config.secure = true
@@ -63,7 +63,7 @@ class ConfigurationTest < Test::Unit::TestCase
   end
 
   should "act like a hash" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     hash = config.to_hash
     [:api_key, :environment_name, :host, :http_open_timeout,
      :http_read_timeout, :client_name, :client_url, :client_version, 
@@ -74,60 +74,60 @@ class ConfigurationTest < Test::Unit::TestCase
   end
 
   should "be mergable" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     hash = config.to_hash
     assert_equal hash.merge(:key => 'value'), config.merge(:key => 'value')
   end
 
   should "use development and staging as development environments by default" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     assert_same_elements %w(development staging), config.development_environments
   end
 
   should "use test and cucumber as test environments by default" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     assert_same_elements %w(test cucumber), config.test_environments
   end
 
   should "be test in a test environment" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.test_environments = %w(test)
     config.environment_name = 'test'
     assert config.test?
   end
 
   should "be public in a public environment" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.development_environments = %w(development)
     config.environment_name = 'production'
     assert config.public?
   end
 
   should "not be public in a development environment" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.development_environments = %w(staging)
     config.environment_name = 'staging'
     assert !config.public?
   end
 
   should "be public without an environment name" do
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     assert config.public?
   end
 
   def assert_config_default(option, default_value, config = nil)
-    config ||= SkywriterClient::Configuration.new
+    config ||= CopycopterClient::Configuration.new
     assert_equal default_value, config.send(option)
   end
 
   def assert_config_overridable(option, value = 'a value')
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     config.send(:"#{option}=", value)
     assert_equal value, config.send(option)
   end
 
   def assert_appends_value(option, &block)
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     original_values = config.send(option).dup
     block ||= lambda do |config|
       new_value = 'hello'
@@ -139,7 +139,7 @@ class ConfigurationTest < Test::Unit::TestCase
   end
 
   def assert_replaces(option, setter)
-    config = SkywriterClient::Configuration.new
+    config = CopycopterClient::Configuration.new
     new_value = 'hello'
     config.send(setter, [new_value])
     assert_equal [new_value], config.send(option)

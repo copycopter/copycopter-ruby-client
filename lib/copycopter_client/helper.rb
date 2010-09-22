@@ -1,19 +1,19 @@
-module SkywriterClient
-  # Helper methods for SkyWriter
+module CopycopterClient
+  # Helper methods for Copycopter
   module Helper
 
-    def sky_write(key, default=nil)
+    def copy_for(key, default=nil)
       default = if default.respond_to?(:to_hash)
                   default[:default]
                 else
                   default
                 end
 
-      result = SkywriterClient.sky_write(scope_key_by_partial(key), default)
+      result = CopycopterClient.copy_for(scope_key_by_partial(key), default)
       result = CGI.unescapeHTML(result.to_s)
       result
     end
-    alias_method :s, :sky_write
+    alias_method :s, :copy_for
 
     private
 

@@ -3,16 +3,16 @@ require 'net/https'
 require 'rubygems'
 require 'active_support'
 require 'httparty'
-require 'skywriter_client/configuration'
-require 'skywriter_client/client'
-require 'skywriter_client/helper'
+require 'copycopter_client/configuration'
+require 'copycopter_client/client'
+require 'copycopter_client/helper'
 
 # Plugin for applications to store their copy in a remote service to be editable by clients
-module SkywriterClient
+module CopycopterClient
 
   VERSION = "0.9.0"
   API_VERSION = "1.0"
-  LOG_PREFIX = "** [SkyWriter] "
+  LOG_PREFIX = "** [Copycopter] "
 
   HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError]
 
@@ -23,11 +23,11 @@ module SkywriterClient
 
   class << self
     # The client object is responsible for retrieving and storing information
-    # in the SkyWriter server
+    # in the Copycopter server
     attr_accessor :client
 
-    # A SkyWriter configuration object. Must act like a hash and return sensible
-    # values for all SkyWriter configuration options. See SkywriterClient::Configuration.
+    # A Copycopter configuration object. Must act like a hash and return sensible
+    # values for all Copycopter configuration options. See CopycopterClient::Configuration.
     attr_accessor :configuration
 
     def remote_lookup_disabled?
@@ -53,9 +53,9 @@ module SkywriterClient
       write_verbose_log("Environment Info: #{environment_info}")
     end
 
-    # Prints out the response body from SkyWriter for debugging help
+    # Prints out the response body from Copycopter for debugging help
     def report_response_body(response)
-      write_verbose_log("Response from SkyWriter: \n#{response}")
+      write_verbose_log("Response from Copycopter: \n#{response}")
     end
 
     # Returns the Ruby version, Rails version, and current Rails environment
@@ -82,7 +82,7 @@ module SkywriterClient
     # Call this method to modify defaults in your initializers.
     #
     # @example
-    #   SkywriterClient.configure do |config|
+    #   CopycopterClient.configure do |config|
     #     config.api_key = '1234567890abcdef'
     #     config.secure  = false
     #   end
@@ -93,7 +93,7 @@ module SkywriterClient
       report_ready unless silent
     end
 
-    def sky_write(key, default = nil)
+    def copy_for(key, default = nil)
       return default if remote_lookup_disabled?
       if !configuration.test?
         result = fetch(key, default)
@@ -110,17 +110,17 @@ module SkywriterClient
       disable_remote_lookup
       default
     end
-    alias_method :s, :sky_write
+    alias_method :s, :copy_for
 
     private
 
     def fetch(key, default = nil)
       perform_caching(key) do
         options  = { :key => key, :environment => configuration[:environment_name] }
-        response = SkywriterClient.client.get(options)
+        response = CopycopterClient.client.get(options)
 
         if response.code != 200
-          SkywriterClient.client.create(options.merge(:content => default))
+          CopycopterClient.client.create(options.merge(:content => default))
           default
         else
           if response['blurb']
@@ -134,7 +134,7 @@ module SkywriterClient
 
     def perform_caching(key, &block)
       if configuration.public? && configuration.cache_enabled
-        Rails.cache.fetch("skywriter.#{key}", :expires_in => configuration.cache_expires_in, &block)
+        Rails.cache.fetch("copycopter.#{key}", :expires_in => configuration.cache_expires_in, &block)
       else
         yield
       end

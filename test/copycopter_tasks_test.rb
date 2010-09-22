@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/helper'
 
-require File.dirname(__FILE__) + '/../lib/skywriter_tasks'
+require File.dirname(__FILE__) + '/../lib/copycopter_tasks'
 require 'fakeweb'
 
-class SkywriterTasksTest < Test::Unit::TestCase
+class CopycopterTasksTest < Test::Unit::TestCase
   def successful_response(body = "")
     response = Net::HTTPSuccess.new('1.2', '200', 'OK')
     response.stubs(:body).returns(body)
@@ -17,16 +17,16 @@ class SkywriterTasksTest < Test::Unit::TestCase
   end
 
   context "being quiet" do
-    setup { SkywriterTasks.stubs(:puts) }
+    setup { CopycopterTasks.stubs(:puts) }
 
     context "in a configured project" do
-      setup { SkywriterClient.configure { |config| config.api_key = "1234123412341234" } }
+      setup { CopycopterClient.configure { |config| config.api_key = "1234123412341234" } }
 
       context "on deploy({})" do
-        setup { @output = SkywriterTasks.deploy({}) }
+        setup { @output = CopycopterTasks.deploy({}) }
 
         before_should "complain about missing rails env" do
-          SkywriterTasks.expects(:puts).with(regexp_matches(/rails environment/i))
+          CopycopterTasks.expects(:puts).with(regexp_matches(/rails environment/i))
         end
 
         should "return false" do
@@ -42,9 +42,9 @@ class SkywriterTasksTest < Test::Unit::TestCase
 	end
 
         context "on deploy(options)" do
-          setup { @output = SkywriterTasks.deploy(@options) }
+          setup { @output = CopycopterTasks.deploy(@options) }
 
-          before_should "post to http://skywriterapp.com/deploys" do
+          before_should "post to http://copycopter.com/deploys" do
             @http.expects(:post).with('/api/v1/deploys', kind_of(String), kind_of(Hash)).returns([successful_response, nil])
           end
 
@@ -62,12 +62,12 @@ class SkywriterTasksTest < Test::Unit::TestCase
           end
 
           before_should "puts the response body on success" do
-            SkywriterTasks.expects(:puts).with("body")
+            CopycopterTasks.expects(:puts).with("body")
             @http.expects(:post).with(any_parameters).returns([successful_response('body'), nil])
           end
 
           before_should "puts the response body on failure" do
-            SkywriterTasks.expects(:puts).with("body")
+            CopycopterTasks.expects(:puts).with("body")
             @http.expects(:post).with(any_parameters).returns([unsuccessful_response('body'), nil])
           end
 
@@ -88,7 +88,7 @@ class SkywriterTasksTest < Test::Unit::TestCase
 
     context "in a configured project with custom host" do
       setup do
-        SkywriterClient.configure do |config|
+        CopycopterClient.configure do |config|
           config.api_key = "1234123412341234"
           config.host = "custom.host"
         end
@@ -96,7 +96,7 @@ class SkywriterTasksTest < Test::Unit::TestCase
       end
 
       context "on deploy(:to => 'staging', :from => 'development')" do
-        setup { @output = SkywriterTasks.deploy(:to => "staging", :from => 'development') }
+        setup { @output = CopycopterTasks.deploy(:to => "staging", :from => 'development') }
 
         before_should "post to the custom host" do
           Net::HTTP.expects(:new).with('custom.host').returns(@http)
@@ -106,13 +106,13 @@ class SkywriterTasksTest < Test::Unit::TestCase
     end
 
     context "when not configured" do
-      setup { SkywriterClient.configure { |config| config.api_key = "" } }
+      setup { CopycopterClient.configure { |config| config.api_key = "" } }
 
       context "on deploy(:to => 'staging', :from => 'development')" do
-        setup { @output = SkywriterTasks.deploy(:to => "staging", :from => 'development') }
+        setup { @output = CopycopterTasks.deploy(:to => "staging", :from => 'development') }
 
         before_should "complain about missing api key" do
-          SkywriterTasks.expects(:puts).with(regexp_matches(/api key/i))
+          CopycopterTasks.expects(:puts).with(regexp_matches(/api key/i))
         end
 
         should "return false" do

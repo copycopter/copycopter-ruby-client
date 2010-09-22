@@ -12,7 +12,7 @@ require 'webmock/test_unit'
 include WebMock
 WebMock.disable_net_connect!
 
-require File.join(File.dirname(__FILE__), "..", "lib", "skywriter_client")
+require File.join(File.dirname(__FILE__), "..", "lib", "copycopter_client")
 
 begin require 'redgreen'; rescue LoadError; end
 
@@ -37,8 +37,8 @@ class Test::Unit::TestCase
   end
 
   def reset_config
-    SkywriterClient.configuration = nil
-    SkywriterClient.configure do |config|
+    CopycopterClient.configuration = nil
+    CopycopterClient.configure do |config|
       config.api_key       = 'abc123'
       config.cache_enabled = false
     end
@@ -49,7 +49,7 @@ class Test::Unit::TestCase
   end
 
   def stub_client!
-    SkywriterClient.client = stub_client
+    CopycopterClient.client = stub_client
   end
 end
 

@@ -1,6 +1,6 @@
-Feature: Using skywriter in a rails app
+Feature: Using copycopter in a rails app
 
-  Scenario: Skywriter in some flash messages in the controller
+  Scenario: copycopter in some flash messages in the controller
     Given I generate a rails application
     And I save the following as "app/controllers/users_controller.rb"
     """
@@ -25,7 +25,7 @@ Feature: Using skywriter in a rails app
     When I visit /users/
     Then I should see "e:development b:users.index.controller-test"
 
-  Scenario: Skywriter in the view
+  Scenario: copycopter in the view
     Given I generate a rails application
     And I save the following as "app/controllers/users_controller.rb"
     """
@@ -50,7 +50,7 @@ Feature: Using skywriter in a rails app
     When I visit /users/
     Then I should see "e:development b:users.index.view-test"
 
-  Scenario: Skywriter gets a 404
+  Scenario: copycopter gets a 404
     Given I generate a rails application
     And I save the following as "app/controllers/users_controller.rb"
     """

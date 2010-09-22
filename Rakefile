@@ -6,7 +6,7 @@ require 'cucumber/rake/task'
 desc 'Default: run unit tests and cucumber features'
 task :default => [:test, :cucumber]
 
-desc 'Test the skywriter_client plugin.'
+desc 'Test the copycopter_client plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'

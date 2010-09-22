@@ -1,4 +1,4 @@
-module SkywriterClient
+module CopycopterClient
   # Used to set up and modify settings for the client.
   class Configuration
 
@@ -11,10 +11,10 @@ module SkywriterClient
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
 
-    # The host to connect to (defaults to skywriterapp.com).
+    # The host to connect to (defaults to copycopter.com).
     attr_accessor :host
 
-    # The port on which your SkyWriter server runs (defaults to 443 for secure
+    # The port on which your Copycopter server runs (defaults to 443 for secure
     # connections, 80 for insecure connections).
     attr_accessor :port
 
@@ -48,7 +48,7 @@ module SkywriterClient
     # The name of the environment the application is running in
     attr_accessor :environment_name
 
-    # The name of the client library being used to send notifications (such as "SkyWriter Client")
+    # The name of the client library being used to send notifications (such as "Copycopter Client")
     attr_accessor :client_name
 
     # The version of the client library being used to send notifications (such as "1.0.2")
@@ -67,14 +67,14 @@ module SkywriterClient
 
     def initialize
       @secure                   = false
-      @host                     = 'skywriterapp.com'
+      @host                     = 'copycopter.com'
       @http_open_timeout        = 2
       @http_read_timeout        = 5
       @development_environments = %w(development staging)
       @test_environments        = %w(test cucumber)
-      @client_name              = 'SkyWriter Client'
+      @client_name              = 'Copycopter Client'
       @client_version           = VERSION
-      @client_url               = 'http://skywriterapp.com'
+      @client_url               = 'http://copycopter.com'
       @cache_enabled            = false
     end
 

@@ -1,5 +1,5 @@
-module SkywriterClient
-  # Communicates with the SkyWriter server
+module CopycopterClient
+  # Communicates with the Copycopter server
   class Client
     include HTTParty
     format :xml
@@ -35,12 +35,12 @@ module SkywriterClient
 
     def log(level, message, response = nil)
       logger.send level, LOG_PREFIX + message if logger
-      SkywriterClient.report_environment_info
-      SkywriterClient.report_response_body(response.body) if response && response.respond_to?(:body)
+      CopycopterClient.report_environment_info
+      CopycopterClient.report_response_body(response.body) if response && response.respond_to?(:body)
     end
 
     def logger
-      SkywriterClient.logger
+      CopycopterClient.logger
     end
 
   end

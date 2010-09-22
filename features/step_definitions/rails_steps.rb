@@ -21,11 +21,11 @@ end
 
 When "this plugin is available" do
   $LOAD_PATH << "#{PROJECT_ROOT}/lib"
-  require 'skywriter_client'
-  When %{I save the following as "vendor/plugins/skywriter_client/rails/init.rb"},
+  require 'copycopter_client'
+  When %{I save the following as "vendor/plugins/copycopter_client/rails/init.rb"},
        IO.read("#{PROJECT_ROOT}/rails/init.rb") 
 
-  ShamRack.at("skywriterapp.com").sinatra do
+  ShamRack.at("copycopter.com").sinatra do
     get "/api/v1/environments/:env/blurbs/:blurb" do |env, blurb|
       if blurb =~ /404/
         raise Sinatra::NotFound

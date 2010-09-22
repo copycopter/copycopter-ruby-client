@@ -1,10 +1,10 @@
 if defined?(ActionController::Base)
-  ActionController::Base.send :include, SkywriterClient::Helper
+  ActionController::Base.send :include, CopycopterClient::Helper
 end
 if defined?(ActionView::Base)
-  ActionView::Base.send :include, SkywriterClient::Helper
+  ActionView::Base.send :include, CopycopterClient::Helper
 end
 
-SkywriterClient.configure(true) do |config|
+CopycopterClient.configure(true) do |config|
   config.environment_name = RAILS_ENV
 end

@@ -5,19 +5,19 @@ include_files = ["README", "MIT-LICENSE", "Rakefile", "init.rb", "{lib,tasks,tes
 end.flatten
 
 Gem::Specification.new do |s|
-  s.name = "skywriter_client"
+  s.name = "copycopter_client"
   s.version = "0.1.0"
   s.authors = ["thoughtbot"]
   s.date = "2010-06-04"
   s.email = "support@thoughtbot.com"
   s.extra_rdoc_files = ["README"]
   s.files = include_files
-  s.homepage = "http://github.com/thoughtbot/skywriter_client"
+  s.homepage = "http://github.com/thoughtbot/copycopter_client"
   s.rdoc_options = ["--line-numbers", "--main"]
   s.require_path = "lib"
-  s.rubyforge_project = "skywriter_client"
+  s.rubyforge_project = "copycopter_client"
   s.rubygems_version = "1.3.5"
-  s.summary = "Client for the SkyWriter content management service"
+  s.summary = "Client for the Copycopter content management service"
 
   s.add_dependency 'httparty'
 
