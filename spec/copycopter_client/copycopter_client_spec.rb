@@ -1,11 +1,9 @@
-require File.dirname(__FILE__) + '/helper'
+require 'spec_helper'
 
-class CopycopterclientTest < Test::Unit::TestCase
-
+describe CopycopterClient do
   include DefinesConstants
 
-  def setup
-    super
+  before do
     reset_config
   end
 
@@ -21,154 +19,145 @@ class CopycopterclientTest < Test::Unit::TestCase
     CopycopterClient.configure { |config| config.environment_name = 'test' }
   end
 
-  should "yield and save a configuration when configuring" do
+  it "should yield and save a configuration when configuring" do
     yielded_configuration = nil
     CopycopterClient.configure do |config|
       yielded_configuration = config
     end
 
-    assert_kind_of CopycopterClient::Configuration, yielded_configuration
-    assert_equal yielded_configuration, CopycopterClient.configuration
+    yielded_configuration.should be_kind_of(CopycopterClient::Configuration)
+    CopycopterClient.configuration.should == yielded_configuration
   end
 
-  should "not remove existing config options when configuring twice" do
+  it "should not remove existing config options when configuring twice" do
     first_config = nil
     CopycopterClient.configure do |config|
       first_config = config
     end
     CopycopterClient.configure do |config|
-      assert_equal first_config, config
+      config.should == first_config
     end
   end
 
-  should "configure the client" do
+  it "should configure the client" do
     client = stub_client
     CopycopterClient::Client.stubs(:new => client)
     configuration = nil
 
     CopycopterClient.configure { |yielded_config| configuration = yielded_config }
 
-    assert_received(CopycopterClient::Client, :new) { |expect| expect.with(configuration) }
-    assert_equal client, CopycopterClient.client
+    CopycopterClient::Client.should have_received(:new).with(configuration)
+    CopycopterClient.client.should == client
   end
 
-  should "return the default content and not contact the server when in a test environment" do
+  it "should return the default content and not contact the server when in a test environment" do
     set_test_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
-    assert_equal "default content",
-                 CopycopterClient.copy_for("test.key", "default content")
-    assert_not_requested :get, /copycopter.*/
+    CopycopterClient.copy_for("test.key", "default content").should == "default content"
+    WebMock.should_not have_requested(:get, /copycopter.*/)
   end
 
-  should "return the default content when specifying a key that doesn't exist" do
+  it "should return the default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
     stub_request(:post, /.*copycopter.*/).to_return(:status => 200, :body => "Posted to test.key")
     stub_request(:get, /copycopter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
-    assert_equal "default content",
-                 CopycopterClient.copy_for("test.key", "default content")
+    CopycopterClient.copy_for("test.key", "default content").should == "default content"
   end
 
-  should "return the default content when request raises a rescuable error" do
+  it "should return the default content when request raises a rescuable error" do
     set_development_env
     [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError].each do |exception|
       reset_webmock
       stub_request(:get, /copycopter.*/).to_raise(exception)
-      assert_equal "default content",
-                   CopycopterClient.copy_for("test.key", "default content")
+      CopycopterClient.copy_for("test.key", "default content").should == "default content"
       CopycopterClient.enable_remote_lookup
     end
   end
 
-  should "timeout after two seconds" do
+  it "should timeout after two seconds" do
     response = mock('response')
     response.stubs('code' => 200, 'body' => 'test', '[]' => nil)
     CopycopterClient::Client.expects(:get).with(anything, has_entries(:timeout => 2)).returns(response)
     CopycopterClient.copy_for("test.key", "default content")
   end
 
-  should "disable remote calls on exception for 5 minutes" do
+  it "should disable remote calls on exception for 5 minutes" do
     set_development_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_timeout
     CopycopterClient.copy_for("test.key", "default content")
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "not default content")
-    assert_equal "default content",
-                 CopycopterClient.copy_for("test.key", "default content")
+    CopycopterClient.copy_for("test.key", "default content").should == "default content"
     CopycopterClient.enable_remote_lookup
-    assert_equal "not default content",
-                 CopycopterClient.copy_for("test.key", "default content")
-
+    CopycopterClient.copy_for("test.key", "default content").should == "not default content"
   end
 
-  should "return nil when there is no default content when specifying a key that doesn't exist" do
+  it "should return nil when there is no default content when specifying a key that doesn't exist" do
     set_development_env
     reset_webmock
     stub_request(:post, /.*copycopter.*/).to_return(:status => 200, :body => "Posted to test.key")
     stub_request(:get, /copycopter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
 
-    assert_nil CopycopterClient.copy_for("test.key")
-    assert_requested :post, /copycopter.*/
+    CopycopterClient.copy_for("test.key").should be_nil
+    WebMock.should have_requested(:post, /copycopter.*/)
   end
 
-  should "return the editable content when specifying a key that has content" do
+  it "should return the editable content when specifying a key that has content" do
     set_development_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id></blurb>\n")
 
-    assert_match "the content", CopycopterClient.copy_for("test.key")
-    assert_match "<a target='_blank' href='http://copycopter.com/projects/1/blurbs/9/edit'>Edit</a>",
-                 CopycopterClient.copy_for("test.key", "default content")
+    CopycopterClient.copy_for("test.key").should include("the content")
+    CopycopterClient.copy_for("test.key", "default content").
+      should include("<a target='_blank' href='http://copycopter.com/projects/1/blurbs/9/edit'>Edit</a>")
   end
 
-  should "return the editable content when specifying a key that has content even with a default" do
+  it "should return the editable content when specifying a key that has content even with a default" do
     set_development_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n</blurb>\n")
 
-    assert_match "the content",
-                 CopycopterClient.copy_for("test.key", "default content")
-    assert_match "<a target='_blank' href='http://copycopter.com/projects/1/blurbs/9/edit'>Edit</a>",
-                 CopycopterClient.copy_for("test.key", "default content")
+    CopycopterClient.copy_for("test.key", "default content").
+      should include("the content")
+    CopycopterClient.copy_for("test.key", "default content").
+      should include("<a target='_blank' href='http://copycopter.com/projects/1/blurbs/9/edit'>Edit</a>")
   end
 
-  should "not include edit link in content in public env" do
+  it "should not include edit link in content in public env" do
     set_public_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>the content</content>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n</blurb>\n")
 
-    assert_no_match /Edit/, CopycopterClient.copy_for("test.key")
+    CopycopterClient.copy_for("test.key").should_not =~ /Edit/
   end
 
-  should "escape HTML entities" do
+  it "should escape HTML entities" do
     set_public_env
     reset_webmock
     stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<blurb>\n  <content>&lt;b&gt;the content&lt;/b&gt;</content>\n  <project-id type=\"integer\">1</project-id>\n  <id type=\"integer\">9</id>\n</blurb>\n")
 
-    assert_equal "<b>the content</b>", CopycopterClient.copy_for("test.key").strip
+    CopycopterClient.copy_for("test.key").strip.should == "<b>the content</b>"
   end
 
-  should "respond to s" do
-    assert CopycopterClient.respond_to?(:s)
+  it "should respond to s" do
+    CopycopterClient.should respond_to(:s)
   end
 
-  should "perform caching when fetching copy" do
+  it "should perform caching when fetching copy" do
     cache = mock('Cache')
-    cache.stubs(:fetch).yields.returns("cached-content")
+    cache.stubs(:fetch, anything).returns("cached-content")
 
-    ::Rails = Class.new
-    ::Rails.stubs(:cache).returns(cache)
+    Rails.cache = cache
 
     CopycopterClient.configuration.cache_enabled    = true
     CopycopterClient.configuration.cache_expires_in = 60
 
-    assert_equal "cached-content", CopycopterClient.copy_for("key")
-    assert_received(cache, :fetch) do |expect|
-      expect.with "copycopter.key", { :expires_in => 60 }
-    end
+    CopycopterClient.copy_for("key").should == "cached-content"
+    cache.should have_received(:fetch).with("copycopter.key", :expires_in => 60)
   end
 end

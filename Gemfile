@@ -4,7 +4,7 @@ gem "rails", "~> 2.3"
 gem "sqlite3-ruby", :require => false
 gem "actionpack", "~> 2.3"
 gem "activerecord", "~> 2.3"
-gem "shoulda"
+gem "rspec"
 gem "bourne"
 gem "webmock"
 gem "rake"

@@ -2,16 +2,15 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 require 'cucumber/rake/task'
+require 'spec/rake/spectask'
 
-desc 'Default: run unit tests and cucumber features'
-task :default => [:test, :cucumber]
+desc 'Default: run specs and cucumber features'
+task :default => [:spec, :cucumber]
 
 desc 'Test the copycopter_client plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+Spec::Rake::SpecTask.new do |t|
+  t.spec_opts = ['--options', "spec/spec.opts"]
+  t.spec_files = FileList['spec/copycopter_client/**/*_spec.rb']
 end
 
 Cucumber::Rake::Task.new(:cucumber) do |t|

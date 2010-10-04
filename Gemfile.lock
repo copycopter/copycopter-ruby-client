@@ -40,8 +40,8 @@ GEM
       activesupport (= 2.3.9)
       rake (>= 0.8.3)
     rake (0.8.7)
+    rspec (1.3.0)
     sham_rack (1.3.2)
-    shoulda (2.11.3)
     sinatra (1.0)
       rack (>= 1.0)
     sqlite3-ruby (1.3.1)
@@ -63,8 +63,8 @@ DEPENDENCIES
   httparty
   rails (~> 2.3)
   rake
+  rspec
   sham_rack
-  shoulda
   sinatra
   sqlite3-ruby
   webmock

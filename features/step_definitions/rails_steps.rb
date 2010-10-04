@@ -50,6 +50,6 @@ When "I visit /$path" do |path|
 end
 
 Then 'I should see "$something"' do |something|
-  assert_match something, @response_body
+  @response_body.should include(something)
 end
 
