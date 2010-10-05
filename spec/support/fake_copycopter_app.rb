@@ -35,9 +35,11 @@ class FakeCopycopterApp < Sinatra::Base
     end
   end
 
-  put "/api/v2/projects/:api_key/defaults" do |api_key|
+  post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
     if projects[api_key]
-      raise NotImplementedError
+      data = JSON.parse(request.body.read)
+      projects[api_key].draft.update(data)
+      201
     else
       halt 404, "No such project"
     end

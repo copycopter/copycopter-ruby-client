@@ -12,7 +12,12 @@ module CopycopterClient
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key = parts.join('.')
-      sync[key]
+      if content = sync[key]
+        content
+      else
+        sync[key] = options[:default]
+        nil
+      end
     end
 
     def available_locales

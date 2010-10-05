@@ -10,7 +10,7 @@ module CopycopterClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :cache_enabled,
-        :cache_expires_in].freeze
+        :cache_expires_in, :polling_delay].freeze
 
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -67,6 +67,9 @@ module CopycopterClient
     # The time, in seconds, the cache should expire.
     attr_accessor :cache_expires_in
 
+    # The time, in seconds, in between each sync to the server.
+    attr_accessor :polling_delay
+
     alias_method :secure?, :secure
 
     def initialize
@@ -81,6 +84,7 @@ module CopycopterClient
       @client_url               = 'http://copycopter.com'
       @cache_enabled            = false
       @applied                  = false
+      @polling_delay            = 300
     end
 
     # Allows config options to be read like a hash

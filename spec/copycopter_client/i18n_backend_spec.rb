@@ -25,4 +25,12 @@ describe CopycopterClient::I18nBackend do
 
     subject.available_locales.should =~ %w(en fr)
   end
+
+  it "queues missing keys" do
+    default = 'default value'
+
+    subject.translate('en', 'test.key', :default => default)
+
+    sync['en.test.key'].should == default
+  end
 end
