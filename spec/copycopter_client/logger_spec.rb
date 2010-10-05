@@ -23,12 +23,14 @@ describe "logging" do
   end
 
   it "should report that client is ready when configured" do
+    pending
     stub_verbose_log
     configure
     should have_logged(/Client (.*) ready/)
   end
 
   it "should not report that client is ready when internally configured" do
+    pending
     stub_verbose_log
     CopycopterClient.configure(true) { |config | }
     should have_logged(/.*/).never

@@ -1,80 +1,36 @@
 require 'spec_helper'
 
 describe CopycopterClient do
-  before { reset_config }
-
-  def build_client(opts = {})
-    config = CopycopterClient::Configuration.new
-    opts.each {|opt, value| config.send(:"#{opt}=", value) }
-    CopycopterClient::Client.new(config)
+  def build_client(config = {})
+    default_config = CopycopterClient::Configuration.new.to_hash
+    CopycopterClient::Client.new(default_config.update(config))
   end
 
-  it "should default the open timeout to 2 seconds" do
+  def add_project
+    api_key = 'xyz123'
+    FakeCopycopterApp.add_project(api_key)
   end
 
-  it "should default the read timeout to 5 seconds" do
-  end
+  it "should default timeout to 2 seconds"
+  it "should allow override of timeout"
+  it "should connect to the right port for ssl"
+  it "should connect to the right port for non-ssl"
+  it "should use ssl if secure"
+  it "should not use ssl if not secure"
 
-  it "should allow override of the open timeout" do
-  end
+  it "downloads published blurbs for an existing project" do
+    project = add_project
+    project.draft['key.one'] = "unexpected one"
+    project.draft['key.three'] = "unexpected three"
+    project.published['key.one'] = "expected one"
+    project.published['key.two'] = "expected two"
 
-  it "should allow override of the read timeout" do
-  end
+    blurbs = build_client(:api_key => project.api_key, :public => true).download
 
-  it "should connect to the right port for ssl" do
-  end
-
-  it "should connect to the right port for non-ssl" do
-  end
-
-  it "should use ssl if secure" do
-  end
-
-  it "should not use ssl if not secure" do
-  end
-
-  it "should be able to create a blurb for an environment" do
-    reset_webmock
-    stub_request(:post, /.*copycopter.*/).to_return(:status => 200, :body => "Posted to test.key")
-
-    client = build_client(:api_key => '123')
-    response = client.create(:environment => 'development',
-                             :key => 'test.key',
-                             :content => 'content')
-
-    response.code.should == 200
-    url = "http://copycopter.com/api/v1/environments/development/blurbs"
-    WebMock.should have_requested(:post, url).
-      with(:headers => { "X-API-KEY" => "123" }).
-      once
-  end
-
-  it "should be able to get a blurb for an environment" do
-    reset_webmock
-    stub_request(:get, /copycopter.*/).to_return(:status => 200, :body => "the content")
-
-    client = build_client(:api_key => '123')
-    response = client.get(:environment => 'development', :key => 'test.key')
-
-    response.code.should == 200
-    url = "http://copycopter.com/api/v1/environments/development/blurbs/test.key"
-    WebMock.should have_requested(:get, url).
-      with(:headers => { "X-API-KEY" => "123" }).
-      once
-  end
-
-  it "should be able to get a blurb that doesn't exist for an environment" do
-    reset_webmock
-    stub_request(:get, /copycopter.*/).to_return(:status => 404, :body => "Blurb not found: test.key")
-
-    client = build_client(:api_key => '123')
-    response = client.get(:environment => 'development', :key => 'test.key')
-
-    response.code.should == 404
-    url = "http://copycopter.com/api/v1/environments/development/blurbs/test.key"
-    WebMock.should have_requested(:get, url).
-      with(:headers => { "X-API-KEY" => "123" }).
-      once
+    blurbs.should == {
+      'key.one' => 'expected one',
+      'key.two' => 'expected two'
+    }
   end
 end
 

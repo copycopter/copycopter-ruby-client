@@ -117,4 +117,83 @@ describe CopycopterClient::Configuration do
     config = CopycopterClient::Configuration.new
     config.should be_public
   end
+
+  it "should yield and save a configuration when configuring" do
+    yielded_configuration = nil
+    CopycopterClient.configure(false) do |config|
+      yielded_configuration = config
+    end
+
+    yielded_configuration.should be_kind_of(CopycopterClient::Configuration)
+    CopycopterClient.configuration.should == yielded_configuration
+  end
+
+  it "doesn't apply the configuration when asked not to" do
+    CopycopterClient.configure(false) { |config| }
+    CopycopterClient.configuration.should_not be_applied
+  end
+
+  it "should not remove existing config options when configuring twice" do
+    first_config = nil
+    CopycopterClient.configure(false) do |config|
+      first_config = config
+    end
+    CopycopterClient.configure(false) do |config|
+      config.should == first_config
+    end
+  end
+
+  it "starts out unapplied" do
+    CopycopterClient::Configuration.new.should_not be_applied
+  end
 end
+
+share_examples_for "applied configuration" do
+  let(:backend) { stub('i18n-backend') }
+  let(:sync)    { stub('sync', :start => nil) }
+  let(:client)  { stub('client') }
+  subject { CopycopterClient::Configuration.new }
+
+  before do
+    CopycopterClient::I18nBackend.stubs(:new => backend)
+    CopycopterClient::Client.stubs(:new => client)
+    CopycopterClient::Sync.stubs(:new => sync)
+  end
+
+  it { should be_applied }
+
+  it "builds and assigns an I18n backend" do
+    CopycopterClient::Client.should have_received(:new).with(subject.to_hash)
+    CopycopterClient::Sync.should have_received(:new).with(client, subject.to_hash)
+    CopycopterClient::I18nBackend.should have_received(:new).with(sync)
+    I18n.backend.should == backend
+  end
+
+end
+
+describe CopycopterClient::Configuration, "applied when testing" do
+  it_should_behave_like "applied configuration"
+
+  before do
+    subject.environment_name = 'test'
+    subject.apply
+  end
+
+  it "doesn't start sync" do
+    sync.should have_received(:start).never
+  end
+end
+
+describe CopycopterClient::Configuration, "applied when not testing" do
+  it_should_behave_like "applied configuration"
+
+  before do
+    subject.environment_name = 'development'
+    subject.apply
+  end
+
+  it "starts sync" do
+    sync.should have_received(:start)
+  end
+end
+

@@ -1,58 +1,62 @@
 Feature: Using copycopter in a rails app
 
-  Scenario: copycopter in some flash messages in the controller
-    Given I generate a rails application
-    And I save the following as "app/controllers/users_controller.rb"
+  Background:
+    Given I have a copycopter project with an api key of "abc123"
+    When I generate a rails application
+    And I configure the copycopter client with api key "abc123"
+
+  Scenario: copycopter in the controller
+    Given the "abc123" project has the following blurbs:
+      | key                            | published content |
+      | en.users.index.controller-test | This is a test    |
+    When I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
-        flash[:success] = s(".controller-test", :default => "default")
+        @text = t("users.index.controller-test", :default => "default")
       end
     end
     """
-    And I save the following as "config/routes.rb"
+    When I write to "config/routes.rb" with:
     """
     ActionController::Routing::Routes.draw do |map|
       map.resources :users
     end
     """
-    And I save the following as "app/views/users/index.html.erb"
+    When I write to "app/views/users/index.html.erb" with:
     """
-    <%= flash[:success] %>
+    <%= @text %>
     """
-    And this plugin is available
-    And the rails app is running
     When I visit /users/
-    Then I should see "e:development b:users.index.controller-test"
+    Then the output should contain "This is a test"
 
   Scenario: copycopter in the view
-    Given I generate a rails application
-    And I save the following as "app/controllers/users_controller.rb"
+    Given the "abc123" project has the following blurbs:
+      | key                      | published content |
+      | en.users.index.view-test | This is a test    |
+    When I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
-        render :action => "index"
+        render
       end
     end
     """
-    And I save the following as "config/routes.rb"
+    When I write to "config/routes.rb" with:
     """
     ActionController::Routing::Routes.draw do |map|
       map.resources :users
     end
     """
-    And I save the following as "app/views/users/index.html.erb"
+    When I write to "app/views/users/index.html.erb" with:
     """
-    <%= s(".view-test", :default => "default") %>
+    <%= t(".view-test", :default => "default") %>
     """
-    And this plugin is available
-    And the rails app is running
     When I visit /users/
-    Then I should see "e:development b:users.index.view-test"
+    Then the output should contain "This is a test"
 
-  Scenario: copycopter gets a 404
-    Given I generate a rails application
-    And I save the following as "app/controllers/users_controller.rb"
+  Scenario: missing key
+    When I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
@@ -60,18 +64,16 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    And I save the following as "config/routes.rb"
+    When I write to "config/routes.rb" with:
     """
     ActionController::Routing::Routes.draw do |map|
       map.resources :users
     end
     """
-    And I save the following as "app/views/users/index.html.erb"
+    When I write to "app/views/users/index.html.erb" with:
     """
-    <%= s(".404", :default => "default") %>
+    <%= t(".404", :default => "default") %>
     """
-    And this plugin is available
-    And the rails app is running
     When I visit /users/
-    Then I should see "default"
+    Then the output should contain "default"
 
