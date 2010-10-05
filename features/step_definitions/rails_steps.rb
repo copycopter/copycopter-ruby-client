@@ -12,18 +12,26 @@ When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
       """
       CopycopterClient.configure do |config|
         config.api_key = "#{api_key}"
+        config.polling_delay = 1
       end
       """
   }
 end
 
-When "I visit /$path" do |path|
+When "I start the application" do
   in_current_dir do
     require 'config/environment'
   end
+end
+
+When "I visit /$path" do |path|
   app = ActionController::Dispatcher.new
   request = Rack::MockRequest.new(app)
   response = request.get(path)
   @last_stdout = response.body
+
+  if defined?(ActionController) && ActionController::Reloader.default_lock
+    ActionController::Reloader.default_lock.unlock
+  end
 end
 

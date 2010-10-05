@@ -27,7 +27,9 @@ Feature: Using copycopter in a rails app
     """
     <%= @text %>
     """
-    When I visit /users/
+    When I start the application
+    And I wait for changes to be synchronized
+    And I visit /users/
     Then the output should contain "This is a test"
 
   Scenario: copycopter in the view
@@ -52,7 +54,9 @@ Feature: Using copycopter in a rails app
     """
     <%= t(".view-test", :default => "default") %>
     """
-    When I visit /users/
+    When I start the application
+    And I wait for changes to be synchronized
+    And I visit /users/
     Then the output should contain "This is a test"
 
   Scenario: missing key
@@ -72,8 +76,13 @@ Feature: Using copycopter in a rails app
     """
     When I write to "app/views/users/index.html.erb" with:
     """
-    <%= t(".404", :default => "default") %>
+    <%= t(".404", :default => "not found") %>
     """
-    When I visit /users/
-    Then the output should contain "default"
+    When I start the application
+    And I visit /users/
+    Then the output should contain "not found"
+    When I wait for changes to be synchronized
+    Then the "abc123" project should have the following blurbs:
+      | key                | draft content |
+      | en.users.index.404 | not found     |
 

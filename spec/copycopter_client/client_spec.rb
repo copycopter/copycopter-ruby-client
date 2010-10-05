@@ -32,5 +32,19 @@ describe CopycopterClient do
       'key.two' => 'expected two'
     }
   end
+
+  it "uploads defaults for missing blurbs in an existing project" do
+    project = add_project
+
+    blurbs = {
+      'key.one' => 'expected one',
+      'key.two' => 'expected two'
+    }
+
+    client = build_client(:api_key => project.api_key, :public => true)
+    client.upload(blurbs)
+
+    project.draft.should == blurbs
+  end
 end
 

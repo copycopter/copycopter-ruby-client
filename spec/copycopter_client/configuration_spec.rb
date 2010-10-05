@@ -5,7 +5,7 @@ describe CopycopterClient::Configuration do
     match do |config|
       config.should respond_to(option)
 
-      if instance_variables.include?('default')
+      if instance_variables.include?('@default')
         config.send(option).should == @default
       end
 
@@ -42,6 +42,7 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:port).                    overridable }
   it { should have_config_option(:development_environments).overridable }
   it { should have_config_option(:api_key).                 overridable }
+  it { should have_config_option(:polling_delay).           overridable.default(300) }
 
   it "should provide default values for secure connections" do
     config = CopycopterClient::Configuration.new
