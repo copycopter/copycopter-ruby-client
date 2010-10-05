@@ -18,7 +18,7 @@ describe CopycopterTasks do
     before { CopycopterTasks.stubs(:puts) }
 
     describe "in a configured project" do
-      before { CopycopterClient.configure { |config| config.api_key = "1234123412341234" } }
+      before { CopycopterClient.configure(false) { |config| config.api_key = "1234123412341234" } }
 
       describe "on deploy({})" do
         before do
@@ -98,7 +98,7 @@ describe CopycopterTasks do
 
     describe "in a configured project with custom host" do
       before do
-        CopycopterClient.configure do |config|
+        CopycopterClient.configure(false) do |config|
           config.api_key = "1234123412341234"
           config.host = "custom.host"
         end
@@ -124,7 +124,7 @@ describe CopycopterTasks do
     end
 
     describe "when not configured" do
-      before { CopycopterClient.configure { |config| config.api_key = "" } }
+      before { CopycopterClient.configure(false) { |config| config.api_key = "" } }
 
       describe "on deploy(:to => 'staging', :from => 'development')" do
         before do

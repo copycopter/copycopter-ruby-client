@@ -10,4 +10,8 @@ gem "httparty"
 gem "sham_rack"
 gem "cucumber"
 gem "sinatra", :require => false
+gem "yard", :require => false
+gem "aruba"
+gem "ruby-debug"
+gem "json"
 

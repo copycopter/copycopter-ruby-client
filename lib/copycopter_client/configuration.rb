@@ -1,3 +1,7 @@
+require 'copycopter_client/i18n_backend'
+require 'copycopter_client/client'
+require 'copycopter_client/sync'
+
 module CopycopterClient
   # Used to set up and modify settings for the client.
   class Configuration
@@ -76,6 +80,7 @@ module CopycopterClient
       @client_version           = VERSION
       @client_url               = 'http://copycopter.com'
       @cache_enabled            = false
+      @applied                  = false
     end
 
     # Allows config options to be read like a hash
@@ -111,6 +116,18 @@ module CopycopterClient
       test_environments.include?(environment_name)
     end
 
+    def applied?
+      @applied
+    end
+
+    def apply
+      client = Client.new(to_hash)
+      sync = Sync.new(client, to_hash)
+      I18n.backend = I18nBackend.new(sync)
+      @applied = true
+      sync.start unless test?
+    end
+
     def port
       @port || default_port
     end
@@ -132,7 +149,25 @@ module CopycopterClient
         80
       end
     end
-
   end
 
+  class << self
+    # Call this method to modify defaults in your initializers.
+    #
+    # @example
+    #   CopycopterClient.configure do |config|
+    #     config.api_key = '1234567890abcdef'
+    #     config.secure  = false
+    #   end
+    def configure(apply = true)
+      self.configuration ||= Configuration.new
+      yield(configuration)
+      configuration.apply if apply
+    end
+
+    # A Copycopter configuration object. Must act like a hash and return sensible
+    # values for all Copycopter configuration options. See CopycopterClient::Configuration.
+    attr_accessor :configuration
+
+  end
 end

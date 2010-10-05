@@ -5,6 +5,7 @@ if defined?(ActionView::Base)
   ActionView::Base.send :include, CopycopterClient::Helper
 end
 
-CopycopterClient.configure(true) do |config|
+CopycopterClient.configure(false) do |config|
   config.environment_name = RAILS_ENV
 end
+

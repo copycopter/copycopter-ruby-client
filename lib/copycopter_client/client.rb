@@ -1,47 +1,27 @@
 module CopycopterClient
   # Communicates with the Copycopter server
   class Client
-    include HTTParty
-    format :xml
-
-    BLURBS_URI = ''.freeze
-
-    def initialize(options = {})
-      [:proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol, :api_key,
-       :host, :port, :secure, :http_open_timeout, :http_read_timeout].each do |option|
+    def initialize(options)
+      [:protocol, :api_key, :host, :port].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
-      self.class.headers("X-API-KEY" => @api_key) if @api_key
     end
 
-    def create(options = {})
-      self.class.post "#{url}/environments/#{options[:environment]}/blurbs",
-                      :body => { :blurb => { :content => options[:content],
-                                             :key     => options[:key] }}
-    end
-
-    def get(options = {})
-      self.class.get "#{url}/environments/#{options[:environment]}/blurbs/#{options[:key]}", :timeout => 2
+    def download
+      response = Net::HTTP.get_response(blurbs_url)
+      JSON.parse(response.body)
     end
 
     private
 
-    attr_reader :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :protocol,
-      :host, :port, :secure, :http_open_timeout, :http_read_timeout
+    attr_reader :protocol, :host, :port, :api_key
 
-    def url
-      URI.parse("#{protocol}://#{host}:#{port}/api/v1")
+    def blurbs_url
+      url("published_blurbs")
     end
 
-    def log(level, message, response = nil)
-      logger.send level, LOG_PREFIX + message if logger
-      CopycopterClient.report_environment_info
-      CopycopterClient.report_response_body(response.body) if response && response.respond_to?(:body)
+    def url(resource)
+      URI.parse("#{protocol}://#{host}:#{port}/api/v2/projects/#{api_key}/#{resource}")
     end
-
-    def logger
-      CopycopterClient.logger
-    end
-
   end
 end

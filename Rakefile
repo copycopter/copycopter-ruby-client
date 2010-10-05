@@ -5,6 +5,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'cucumber/rake/task'
 require 'spec/rake/spectask'
+require 'yard'
 
 desc 'Default: run specs and cucumber features'
 task :default => [:spec, :cucumber]
@@ -15,15 +16,25 @@ Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList['spec/copycopter_client/**/*_spec.rb']
 end
 
-Cucumber::Rake::Task.new(:cucumber) do |t|
-  t.fork = true
-  t.cucumber_opts = ['--format', (ENV['CUCUMBER_FORMAT'] || 'progress')]
+namespace :cucumber do
+  Cucumber::Rake::Task.new(:ok) do |t|
+    t.fork = true
+    t.cucumber_opts = ['--tags', '~@wip',
+                       '--format', (ENV['CUCUMBER_FORMAT'] || 'progress')]
+  end
+
+  Cucumber::Rake::Task.new(:wip) do |t|
+    t.fork = true
+    t.cucumber_opts = ['--tags', '@wip',
+                       '--format', (ENV['CUCUMBER_FORMAT'] || 'progress')]
+  end
+
+  task :all => [:ok, :wip]
 end
 
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new do |t|
-    t.files   = ['lib/**/*.rb', 'TESTING.rdoc']
-  end
-rescue LoadError
+task :cucumber => 'cucumber:ok'
+
+YARD::Rake::YardocTask.new do |t|
+  t.files   = ['lib/**/*.rb', 'TESTING.rdoc']
 end
+

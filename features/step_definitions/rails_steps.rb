@@ -1,55 +1,29 @@
-Given "I generate a rails application" do
-  FileUtils.rm_rf TEMP_ROOT
-  FileUtils.mkdir_p TEMP_ROOT
-  Dir.chdir(TEMP_ROOT) do
-    `rails _2.3.8_ #{APP_NAME}`
-  end
+When "I generate a rails application" do
+  steps %{
+    When I run "rails _2.3.8_ testapp"
+    And I cd to "testapp"
+  }
 end
 
-When 'I save the following as "$path"' do |path, string|
-  FileUtils.mkdir_p(File.join(CUC_RAILS_ROOT, File.dirname(path)))
-  File.open(File.join(CUC_RAILS_ROOT, path), 'w') { |file| file.write(string) }
-end
-
-When "the rails app is running" do
-  ShamRack.at("example.com").rackup do
-    Dir.chdir(CUC_RAILS_ROOT)
-    require "config/environment"
-    run ActionController::Dispatcher.new
-  end
-end
-
-When "this plugin is available" do
-  $LOAD_PATH << "#{PROJECT_ROOT}/lib"
-  require 'copycopter_client'
-  When %{I save the following as "vendor/plugins/copycopter_client/rails/init.rb"},
-       IO.read("#{PROJECT_ROOT}/rails/init.rb") 
-
-  ShamRack.at("copycopter.com").sinatra do
-    get "/api/v1/environments/:env/blurbs/:blurb" do |env, blurb|
-      if blurb =~ /404/
-        raise Sinatra::NotFound
-      else
-        "e:#{env} b:#{blurb}"
+When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
+  steps %{
+    When I run "ln -s #{PROJECT_ROOT} vendor/plugins/copycopter"
+    And I write to "config/initializers/copycopter.rb" with:
+      """
+      CopycopterClient.configure do |config|
+        config.api_key = "#{api_key}"
       end
-    end
-  end
-end
-
-When "I visit and print /$path" do |path|
-  When %{I visit /#{path}}
-  puts @response_body
+      """
+  }
 end
 
 When "I visit /$path" do |path|
-  @response_body = Net::HTTP.get(URI.parse("http://example.com/#{path}"))
-
-  if defined?(ActionController) && ActionController::Reloader.default_lock
-    ActionController::Reloader.default_lock.unlock
+  in_current_dir do
+    require 'config/environment'
   end
-end
-
-Then 'I should see "$something"' do |something|
-  @response_body.should include(something)
+  app = ActionController::Dispatcher.new
+  request = Rack::MockRequest.new(app)
+  response = request.get(path)
+  @last_stdout = response.body
 end
 
