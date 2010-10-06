@@ -14,4 +14,5 @@ gem "yard", :require => false
 gem "aruba"
 gem "ruby-debug"
 gem "json"
+gem "thin"
 

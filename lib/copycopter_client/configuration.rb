@@ -96,7 +96,8 @@ module CopycopterClient
 
     # Returns a hash of all configurable options
     def to_hash
-      OPTIONS.inject({}) do |hash, option|
+      base_options = { :public => public? }
+      OPTIONS.inject(base_options) do |hash, option|
         hash.merge(option.to_sym => send(option))
       end
     end
