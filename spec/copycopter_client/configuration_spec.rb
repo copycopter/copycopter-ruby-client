@@ -75,6 +75,7 @@ describe CopycopterClient::Configuration do
      :proxy_user, :secure, :development_environments].each do |option|
       hash[option].should == config[option]
     end
+    hash[:public].should == config.public?
   end
 
   it "should be mergable" do

@@ -20,12 +20,39 @@ describe CopycopterClient do
 
   it "downloads published blurbs for an existing project" do
     project = add_project
-    project.draft['key.one'] = "unexpected one"
-    project.draft['key.three'] = "unexpected three"
-    project.published['key.one'] = "expected one"
-    project.published['key.two'] = "expected two"
+    project.update({
+      'draft' => {
+        'key.one'   => "unexpected one",
+        'key.three' => "unexpected three"
+      },
+      'published' => {
+        'key.one' => "expected one",
+        'key.two' => "expected two"
+      }
+    })
 
     blurbs = build_client(:api_key => project.api_key, :public => true).download
+
+    blurbs.should == {
+      'key.one' => 'expected one',
+      'key.two' => 'expected two'
+    }
+  end
+
+  it "downloads draft blurbs for an existing project" do
+    project = add_project
+    project.update({
+      'draft' => {
+        'key.one' => "expected one",
+        'key.two' => "expected two"
+      },
+      'published' => {
+        'key.one'   => "unexpected one",
+        'key.three' => "unexpected three"
+      }
+    })
+
+    blurbs = build_client(:api_key => project.api_key, :public => false).download
 
     blurbs.should == {
       'key.one' => 'expected one',
@@ -44,7 +71,7 @@ describe CopycopterClient do
     client = build_client(:api_key => project.api_key, :public => true)
     client.upload(blurbs)
 
-    project.draft.should == blurbs
+    project.reload.draft.should == blurbs
   end
 end
 

@@ -1,44 +1,39 @@
 require 'sinatra/base'
+require 'json'
 
 class FakeCopycopterApp < Sinatra::Base
-  class << self
-    attr_accessor :projects
-  end
-
-  self.projects = {}
-
   def self.add_project(api_key)
-    self.projects[api_key] = Project.new(api_key)
+    Project.create(api_key)
   end
 
   def self.reset
-    self.projects.clear
+    Project.delete_all
   end
 
-  def projects
-    self.class.projects
+  def self.project(api_key)
+    Project.find(api_key)
   end
 
   get "/api/v2/projects/:api_key/published_blurbs" do |api_key|
-    if projects[api_key]
-      projects[api_key].published.to_json
+    if project = Project.find(api_key)
+      project.published.to_json
     else
       halt 404, "No such project"
     end
   end
 
   get "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
-    if projects[api_key]
-      projects[api_key].draft.to_json
+    if project = Project.find(api_key)
+      project.draft.to_json
     else
       halt 404, "No such project"
     end
   end
 
   post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
-    if projects[api_key]
+    if project = Project.find(api_key)
       data = JSON.parse(request.body.read)
-      projects[api_key].draft.update(data)
+      project.update('draft' => data)
       201
     else
       halt 404, "No such project"
@@ -52,10 +47,65 @@ class FakeCopycopterApp < Sinatra::Base
   class Project
     attr_reader :draft, :published, :api_key
 
-    def initialize(api_key)
-      @api_key   = api_key
-      @draft     = {}
-      @published = {}
+    def initialize(attrs)
+      @api_key   = attrs['api_key']
+      @draft     = attrs['draft']     || {}
+      @published = attrs['published'] || {}
+    end
+
+    def to_hash
+      { 'api_key'   => @api_key,
+        'draft'     => @draft,
+        'published' => @published }
+    end
+
+    def update(attrs)
+      @draft.    update(attrs['draft'])     if attrs['draft']
+      @published.update(attrs['published']) if attrs['published']
+      self.class.save(self)
+    end
+
+    def reload
+      self.class.find(api_key)
+    end
+
+    def self.create(api_key)
+      project = Project.new('api_key' => api_key)
+      save(project)
+      project
+    end
+
+    def self.find(api_key)
+      open_project_data do |data|
+        Project.new(data[api_key].dup)
+      end
+    end
+
+    def self.delete_all
+      open_project_data do |data|
+        data.clear
+      end
+    end
+
+    def self.save(project)
+      open_project_data do |data|
+        data[project.api_key] = project.to_hash
+      end
+    end
+
+    def self.open_project_data
+      project_file = File.join(PROJECT_ROOT, 'tmp', 'projects.json')
+      if File.exist?(project_file)
+        data = JSON.parse(IO.read(project_file))
+      else
+        data = {}
+      end
+
+      result = yield(data)
+
+      File.open(project_file, "w") { |file| file.write(data.to_json) }
+
+      result
     end
   end
 end

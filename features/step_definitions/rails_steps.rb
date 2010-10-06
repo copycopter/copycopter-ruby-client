@@ -20,18 +20,23 @@ end
 
 When "I start the application" do
   in_current_dir do
-    require 'config/environment'
+    RailsServer.start(ENV['RAILS_PORT'])
   end
 end
 
 When "I visit /$path" do |path|
-  app = ActionController::Dispatcher.new
-  request = Rack::MockRequest.new(app)
-  response = request.get(path)
-  @last_stdout = response.body
+  @last_stdout = RailsServer.get(path)
+end
 
-  if defined?(ActionController) && ActionController::Reloader.default_lock
-    ActionController::Reloader.default_lock.unlock
+When /^I configure the copycopter client to used published data$/ do
+  in_current_dir do
+    config_path = "config/initializers/copycopter.rb"
+    contents = IO.read(config_path)
+    contents.sub!("end", "  config.development_environments = []\nend")
+    File.open(config_path, "w") { |file| file.write(contents) }
   end
 end
 
+After do
+  RailsServer.stop
+end
