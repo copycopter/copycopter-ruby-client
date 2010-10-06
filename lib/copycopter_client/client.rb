@@ -1,8 +1,12 @@
 module CopycopterClient
+  class ConnectionError < StandardError
+  end
+
   # Communicates with the Copycopter server
   class Client
     def initialize(options)
-      [:protocol, :api_key, :host, :port, :public].each do |option|
+      [:protocol, :api_key, :host, :port, :public, :http_read_timeout,
+        :http_open_timeout].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
     end
@@ -22,7 +26,7 @@ module CopycopterClient
 
     private
 
-    attr_reader :protocol, :host, :port, :api_key
+    attr_reader :protocol, :host, :port, :api_key, :http_read_timeout, :http_open_timeout
 
     def public?
       @public
@@ -41,11 +45,10 @@ module CopycopterClient
     end
 
     def connect
-      result = nil
-      Net::HTTP.start(host, port) do |http|
-        result = yield(http)
-      end
-      result
+      http = Net::HTTP.new(host, port)
+      http.open_timeout = http_open_timeout
+      http.read_timeout = http_read_timeout
+      yield(http)
     end
   end
 end

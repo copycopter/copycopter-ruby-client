@@ -11,8 +11,29 @@ describe CopycopterClient do
     FakeCopycopterApp.add_project(api_key)
   end
 
-  it "should default timeout to 2 seconds"
-  it "should allow override of timeout"
+  describe "opening a connection" do
+    let(:config) { CopycopterClient::Configuration.new }
+    let(:http) { Net::HTTP.new(config.host, config.port) }
+
+    before do
+      Net::HTTP.stubs(:new => http)
+    end
+
+    it "should timeout when connecting" do
+      project = add_project
+      client = build_client(:api_key => project.api_key, :http_open_timeout => 4)
+      client.download
+      http.open_timeout.should == 4
+    end
+
+    it "should timeout when reading" do
+      project = add_project
+      client = build_client(:api_key => project.api_key, :http_read_timeout => 4)
+      client.download
+      http.read_timeout.should == 4
+    end
+  end
+
   it "should connect to the right port for ssl"
   it "should connect to the right port for non-ssl"
   it "should use ssl if secure"
