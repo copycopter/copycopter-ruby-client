@@ -1,33 +1,6 @@
 require 'spec_helper'
 
 describe CopycopterClient::Sync do
-  class FakeClient
-    def initialize
-      @data = {}
-      @uploaded = {}
-      @uploads = 0
-    end
-
-    attr_reader :uploaded
-
-    def []=(key, value)
-      @data[key] = value
-    end
-
-    def download
-      @data.dup
-    end
-
-    def upload(data)
-      @uploaded.update(data)
-      @uploads += 1
-    end
-
-    def uploaded?
-      @uploads > 0
-    end
-  end
-
   let(:client) { FakeClient.new }
 
   def build_sync(config = {})
@@ -98,7 +71,54 @@ describe CopycopterClient::Sync do
     client.uploaded.should == { 'test.key' => 'test value' }
   end
 
-  it "syncronizes changes downloads threads"
-  it "syncronizes changes uploads threads"
+  describe "given locked mutex" do
+    Spec::Matchers.define :finish_after_unlocking do |mutex|
+      match do |thread|
+        sleep(0.1)
+
+        if thread.status === false
+          violated("finished before unlocking")
+        else
+          mutex.unlock
+          sleep(0.1)
+
+          if thread.status === false
+            true
+          else
+            violated("still running after unlocking")
+          end
+        end
+      end
+
+      def violated(failure)
+        @failure_message = failure
+        false
+      end
+
+      failure_message_for_should do
+        @failure_message
+      end
+    end
+
+    let(:mutex) { Mutex.new }
+    let(:sync) { build_sync(:polling_delay => 0.1) }
+
+    before do
+      mutex.lock
+      Mutex.stubs(:new => mutex)
+    end
+
+    it "synchronizes read access to keys between threads" do
+      Thread.new { sync['test.key'] }.should finish_after_unlocking(mutex)
+    end
+
+    it "synchronizes read access to the key list between threads" do
+      Thread.new { sync.keys }.should finish_after_unlocking(mutex)
+    end
+
+    it "synchronizes write access to keys between threads" do
+      Thread.new { sync['test.key'] = 'value' }.should finish_after_unlocking(mutex)
+    end
+  end
 end
 

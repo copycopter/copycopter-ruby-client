@@ -19,6 +19,10 @@ Given /^the "([^"]*)" project has the following blurbs:$/ do |api_key, table|
   end
 end
 
+When /^the the following blurbs are updated in the "([^"]*)" project:$/ do |api_key, table|
+  Given %{the "#{api_key}" project has the following blurbs:}, table
+end
+
 Then /^the "([^"]*)" project should have the following blurbs:$/ do |api_key, table|
   project = FakeCopycopterApp.projects[api_key]
   table.hashes.each do |blurb_hash|
