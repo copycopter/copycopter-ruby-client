@@ -10,6 +10,7 @@ module CopycopterClient
       @stop          = false
       @queued        = {}
       @mutex         = Mutex.new
+      @logger        = options[:logger]
     end
 
     def start
@@ -21,35 +22,43 @@ module CopycopterClient
     end
 
     def [](key)
-      sync { @blurbs[key] }
+      lock { @blurbs[key] }
     end
 
     def []=(key, value)
-      sync { @queued[key] = value }
+      lock { @queued[key] = value }
     end
 
     def keys
-      sync { @blurbs.keys }
+      lock { @blurbs.keys }
     end
 
     private
 
-    attr_reader :client, :polling_delay
+    attr_reader :client, :polling_delay, :logger
 
     def poll
       until @stop
+        sync
+        sleep(polling_delay)
+      end
+    end
+
+    def sync
+      begin
         downloaded_blurbs = client.download
-        sync { @blurbs = downloaded_blurbs }
+        lock { @blurbs = downloaded_blurbs }
         with_queued_changes do |queued|
           client.upload(queued)
         end
-        sleep(polling_delay)
+      rescue ConnectionError => error
+        logger.error(LOG_PREFIX + error.message)
       end
     end
 
     def with_queued_changes
       changes_to_push = nil
-      sync do
+      lock do
         unless @queued.empty?
           changes_to_push = @queued
           @queued = {}
@@ -58,7 +67,7 @@ module CopycopterClient
       yield(changes_to_push) if changes_to_push
     end
 
-    def sync(&block)
+    def lock(&block)
       @mutex.synchronize(&block)
     end
   end

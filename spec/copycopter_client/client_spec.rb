@@ -53,6 +53,28 @@ describe CopycopterClient do
       client.download
       http.use_ssl.should == false
     end
+
+    it "wraps HTTP errors with ConnectionError" do
+      errors = [
+        Timeout::Error.new,
+        Errno::EINVAL.new,
+        Errno::ECONNRESET.new,
+        EOFError.new,
+        Net::HTTPBadResponse.new,
+        Net::HTTPHeaderSyntaxError.new,
+        Net::ProtocolError.new
+      ]
+
+      errors.each do |original_error|
+        http.stubs(:get).raises(original_error)
+        client = build_client_with_project
+        expect { client.download }.
+          to raise_error(CopycopterClient::ConnectionError) { |error|
+            error.message.
+              should == "#{original_error.class.name}: #{original_error.message}"
+          }
+      end
+    end
   end
 
   it "downloads published blurbs for an existing project" do

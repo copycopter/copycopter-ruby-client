@@ -1,11 +1,12 @@
+require 'copycopter_client'
+require 'copycopter_client/helper'
+
 if defined?(ActionController::Base)
   ActionController::Base.send :include, CopycopterClient::Helper
 end
 if defined?(ActionView::Base)
   ActionView::Base.send :include, CopycopterClient::Helper
 end
-
-require 'copycopter_client'
 
 CopycopterClient.configure(false) do |config|
   config.environment_name = Rails.env

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'copycopter_client/helper'
 
 describe CopycopterClient::Helper do
   subject { Object.new }
