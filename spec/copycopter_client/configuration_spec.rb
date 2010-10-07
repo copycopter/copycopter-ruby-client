@@ -194,7 +194,7 @@ share_examples_for "applied configuration" do
   it "builds and assigns an I18n backend" do
     CopycopterClient::Client.should have_received(:new).with(subject.to_hash)
     CopycopterClient::Sync.should have_received(:new).with(client, subject.to_hash)
-    CopycopterClient::I18nBackend.should have_received(:new).with(sync)
+    CopycopterClient::I18nBackend.should have_received(:new).with(sync, subject.to_hash)
     I18n.backend.should == backend
   end
 
