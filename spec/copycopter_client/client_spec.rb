@@ -32,12 +32,21 @@ describe CopycopterClient do
       client.download
       http.read_timeout.should == 4
     end
-  end
 
-  it "should connect to the right port for ssl"
-  it "should connect to the right port for non-ssl"
-  it "should use ssl if secure"
-  it "should not use ssl if not secure"
+    it "uses ssl when secure" do
+      project = add_project
+      client = build_client(:api_key => project.api_key, :secure => true)
+      client.download
+      http.use_ssl.should == true
+    end
+
+    it "doesn't use ssl when insecure" do
+      project = add_project
+      client = build_client(:api_key => project.api_key, :secure => false)
+      client.download
+      http.use_ssl.should == false
+    end
+  end
 
   it "downloads published blurbs for an existing project" do
     project = add_project
