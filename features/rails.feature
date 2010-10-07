@@ -33,6 +33,7 @@ Feature: Using copycopter in a rails app
     Then the log should contain "Downloaded translations"
     When I visit /users/
     Then the output should contain "This is a test"
+    And the output should contain a link to edit "en.users.index.controller-test" from "abc123"
 
   Scenario: copycopter in the view
     Given the "abc123" project has the following blurbs:
@@ -122,7 +123,7 @@ Feature: Using copycopter in a rails app
       | en.users.index.404 | not found     |
     And the log should contain "Uploaded missing translations"
 
-  Scenario: copycopter in development
+  Scenario: copycopter in production
     Given the "abc123" project has the following blurbs:
       | key                            | published content | draft content |
       | en.users.index.controller-test | This is a test    | Extra extra   |
@@ -149,6 +150,7 @@ Feature: Using copycopter in a rails app
     And I wait for changes to be synchronized
     And I visit /users/
     Then the output should contain "This is a test"
+    And the output should not contain an edit link
 
   Scenario: backwards compatibility
     Given the "abc123" project has the following blurbs:
