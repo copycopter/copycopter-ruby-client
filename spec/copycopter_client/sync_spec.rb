@@ -90,6 +90,25 @@ describe CopycopterClient::Sync do
     sync['test.key'].should == 'test value'
   end
 
+  it "handles an invalid api key" do
+    failure = "server is napping"
+    logger = FakeLogger.new
+    client.stubs(:upload).raises(CopycopterClient::InvalidApiKey.new(failure))
+    sync = build_sync(:polling_delay => 1, :logger => logger)
+
+    sync['upload.key'] = 'upload'
+    sync.start
+    sleep(2)
+
+    logger.should have_entry(:error, "** [Copycopter] #{failure}"),
+                  logger.entries.inspect
+
+    client['test.key'] = 'test value'
+    sleep(2)
+
+    sync['test.key'].should be_nil
+  end
+
   describe "given locked mutex" do
     Spec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|

@@ -1,9 +1,8 @@
 require 'net/http'
 require 'net/https'
+require 'copycopter_client/errors'
 
 module CopycopterClient
-  class ConnectionError < StandardError
-  end
 
   # Communicates with the Copycopter server
   class Client
@@ -21,6 +20,7 @@ module CopycopterClient
     def download
       connect do |http|
         response = http.get(uri(download_resource))
+        check(response)
         logger.info("#{LOG_PREFIX}Downloaded translations")
         JSON.parse(response.body)
       end
@@ -28,7 +28,8 @@ module CopycopterClient
 
     def upload(data)
       connect do |http|
-        http.post(uri("draft_blurbs"), data.to_json)
+        response = http.post(uri("draft_blurbs"), data.to_json)
+        check(response)
         logger.info("#{LOG_PREFIX}Uploaded missing translations")
       end
     end
@@ -63,6 +64,16 @@ module CopycopterClient
         yield(http)
       rescue *HTTP_ERRORS => exception
         raise ConnectionError, "#{exception.class.name}: #{exception.message}"
+      end
+    end
+
+    def check(response)
+      if Net::HTTPNotFound === response
+        raise InvalidApiKey, "Invalid API key: #{api_key}"
+      end
+
+      unless Net::HTTPSuccess === response
+        raise ConnectionError, "#{response.code}: #{response.body}"
       end
     end
   end

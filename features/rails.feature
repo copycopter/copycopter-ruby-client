@@ -183,3 +183,9 @@ Feature: Using copycopter in a rails app
     Then the output should contain "Controller blurb"
     And the output should contain "View blurb"
 
+  Scenario: configure a bad api key
+    When I configure the copycopter client with api key "bogus"
+    When I start the application
+    And I wait for changes to be synchronized
+    Then the log should contain "Invalid API key: bogus"
+
