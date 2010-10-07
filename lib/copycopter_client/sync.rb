@@ -1,5 +1,5 @@
 require 'thread'
-require 'copycopter_client/sync'
+require 'copycopter_client/client'
 
 module CopycopterClient
   class Sync
@@ -42,6 +42,8 @@ module CopycopterClient
         sync
         sleep(polling_delay)
       end
+    rescue InvalidApiKey => error
+      logger.error(LOG_PREFIX + error.message)
     end
 
     def sync

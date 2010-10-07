@@ -14,34 +14,30 @@ class FakeCopycopterApp < Sinatra::Base
     Project.find(api_key)
   end
 
-  get "/api/v2/projects/:api_key/published_blurbs" do |api_key|
-    if project = Project.find(api_key)
-      project.published.to_json
+  def with_project(api_key)
+    if api_key == 'raise_error'
+      halt 500, { :error => "Blah ha" }.to_json
+    elsif project = Project.find(api_key)
+      yield(project)
     else
-      halt 404, "No such project"
+      halt 404, { :error => "No such project" }.to_json
     end
+  end
+
+  get "/api/v2/projects/:api_key/published_blurbs" do |api_key|
+    with_project(api_key) { |project| project.published.to_json }
   end
 
   get "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
-    if project = Project.find(api_key)
-      project.draft.to_json
-    else
-      halt 404, "No such project"
-    end
+    with_project(api_key) { |project| project.draft.to_json }
   end
 
   post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
-    if project = Project.find(api_key)
+    with_project(api_key) do |project|
       data = JSON.parse(request.body.read)
       project.update('draft' => data)
       201
-    else
-      halt 404, "No such project"
     end
-  end
-
-  not_found do
-    "Unknown resource"
   end
 
   class Project
@@ -77,7 +73,11 @@ class FakeCopycopterApp < Sinatra::Base
 
     def self.find(api_key)
       open_project_data do |data|
-        Project.new(data[api_key].dup)
+        if project_hash = data[api_key]
+          Project.new(project_hash.dup)
+        else
+          nil
+        end
       end
     end
 

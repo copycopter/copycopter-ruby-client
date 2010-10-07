@@ -75,6 +75,26 @@ describe CopycopterClient do
           }
       end
     end
+
+    it "handles 500 errors from downloads with ConnectionError" do
+      client = build_client(:api_key => 'raise_error')
+      expect { client.download }.to raise_error(CopycopterClient::ConnectionError)
+    end
+
+    it "handles 500 errors from uploads with ConnectionError" do
+      client = build_client(:api_key => 'raise_error')
+      expect { client.upload({}) }.to raise_error(CopycopterClient::ConnectionError)
+    end
+
+    it "handles 404 errors from downloads with ConnectionError" do
+      client = build_client(:api_key => 'bogus')
+      expect { client.download }.to raise_error(CopycopterClient::InvalidApiKey)
+    end
+
+    it "handles 404 errors from uploads with ConnectionError" do
+      client = build_client(:api_key => 'bogus')
+      expect { client.upload({}) }.to raise_error(CopycopterClient::InvalidApiKey)
+    end
   end
 
   it "downloads published blurbs for an existing project" do
