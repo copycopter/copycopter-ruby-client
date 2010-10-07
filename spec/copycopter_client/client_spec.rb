@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe CopycopterClient do
   def build_client(config = {})
+    config[:logger] ||= FakeLogger.new
     default_config = CopycopterClient::Configuration.new.to_hash
     CopycopterClient::Client.new(default_config.update(config))
   end
@@ -9,6 +10,12 @@ describe CopycopterClient do
   def add_project
     api_key = 'xyz123'
     FakeCopycopterApp.add_project(api_key)
+  end
+
+  def build_client_with_project(config = {})
+    project = add_project
+    config[:api_key] = project.api_key
+    build_client(config)
   end
 
   describe "opening a connection" do
@@ -69,6 +76,13 @@ describe CopycopterClient do
     }
   end
 
+  it "logs that it performed a download" do
+    logger = FakeLogger.new
+    client = build_client_with_project(:logger => logger)
+    client.download
+    logger.should have_entry(:info, "** [Copycopter] Downloaded translations")
+  end
+
   it "downloads draft blurbs for an existing project" do
     project = add_project
     project.update({
@@ -102,6 +116,13 @@ describe CopycopterClient do
     client.upload(blurbs)
 
     project.reload.draft.should == blurbs
+  end
+
+  it "logs that it performed an upload" do
+    logger = FakeLogger.new
+    client = build_client_with_project(:logger => logger)
+    client.upload({})
+    logger.should have_entry(:info, "** [Copycopter] Uploaded missing translations")
   end
 end
 

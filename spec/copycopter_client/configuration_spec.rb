@@ -43,6 +43,8 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:development_environments).overridable }
   it { should have_config_option(:api_key).                 overridable }
   it { should have_config_option(:polling_delay).           overridable.default(300) }
+  it { should have_config_option(:logger).                  overridable }
+  it { should have_config_option(:framework).               overridable }
 
   it "should provide default values for secure connections" do
     config = CopycopterClient::Configuration.new
@@ -70,9 +72,9 @@ describe CopycopterClient::Configuration do
     config = CopycopterClient::Configuration.new
     hash = config.to_hash
     [:api_key, :environment_name, :host, :http_open_timeout,
-     :http_read_timeout, :client_name, :client_url, :client_version,
-     :port, :protocol, :proxy_host, :proxy_pass, :proxy_port,
-     :proxy_user, :secure, :development_environments].each do |option|
+      :http_read_timeout, :client_name, :client_url, :client_version, :port,
+      :protocol, :proxy_host, :proxy_pass, :proxy_port, :proxy_user, :secure,
+      :development_environments, :logger, :framework].each do |option|
       hash[option].should == config[option]
     end
     hash[:public].should == config.public?
@@ -131,8 +133,10 @@ describe CopycopterClient::Configuration do
   end
 
   it "doesn't apply the configuration when asked not to" do
-    CopycopterClient.configure(false) { |config| }
+    logger = FakeLogger.new
+    CopycopterClient.configure(false) { |config| config.logger = logger }
     CopycopterClient.configuration.should_not be_applied
+    logger.entries[:info].should be_empty
   end
 
   it "should not remove existing config options when configuring twice" do
@@ -148,18 +152,41 @@ describe CopycopterClient::Configuration do
   it "starts out unapplied" do
     CopycopterClient::Configuration.new.should_not be_applied
   end
+
+  it "logs to $stdout by default" do
+    logger = FakeLogger.new
+    Logger.stubs(:new => logger)
+
+    config = CopycopterClient::Configuration.new
+    Logger.should have_received(:new).with($stdout)
+    config.logger.should == logger
+  end
+
+  it "generates environment info without a framework" do
+    subject.environment_name = 'production'
+    subject.environment_info.should == "[Ruby: #{RUBY_VERSION}] [Env: production]"
+  end
+
+  it "generates environment info with a framework" do
+    subject.environment_name = 'production'
+    subject.framework = 'Sinatra: 1.0.0'
+    subject.environment_info.
+      should == "[Ruby: #{RUBY_VERSION}] [Sinatra: 1.0.0] [Env: production]"
+  end
 end
 
 share_examples_for "applied configuration" do
   let(:backend) { stub('i18n-backend') }
   let(:sync)    { stub('sync', :start => nil) }
   let(:client)  { stub('client') }
+  let(:logger)  { FakeLogger.new }
   subject { CopycopterClient::Configuration.new }
 
   before do
     CopycopterClient::I18nBackend.stubs(:new => backend)
     CopycopterClient::Client.stubs(:new => client)
     CopycopterClient::Sync.stubs(:new => sync)
+    subject.logger = logger
   end
 
   it { should be_applied }
@@ -171,6 +198,17 @@ share_examples_for "applied configuration" do
     I18n.backend.should == backend
   end
 
+  it "logs that it's ready" do
+    logger.should have_entry(:info,
+                             "** [Copycopter] Client #{CopycopterClient::VERSION} ready"),
+                  logger.entries[:info].inspect
+  end
+
+  it "logs environment info" do
+    logger.should have_entry(:info,
+                             "** [Copycopter] Environment Info: #{subject.environment_info}"),
+                  logger.entries[:info].inspect
+  end
 end
 
 describe CopycopterClient::Configuration, "applied when testing" do

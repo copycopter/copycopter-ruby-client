@@ -6,7 +6,7 @@ module CopycopterClient
   class Client
     def initialize(options)
       [:protocol, :api_key, :host, :port, :public, :http_read_timeout,
-        :http_open_timeout, :secure].each do |option|
+        :http_open_timeout, :secure, :logger].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
     end
@@ -14,6 +14,7 @@ module CopycopterClient
     def download
       connect do |http|
         response = http.request_get(uri(download_resource))
+        logger.info("#{LOG_PREFIX}Downloaded translations")
         JSON.parse(response.body)
       end
     end
@@ -21,13 +22,14 @@ module CopycopterClient
     def upload(data)
       connect do |http|
         http.request_post(uri("draft_blurbs"), data.to_json)
+        logger.info("#{LOG_PREFIX}Uploaded missing translations")
       end
     end
 
     private
 
     attr_reader :protocol, :host, :port, :api_key, :http_read_timeout,
-      :http_open_timeout, :secure
+      :http_open_timeout, :secure, :logger
 
     def public?
       @public
