@@ -69,9 +69,4 @@ describe CopycopterClient do
 
     CopycopterClient.copy_for("test.key").should_not =~ /Edit/
   end
-
-  it "should respond to s" do
-    pending
-    CopycopterClient.should respond_to(:s)
-  end
 end
