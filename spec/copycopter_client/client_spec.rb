@@ -166,5 +166,43 @@ describe CopycopterClient do
     client.upload({})
     logger.should have_entry(:info, "** [Copycopter] Uploaded missing translations")
   end
+
+  it "deploys from the top-level constant" do
+    client = build_client
+    CopycopterClient.client = client
+    client.stubs(:deploy)
+
+    CopycopterClient.deploy
+
+    client.should have_received(:deploy)
+  end
+
+  it "deploys" do
+    project = add_project
+    project.update({
+      'draft' => {
+        'key.one' => "expected one",
+        'key.two' => "expected two"
+      },
+      'published' => {
+        'key.one'   => "unexpected one",
+        'key.two'   => "unexpected one",
+      }
+    })
+    logger = FakeLogger.new
+    client = build_client(:api_key => project.api_key, :logger => logger)
+
+    client.deploy
+
+    project.reload.published.should == {
+      'key.one'   => "expected one",
+      'key.two'   => "expected two"
+    }
+    logger.should have_entry(:info, "** [Copycopter] Deployed")
+  end
+
+  it "handles deploy errors" do
+    expect { build_client.deploy }.to raise_error(CopycopterClient::InvalidApiKey)
+  end
 end
 

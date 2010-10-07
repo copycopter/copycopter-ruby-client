@@ -40,6 +40,13 @@ class FakeCopycopterApp < Sinatra::Base
     end
   end
 
+  post "/api/v2/projects/:api_key/deploys" do |api_key|
+    with_project(api_key) do |project|
+      project.deploy
+      201
+    end
+  end
+
   class Project
     attr_reader :draft, :published, :api_key
 
@@ -63,6 +70,11 @@ class FakeCopycopterApp < Sinatra::Base
 
     def reload
       self.class.find(api_key)
+    end
+
+    def deploy
+      @published.update(@draft)
+      self.class.save(self)
     end
 
     def self.create(api_key)

@@ -67,6 +67,17 @@ Then /^the output should contain a link to edit "([^"]*)" from "([^"]*)"$/ do |b
   }
 end
 
+
+When /^I successfully rake "([^"]*)"$/ do |task|
+  in_current_dir do
+    pid = fork do
+      load('Rakefile')
+      Rake::Task[task].invoke
+    end
+    Process.wait(pid)
+  end
+end
+
 Then /^the output should not contain an edit link$/ do
   steps %{Then the output should not contain "<a href"}
 end
