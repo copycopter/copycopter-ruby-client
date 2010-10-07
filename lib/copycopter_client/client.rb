@@ -1,9 +1,16 @@
+require 'net/http'
+require 'net/https'
+
 module CopycopterClient
   class ConnectionError < StandardError
   end
 
   # Communicates with the Copycopter server
   class Client
+    HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+                   Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
+                   Net::ProtocolError]
+
     def initialize(options)
       [:protocol, :api_key, :host, :port, :public, :http_read_timeout,
         :http_open_timeout, :secure, :logger].each do |option|
@@ -13,7 +20,7 @@ module CopycopterClient
 
     def download
       connect do |http|
-        response = http.request_get(uri(download_resource))
+        response = http.get(uri(download_resource))
         logger.info("#{LOG_PREFIX}Downloaded translations")
         JSON.parse(response.body)
       end
@@ -21,7 +28,7 @@ module CopycopterClient
 
     def upload(data)
       connect do |http|
-        http.request_post(uri("draft_blurbs"), data.to_json)
+        http.post(uri("draft_blurbs"), data.to_json)
         logger.info("#{LOG_PREFIX}Uploaded missing translations")
       end
     end
@@ -52,7 +59,11 @@ module CopycopterClient
       http.open_timeout = http_open_timeout
       http.read_timeout = http_read_timeout
       http.use_ssl      = secure
-      yield(http)
+      begin
+        yield(http)
+      rescue *HTTP_ERRORS => exception
+        raise ConnectionError, "#{exception.class.name}: #{exception.message}"
+      end
     end
   end
 end
