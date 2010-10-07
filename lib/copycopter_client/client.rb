@@ -6,7 +6,7 @@ module CopycopterClient
   class Client
     def initialize(options)
       [:protocol, :api_key, :host, :port, :public, :http_read_timeout,
-        :http_open_timeout].each do |option|
+        :http_open_timeout, :secure].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
     end
@@ -26,7 +26,8 @@ module CopycopterClient
 
     private
 
-    attr_reader :protocol, :host, :port, :api_key, :http_read_timeout, :http_open_timeout
+    attr_reader :protocol, :host, :port, :api_key, :http_read_timeout,
+      :http_open_timeout, :secure
 
     def public?
       @public
@@ -48,6 +49,7 @@ module CopycopterClient
       http = Net::HTTP.new(host, port)
       http.open_timeout = http_open_timeout
       http.read_timeout = http_read_timeout
+      http.use_ssl      = secure
       yield(http)
     end
   end
