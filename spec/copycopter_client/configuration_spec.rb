@@ -209,6 +209,10 @@ share_examples_for "applied configuration" do
                              "** [Copycopter] Environment Info: #{subject.environment_info}"),
                   logger.entries[:info].inspect
   end
+
+  it "stores the client" do
+    CopycopterClient.client.should == client
+  end
 end
 
 describe CopycopterClient::Configuration, "applied when testing" do

@@ -21,7 +21,7 @@ module CopycopterClient
       connect do |http|
         response = http.get(uri(download_resource))
         check(response)
-        logger.info("#{LOG_PREFIX}Downloaded translations")
+        log("Downloaded translations")
         JSON.parse(response.body)
       end
     end
@@ -30,7 +30,15 @@ module CopycopterClient
       connect do |http|
         response = http.post(uri("draft_blurbs"), data.to_json)
         check(response)
-        logger.info("#{LOG_PREFIX}Uploaded missing translations")
+        log("Uploaded missing translations")
+      end
+    end
+
+    def deploy
+      connect do |http|
+        response = http.post(uri("deploys"), "")
+        check(response)
+        log("Deployed")
       end
     end
 
@@ -75,6 +83,10 @@ module CopycopterClient
       unless Net::HTTPSuccess === response
         raise ConnectionError, "#{response.code}: #{response.body}"
       end
+    end
+
+    def log(message)
+      logger.info(LOG_PREFIX + message)
     end
   end
 end

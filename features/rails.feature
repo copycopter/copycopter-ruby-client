@@ -189,3 +189,14 @@ Feature: Using copycopter in a rails app
     And I wait for changes to be synchronized
     Then the log should contain "Invalid API key: bogus"
 
+  Scenario: deploy
+    Given the "abc123" project has the following blurbs:
+      | key      | draft content | published content |
+      | test.one | expected one  | unexpected one    |
+      | test.two | expected two  | unexpected two    |
+    When I successfully rake "copycopter:deploy"
+    Then the "abc123" project should have the following blurbs:
+      | key      | draft content | published content |
+      | test.one | expected one  | expected one      |
+      | test.two | expected two  | expected two      |
+
