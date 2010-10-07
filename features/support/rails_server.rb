@@ -20,7 +20,10 @@ class RailsServer
     @port = (port || 3001).to_i
     @output = StringIO.new("")
     @pid = fork do
-      $stdout = self.output
+      unless ENV['DEBUG']
+        $stdout = self.output
+        $stderr = self.output
+      end
       require 'config/environment'
       app = ActionController::Dispatcher.new
       Rack::Handler::Thin.run(app, :Port => @port, :AccessLog => [])

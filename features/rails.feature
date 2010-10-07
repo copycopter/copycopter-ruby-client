@@ -150,3 +150,34 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the output should contain "This is a test"
 
+  Scenario: backwards compatibility
+    Given the "abc123" project has the following blurbs:
+      | key                            | draft content    |
+      | en.users.index.controller-test | Controller blurb |
+      | en.users.index.view-test       | View blurb       |
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        @text = s('.controller-test')
+        render
+      end
+    end
+    """
+    When I write to "config/routes.rb" with:
+    """
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :users
+    end
+    """
+    When I write to "app/views/users/index.html.erb" with:
+    """
+    <%= @text %>
+    <%= s(".view-test", "default") %>
+    """
+    When I start the application
+    And I wait for changes to be synchronized
+    And I visit /users/
+    Then the output should contain "Controller blurb"
+    And the output should contain "View blurb"
+

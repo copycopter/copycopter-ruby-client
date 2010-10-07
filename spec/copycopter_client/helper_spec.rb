@@ -1,42 +1,48 @@
 require 'spec_helper'
 
 describe CopycopterClient::Helper do
-  include CopycopterClient::Helper
+  subject { Object.new }
 
-  subject { self }
-
-  it "should define a copy_for method" do
-    should respond_to(:copy_for)
+  before do
+    class << subject
+      include CopycopterClient::Helper
+      def warn(*args); end # these are annoying in test output
+    end
+    I18n.stubs(:translate)
   end
 
-  it "should define a s method" do
-    should respond_to(:s)
+  Spec::Matchers.define :have_translated do |key, default|
+    match do |ignored_subject|
+      extend Mocha::API
+      I18n.should have_received(:translate).with(key, default)
+    end
+  end
+
+  it "translates keys on CopycopterClient.s" do
+    CopycopterClient.s('test.key', 'default')
+    should have_translated("test.key", 'default')
+  end
+
+  it "translates keys on CopycopterClient.copy_for" do
+    CopycopterClient.copy_for('test.key', 'default')
+    should have_translated("test.key", 'default')
   end
 
   it "should prepend current partial when key starts with . and inside a view" do
     template = stub(:path_without_format_and_extension => "controller/action")
-    stubs(:template => template)
-    CopycopterClient.stubs(:copy_for)
+    subject.stubs(:template => template)
 
-    s(".key")
+    subject.s(".key")
 
-    CopycopterClient.should have_received(:copy_for).with("controller.action.key", nil)
+    should have_translated("controller.action.key", nil)
   end
 
   it "should prepend controller and action when key starts with . and inside a controller" do
-    stubs(:controller_name => "controller", :action_name => "action")
-    CopycopterClient.stubs(:copy_for)
+    subject.stubs(:controller_name => "controller", :action_name => "action")
 
-    s(".key")
+    subject.s(".key")
 
-    CopycopterClient.should have_received(:copy_for).with("controller.action.key", nil)
-  end
-
-  Spec::Matchers.define :request_copy_with_default do |default|
-    match do |ignored_subject|
-      extend Mocha::API
-      CopycopterClient.should have_received(:copy_for).with(anything, default)
-    end
+    should have_translated("controller.action.key", nil)
   end
 
   describe "default assignment" do
@@ -46,23 +52,23 @@ describe CopycopterClient::Helper do
     end
 
     it "should allow a hash with key default" do
-      s(@key, :default => "Default string")
-      should request_copy_with_default("Default string")
+      subject.s(@key, :default => "Default string")
+      should have_translated('.key', "Default string")
     end
 
     it "should not allow a hash with stringed key default" do
-      s(@key, "default" => "Default string")
-      should request_copy_with_default(nil)
+      subject.s(@key, "default" => "Default string")
+      should have_translated('.key', nil)
     end
 
     it "should not allow a hash with key other than default" do
-      s(@key, :junk => "Default string")
-      should request_copy_with_default(nil)
+      subject.s(@key, :junk => "Default string")
+      should have_translated('.key', nil)
     end
 
     it "should allow a string" do
-      s(@key, "Default string")
-      should request_copy_with_default("Default string")
+      subject.s(@key, "Default string")
+      should have_translated('.key', "Default string")
     end
   end
 end
