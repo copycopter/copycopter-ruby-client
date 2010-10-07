@@ -15,4 +15,5 @@ gem "aruba"
 gem "ruby-debug"
 gem "json"
 gem "thin"
+gem "i18n"
 

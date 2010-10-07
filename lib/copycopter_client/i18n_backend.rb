@@ -1,3 +1,5 @@
+require 'i18n'
+
 module CopycopterClient
   class I18nBackend
     include I18n::Backend::Base

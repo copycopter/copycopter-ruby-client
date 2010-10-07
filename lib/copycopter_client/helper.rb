@@ -18,7 +18,7 @@ module CopycopterClient
     private
 
     def scope_key_by_partial(key)
-      if key.to_s.first == "."
+      if key.to_s[0].chr == "."
         if respond_to?(:template)
           "#{template.path_without_format_and_extension.gsub(%r{/_?}, '.')}#{key}"
         else
