@@ -29,7 +29,9 @@ Feature: Using copycopter in a rails app
     """
     When I start the application
     And I wait for changes to be synchronized
-    And I visit /users/
+    Then the copycopter client version and environment should have been logged
+    Then the log should contain "Downloaded translations"
+    When I visit /users/
     Then the output should contain "This is a test"
 
   Scenario: copycopter in the view
@@ -118,6 +120,7 @@ Feature: Using copycopter in a rails app
     Then the "abc123" project should have the following blurbs:
       | key                | draft content |
       | en.users.index.404 | not found     |
+    And the log should contain "Uploaded missing translations"
 
   Scenario: copycopter in development
     Given the "abc123" project has the following blurbs:

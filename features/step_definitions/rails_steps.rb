@@ -37,6 +37,27 @@ When /^I configure the copycopter client to used published data$/ do
   end
 end
 
+Then /^the copycopter client version and environment should have been logged$/ do
+  client_version = CopycopterClient::VERSION
+  rails_version = in_current_dir { `script/runner 'puts Rails::VERSION::STRING'`.strip }
+  environment_info = "[Ruby: #{RUBY_VERSION}]"
+  environment_info << " [Rails: #{rails_version}]"
+  environment_info << " [Env: development]"
+  steps %{
+    Then the log should contain "Client #{client_version} ready"
+    Then the log should contain "Environment Info: #{environment_info}"
+  }
+end
+
+Then /^the log should contain "([^"]*)"$/ do |line|
+  line = "** [Copycopter] #{line}"
+  in_current_dir do
+    File.open("log/development.log") do |file|
+      file.readlines.map { |file_line| file_line.rstrip }.should include(line)
+    end
+  end
+end
+
 After do
   RailsServer.stop
 end

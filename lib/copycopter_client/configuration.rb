@@ -1,3 +1,4 @@
+require 'logger'
 require 'copycopter_client/i18n_backend'
 require 'copycopter_client/client'
 require 'copycopter_client/sync'
@@ -10,7 +11,7 @@ module CopycopterClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :cache_enabled,
-        :cache_expires_in, :polling_delay].freeze
+        :cache_expires_in, :polling_delay, :logger, :framework].freeze
 
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -55,6 +56,9 @@ module CopycopterClient
     # The name of the client library being used to send notifications (such as "Copycopter Client")
     attr_accessor :client_name
 
+    # The framework notifications are being sent from (such as "Rails 2.3.9")
+    attr_accessor :framework
+
     # The version of the client library being used to send notifications (such as "1.0.2")
     attr_accessor :client_version
 
@@ -69,6 +73,9 @@ module CopycopterClient
 
     # The time, in seconds, in between each sync to the server.
     attr_accessor :polling_delay
+
+    # Where to log messages. Must respond to same interface as Logger.
+    attr_accessor :logger
 
     alias_method :secure?, :secure
 
@@ -85,6 +92,7 @@ module CopycopterClient
       @cache_enabled            = false
       @applied                  = false
       @polling_delay            = 300
+      @logger                   = Logger.new($stdout)
     end
 
     # Allows config options to be read like a hash
@@ -130,6 +138,8 @@ module CopycopterClient
       sync = Sync.new(client, to_hash)
       I18n.backend = I18nBackend.new(sync)
       @applied = true
+      logger.info("#{LOG_PREFIX}Client #{VERSION} ready")
+      logger.info("#{LOG_PREFIX}Environment Info: #{environment_info}")
       sync.start unless test?
     end
 
@@ -143,6 +153,11 @@ module CopycopterClient
       else
         'http'
       end
+    end
+
+    def environment_info
+      parts = ["Ruby: #{RUBY_VERSION}", framework, "Env: #{environment_name}"]
+      parts.compact.map { |part| "[#{part}]" }.join(" ")
     end
 
     private

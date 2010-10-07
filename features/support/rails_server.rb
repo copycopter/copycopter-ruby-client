@@ -21,7 +21,6 @@ class RailsServer
     @output = StringIO.new("")
     @pid = fork do
       $stdout = self.output
-      $stderr = self.output
       require 'config/environment'
       app = ActionController::Dispatcher.new
       Rack::Handler::Thin.run(app, :Port => @port, :AccessLog => [])

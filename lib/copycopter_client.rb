@@ -1,27 +1,16 @@
 require 'httparty'
+require 'copycopter_client/version'
 require 'copycopter_client/configuration'
 require 'copycopter_client/client'
 require 'copycopter_client/helper'
 
 # Plugin for applications to store their copy in a remote service to be editable by clients
 module CopycopterClient
-
-  VERSION = "1.0.0.beta1"
-  API_VERSION = "2.0"
   LOG_PREFIX = "** [Copycopter] "
 
   # HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError]
 
-  # HEADERS = {
-  #   'Content-type'             => 'text/xml',
-  #   'Accept'                   => 'text/xml, application/xml'
-  # }
-
   class << self
-    # The client object is responsible for retrieving and storing information
-    # in the Copycopter server
-    # attr_accessor :client
-
     # def remote_lookup_disabled?
     #   Thread.current[:disabled] && Thread.current[:disabled] >= Time.now
     # end
@@ -32,42 +21,6 @@ module CopycopterClient
 
     # def enable_remote_lookup
     #   Thread.current[:disabled] = nil
-    # end
-
-    # Tell the log that the client is good to go
-    # def report_ready
-    #   write_verbose_log("Client #{VERSION} ready")
-    # end
-
-    # Prints out the environment info to the log for debugging help
-    # def report_environment_info
-    #   write_verbose_log("Environment Info: #{environment_info}")
-    # end
-
-    # Prints out the response body from Copycopter for debugging help
-    # def report_response_body(response)
-    #   write_verbose_log("Response from Copycopter: \n#{response}")
-    # end
-
-    # Returns the Ruby version, Rails version, and current Rails environment
-    # def environment_info
-    #   info = "[Ruby: #{RUBY_VERSION}]"
-    #   info << " [Rails: #{::Rails::VERSION::STRING}]" if defined?(Rails)
-    #   info << " [Env: #{configuration.environment_name}]"
-    # end
-
-    # Writes out the given message to the #logger
-    # def write_verbose_log(message)
-    #   logger.info LOG_PREFIX + message if logger
-    # end
-
-    # Look for the Rails logger currently defined
-    # def logger
-    #   if defined?(Rails.logger)
-    #     Rails.logger
-    #   elsif defined?(RAILS_DEFAULT_LOGGER)
-    #     RAILS_DEFAULT_LOGGER
-    #   end
     # end
 
     # def copy_for(key, default = nil)
