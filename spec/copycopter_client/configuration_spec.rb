@@ -37,8 +37,6 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:host).                    overridable.default('copycopter.com') }
   it { should have_config_option(:http_open_timeout).       overridable.default(2) }
   it { should have_config_option(:http_read_timeout).       overridable.default(5) }
-  it { should have_config_option(:cache_enabled).           overridable.default(false) }
-  it { should have_config_option(:cache_expires_in).        overridable.default(nil) }
   it { should have_config_option(:port).                    overridable }
   it { should have_config_option(:development_environments).overridable }
   it { should have_config_option(:api_key).                 overridable }

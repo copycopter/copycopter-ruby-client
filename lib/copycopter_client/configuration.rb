@@ -10,8 +10,8 @@ module CopycopterClient
     OPTIONS = [:api_key, :development_environments, :environment_name, :host,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
-        :proxy_port, :proxy_user, :secure, :cache_enabled,
-        :cache_expires_in, :polling_delay, :logger, :framework].freeze
+        :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
+        :framework].freeze
 
     # The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -65,12 +65,6 @@ module CopycopterClient
     # The url of the client library being used
     attr_accessor :client_url
 
-    # +true+ to enable caching, +false+ to disable caching
-    attr_accessor :cache_enabled
-
-    # The time, in seconds, the cache should expire.
-    attr_accessor :cache_expires_in
-
     # The time, in seconds, in between each sync to the server.
     attr_accessor :polling_delay
 
@@ -89,7 +83,6 @@ module CopycopterClient
       @client_name              = 'Copycopter Client'
       @client_version           = VERSION
       @client_url               = 'http://copycopter.com'
-      @cache_enabled            = false
       @applied                  = false
       @polling_delay            = 300
       @logger                   = Logger.new($stdout)

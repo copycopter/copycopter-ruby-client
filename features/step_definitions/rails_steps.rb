@@ -7,7 +7,8 @@ end
 
 When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
   steps %{
-    When I run "ln -s #{PROJECT_ROOT} vendor/plugins/copycopter"
+    When I run "rm -f vendor/plugins/copycopter"
+    And I run "ln -s #{PROJECT_ROOT} vendor/plugins/copycopter"
     And I write to "config/initializers/copycopter.rb" with:
       """
       CopycopterClient.configure do |config|
