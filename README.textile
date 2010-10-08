@@ -1,0 +1,68 @@
+h1. Copycopter Client
+
+This is the client gem for integrating apps with "Copycopter":http://copycopter.com.
+
+The client integrates with the I18n gem so that you can access copy text and translations from a Copycopter project.
+
+h2. Installation
+
+Just install the gem:
+
+<pre>gem install copycopter_client</pre>
+
+h3. Rails 3
+
+Add the following line to your <code>Gemfile</code>:
+
+<pre>gem "copycopter_client"</pre>
+
+Then run <code>bundle install</code>.
+
+h3. Rails 2
+
+Add the following line to your <code>config/environment.rb</code>:
+
+<pre>config.gem 'copycopter_client'</pre>
+
+Then run <code>rake gems:install</code>. We also recommend vendoring the gem by running <code>rake gems:unpack:dependencies GEM=copycopter_client</code>.
+
+h2. Configuration
+
+Add the following to your application:
+
+<pre>
+CopycopterClient.configure do |config|
+  config.api_key = "YOUR API KEY HERE"
+end
+</pre>
+
+In a Rails application, this should be saved as <code>config/initializers/copycopter.rb</code>. You can find the API key on the project page on the Copycopter website. See the {CopycopterClient::Configuration} class for a full list of configuration options.
+
+h2. Usage
+
+You can access blurbs from Copycopter by using <code>I18n.translate</code>. This is also aliased as <code>translate</code> or just <code>t</code> inside Rails controllers and views.
+
+<pre>
+# In a controller
+def index
+  flash[:success] = t("users.create.success", :default => "User created")
+end
+
+# In a view
+<%= t(".welcome", :default => "Why hello there") %>
+
+# Global scope (for example, in a Rake task)
+I81n.translate("system.tasks_complete", :default => "Tasks complete")
+</pre>
+
+See the "I18n documentation":http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile documentation for more examples.
+
+h2. Deploys
+
+Blurbs start out as draft copy, and won't be displayed in production environments until they're published. If you want to publish all draft copy when deploying to production, you can use the <code>copycopter:deploy</code> rake task:
+
+<pre>rake copycopter:deploy</pre>
+
+h2. About
+
+Copyright (c) 2010 "thoughtbot, inc.":http://thoughtbot.com, released under the MIT license
