@@ -1,6 +1,11 @@
 module CopycopterClient
   # Helper methods for Copycopter
+  # @deprecated use +I81n#translate+ instead.
   module Helper
+    # Returns copy for the given key in the current locale.
+    # @param key [String] the key you want copy for
+    # @param default [String, Hash] an optional default value, used if this key is missing
+    # @option default [String] :default the default text
     def copy_for(key, default=nil)
       default = if default.respond_to?(:to_hash)
                   default[:default]

@@ -33,6 +33,6 @@ Cucumber::Rake::Task.new do |t|
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb', 'TESTING.rdoc']
+  t.files   = ['lib/**/*.rb']
 end
 

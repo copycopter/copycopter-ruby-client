@@ -2,7 +2,19 @@ require 'thread'
 require 'copycopter_client/client'
 
 module CopycopterClient
+  # Manages synchronization of copy between {I18nBackend} and {Client}. Acts
+  # like a Hash. Applications using the client will not need to interact with
+  # this class directly.
+  #
+  # Responsible for:
+  # * Starting and running the background polling thread
+  # * Locking down access to data used by both threads
   class Sync
+    # Usually instantiated when {Configuration#apply} is invoked.
+    # @param client [Client] the client used to fetch and upload data
+    # @param options [Hash]
+    # @option options [Fixnum] :polling_delay the number of seconds in between each synchronization with the server
+    # @option options [Logger] :logger where errors should be logged
     def initialize(client, options)
       @client        = client
       @blurbs        = {}
@@ -13,22 +25,33 @@ module CopycopterClient
       @logger        = options[:logger]
     end
 
+    # Starts the polling thread. The polling thread doesn't run in test environments.
     def start
       Thread.new { poll }
     end
 
+    # Stops the polling thread after the next run.
     def stop
       @stop = true
     end
 
+    # Returns content for the given blurb.
+    # @param key [String] the key of the desired blurb
+    # @return [String] the contents of the blurb
     def [](key)
       lock { @blurbs[key] }
     end
 
+    # Sets content for the given blurb. The content will be pushed to the
+    # server on the next poll.
+    # @param key [String] the key of the blurb to update
+    # @param value [String] the new contents of the blurb
     def []=(key, value)
       lock { @queued[key] = value }
     end
 
+    # Keys for all blurbs stored on the server.
+    # @return [Array<String>] keys
     def keys
       lock { @blurbs.keys }
     end
