@@ -1,5 +1,18 @@
+if ARGV[0].to_s =~ /^rails\d$/
+  version = ARGV.shift
+  ENV['BUNDLE_GEMFILE'] = File.expand_path(version + "-Gemfile")
+  puts "Using #{version}"
+  exec("rake", *ARGV)
+end
+
 require 'rubygems'
 require 'bundler/setup'
+
+unless ENV['BUNDLE_GEMFILE']
+  $stderr.puts "No Gemfile was configured"
+  exit(1)
+end
+
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
@@ -24,7 +37,6 @@ namespace :cucumber do
   end
 
   Cucumber::Rake::Task.new(:wip) do |t|
-    t.fork = true
     t.cucumber_opts = ['--tags', '@wip',
                        '--format', (ENV['CUCUMBER_FORMAT'] || 'progress')]
   end
