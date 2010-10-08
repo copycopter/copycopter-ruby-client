@@ -1,6 +1,6 @@
 When "I generate a rails application" do
   steps %{
-    When I run "rails _2.3.8_ testapp"
+    When I run "rails _#{Rails::VERSION::STRING}_ testapp"
     And I cd to "testapp"
   }
 end
@@ -40,9 +40,8 @@ end
 
 Then /^the copycopter client version and environment should have been logged$/ do
   client_version = CopycopterClient::VERSION
-  rails_version = in_current_dir { `script/runner 'puts Rails::VERSION::STRING'`.strip }
   environment_info = "[Ruby: #{RUBY_VERSION}]"
-  environment_info << " [Rails: #{rails_version}]"
+  environment_info << " [Rails: #{Rails::VERSION::STRING}]"
   environment_info << " [Env: development]"
   steps %{
     Then the log should contain "Client #{client_version} ready"
