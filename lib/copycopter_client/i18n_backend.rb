@@ -16,10 +16,11 @@ module CopycopterClient
 
     def translate(locale, key, options = {})
       content = super(locale, key, options)
-      if public?
-        content
+      html = wrap_with_link_in_private(content, edit_url(locale, key))
+      if html.respond_to?(:html_safe)
+        html.html_safe
       else
-        %{#{content} <a href="#{edit_url(locale, key)}" target="_blank">Edit</a>}
+        html
       end
     end
 
@@ -28,6 +29,14 @@ module CopycopterClient
     end
 
     private
+
+    def wrap_with_link_in_private(content, url)
+      if public?
+        content
+      else
+        %{#{content} <a href="#{url}" target="_blank">Edit</a>}
+      end
+    end
 
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])

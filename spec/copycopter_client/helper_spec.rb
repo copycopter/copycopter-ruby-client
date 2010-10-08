@@ -29,6 +29,18 @@ describe CopycopterClient::Helper do
     should have_translated("test.key", 'default')
   end
 
+  it "uses existing scope by partial key when present" do
+    subject.stubs(:scope_key_by_partial => "controller.action.key")
+    class << subject
+      private :scope_key_by_partial
+    end
+
+    subject.s(".key")
+
+    subject.should have_received(:scope_key_by_partial).with(".key")
+    should have_translated("controller.action.key", nil)
+  end
+
   it "should prepend current partial when key starts with . and inside a view" do
     template = stub(:path_without_format_and_extension => "controller/action")
     subject.stubs(:template => template)
@@ -48,8 +60,7 @@ describe CopycopterClient::Helper do
 
   describe "default assignment" do
     before do
-      stubs(:scope_copycopter_key_by_partial => '.key')
-      CopycopterClient.stubs(:copy_for)
+      subject.stubs(:scope_copycopter_key_by_partial => '.key')
     end
 
     it "should allow a hash with key default" do

@@ -1,6 +1,12 @@
 When "I generate a rails application" do
+  if Rails::VERSION::MAJOR == 3
+    subcommand = 'new'
+  else
+    subcommand = ''
+  end
+
   steps %{
-    When I run "rails _#{Rails::VERSION::STRING}_ testapp"
+    When I run "rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp"
     And I cd to "testapp"
   }
 end

@@ -57,4 +57,10 @@ describe CopycopterClient::I18nBackend do
     backend.translate('en', 'test.key', :default => 'default').
       should_not include("<a href")
   end
+
+  it "marks strings as html safe" do
+    sync['en.test.key'] = FakeHtmlSafeString.new("Hello")
+    backend = build_backend(:public => true)
+    backend.translate('en', 'test.key').should be_html_safe
+  end
 end

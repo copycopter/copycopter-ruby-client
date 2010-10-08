@@ -8,7 +8,7 @@ module CopycopterClient
                   default
                 end
 
-      args = [scope_key_by_partial(key), default]
+      args = [scope_copycopter_key_by_partial(key), default]
       introspected_args = args.map { |arg| arg.inspect }.join(', ')
       warn("WARNING: #s is deprecated; use t(#{introspected_args}) instead.")
       I18n.translate(*args)
@@ -18,7 +18,9 @@ module CopycopterClient
     private
 
     def scope_copycopter_key_by_partial(key)
-      if key.to_s.first == "."
+      if respond_to?(:scope_key_by_partial, true)
+        scope_key_by_partial(key)
+      elsif key.to_s[0].chr == "."
         if respond_to?(:template)
           "#{template.path_without_format_and_extension.gsub(%r{/_?}, '.')}#{key}"
         else
