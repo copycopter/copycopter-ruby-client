@@ -1,16 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-include_files = ["README", "MIT-LICENSE", "Rakefile", "init.rb", "{lib,tasks,test,rails}/**/*"].map do |glob|
+include_files = ["README", "MIT-LICENSE", "Rakefile", "init.rb", "{lib,tasks,spec,features,rails}/**/*"].map do |glob|
   Dir[glob]
 end.flatten
 
+require File.join(File.dirname(__FILE__), 'lib', 'copycopter_client', 'version')
+
 Gem::Specification.new do |s|
   s.name = "copycopter_client"
-  s.version = "0.1.0"
+  s.version = CopycopterClient::VERSION
   s.authors = ["thoughtbot"]
   s.date = "2010-06-04"
   s.email = "support@thoughtbot.com"
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["README.textile"]
   s.files = include_files
   s.homepage = "http://github.com/thoughtbot/copycopter_client"
   s.rdoc_options = ["--line-numbers", "--main"]
@@ -19,13 +21,5 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.3.5"
   s.summary = "Client for the Copycopter content management service"
 
-  s.add_dependency 'httparty'
-
-  s.add_development_dependency 'shoulda'
-  s.add_development_dependency 'mocha'
-  s.add_development_dependency 'bourne'
-  s.add_development_dependency 'activesupport'
-  s.add_development_dependency 'activerecord'
-  s.add_development_dependency 'activepack'
-  s.add_development_dependency 'webmock'
+  s.add_dependency 'i18n'
 end
