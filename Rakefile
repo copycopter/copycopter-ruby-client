@@ -5,6 +5,7 @@ require 'bundler/setup'
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rake/gempackagetask'
 require 'cucumber/rake/task'
 require 'spec/rake/spectask'
 require 'yard'
@@ -34,5 +35,11 @@ end
 
 YARD::Rake::YardocTask.new do |t|
   t.files   = ['lib/**/*.rb']
+end
+
+eval("$specification = begin; #{IO.read('copycopter_client.gemspec')}; end")
+Rake::GemPackageTask.new($specification) do |package|
+  package.need_zip = true
+  package.need_tar = true
 end
 
