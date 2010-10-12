@@ -1,9 +1,12 @@
 require 'spec_helper'
 
 describe CopycopterClient::Sync do
+  include DefinesConstants
+
   let(:client) { FakeClient.new }
 
   def build_sync(config = {})
+    config[:logger] ||= FakeLogger.new
     default_config = CopycopterClient::Configuration.new.to_hash
     sync = CopycopterClient::Sync.new(client, default_config.update(config))
     @syncs << sync
@@ -107,6 +110,27 @@ describe CopycopterClient::Sync do
     sleep(2)
 
     sync['test.key'].should be_nil
+  end
+
+  it "starts after spawning when using passenger" do
+    logger = FakeLogger.new
+    passenger = define_constant('PhusionPassenger', FakePassenger.new)
+    passenger.become_master
+    sync = build_sync(:polling_delay => 1, :logger => logger)
+
+    sync.start
+    sleep(2)
+
+    client.should_not be_downloaded
+    logger.should have_entry(:info, "** [Copycopter] Not polling from spawner process"),
+                  "Got entries: #{logger.entries.inspect}"
+
+    passenger.spawn
+    sleep(2)
+
+    client.should be_downloaded
+    logger.should have_entry(:info, "** [Copycopter] Starting poller"),
+                  "Got entries: #{logger.entries.inspect}"
   end
 
   describe "given locked mutex" do
