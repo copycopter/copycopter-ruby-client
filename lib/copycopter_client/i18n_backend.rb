@@ -27,9 +27,10 @@ module CopycopterClient
     end
 
     # This is invoked by frameworks when locales should be loaded. The
-    # Copycopter client loads content in the background, so this method does
-    # nothing.
+    # Copycopter client loads content in the background, so this method waits
+    # until the first download is complete.
     def reload!
+      sync.wait_for_download
     end
 
     # Translates the given local and key. See the I81n API documentation for details.
