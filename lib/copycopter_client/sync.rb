@@ -26,8 +26,18 @@ module CopycopterClient
     end
 
     # Starts the polling thread. The polling thread doesn't run in test environments.
+    #
+    # If this sync was created from a master spawner (as in the case for
+    # phusion passenger), it will instead register after fork hooks so that the
+    # poller starts in each spawned process.
     def start
-      Thread.new { poll }
+      if spawner?
+        logger.info(LOG_PREFIX + "Not polling from spawner process")
+        register_spawn_hooks
+      else
+        logger.info(LOG_PREFIX + "Starting poller")
+        Thread.new { poll }
+      end
     end
 
     # Stops the polling thread after the next run.
@@ -94,6 +104,18 @@ module CopycopterClient
 
     def lock(&block)
       @mutex.synchronize(&block)
+    end
+
+    def spawner?
+      $0.include?("ApplicationSpawner")
+    end
+
+    def register_spawn_hooks
+      if defined?(PhusionPassenger)
+        PhusionPassenger.on_event(:starting_worker_process) do |forked|
+          start
+        end
+      end
     end
   end
 end
