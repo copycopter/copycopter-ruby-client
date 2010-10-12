@@ -10,8 +10,12 @@ describe CopycopterClient::I18nBackend do
 
   subject { build_backend }
 
-  it "does nothing when reloaded" do
-    lambda { subject.reload! }.should_not raise_error
+  it "waits until the first download when reloaded" do
+    sync.stubs(:wait_for_download)
+
+    subject.reload!
+
+    sync.should have_received(:wait_for_download)
   end
 
   it "includes the base i18n backend" do

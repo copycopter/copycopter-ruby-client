@@ -23,6 +23,7 @@ module CopycopterClient
       @queued        = {}
       @mutex         = Mutex.new
       @logger        = options[:logger]
+      @pending       = false
     end
 
     # Starts the polling thread. The polling thread doesn't run in test environments.
@@ -36,6 +37,7 @@ module CopycopterClient
         register_spawn_hooks
       else
         logger.info(LOG_PREFIX + "Starting poller")
+        @pending = true
         Thread.new { poll }
       end
     end
@@ -66,6 +68,16 @@ module CopycopterClient
       lock { @blurbs.keys }
     end
 
+    # Waits until the first download has finished.
+    def wait_for_download
+      if @pending
+        logger.info(LOG_PREFIX + "Waiting for first sync")
+        while @pending
+          sleep(0.1)
+        end
+      end
+    end
+
     private
 
     attr_reader :client, :polling_delay, :logger
@@ -89,6 +101,8 @@ module CopycopterClient
       rescue ConnectionError => error
         logger.error(LOG_PREFIX + error.message)
       end
+    ensure
+      @pending = false
     end
 
     def with_queued_changes

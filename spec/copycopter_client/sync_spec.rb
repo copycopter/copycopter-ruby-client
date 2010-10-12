@@ -133,6 +133,64 @@ describe CopycopterClient::Sync do
                   "Got entries: #{logger.entries.inspect}"
   end
 
+  it "blocks until the first download is complete" do
+    logger = FakeLogger.new
+    client.delay = 1
+    sync = build_sync(:logger => logger)
+
+    sync.start
+
+    finished = false
+    Thread.new do
+      sync.wait_for_download
+      finished = true
+    end
+
+    logger.should have_entry(:info, "** [Copycopter] Waiting for first sync")
+    finished.should == false
+
+    sleep(3)
+
+    finished.should == true
+  end
+
+  it "doesn't block if the first download fails" do
+    client.delay = 1
+    client.stubs(:upload).raises(StandardError.new("Failure"))
+    sync = build_sync
+
+    sync['test.key'] = 'value'
+    sync.start
+
+    finished = false
+    Thread.new do
+      sync.wait_for_download
+      finished = true
+    end
+
+    finished.should == false
+
+    sleep(4)
+
+    finished.should == true
+  end
+
+  it "doesn't block before starting" do
+    logger = FakeLogger.new
+    sync = build_sync(:polling_delay => 3, :logger => logger)
+
+    finished = false
+    Thread.new do
+      sync.wait_for_download
+      finished = true
+    end
+
+    sleep(1)
+
+    finished.should == true
+    logger.should_not have_entry(:info, "** [Copycopter] Waiting for first sync")
+  end
+
   describe "given locked mutex" do
     Spec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|
