@@ -7,9 +7,6 @@ require 'copycopter_client/configuration'
 # method, which will setup all the pieces and begin synchronization when
 # appropriate.
 module CopycopterClient
-  # Added to all log entries created from the client
-  LOG_PREFIX = "** [Copycopter] "
-
   class << self
     # @return [Client] instance used to communicate with the Copycopter server.
     # This is set when {.configure} is called.

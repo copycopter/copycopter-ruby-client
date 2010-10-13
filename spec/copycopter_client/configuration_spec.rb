@@ -41,7 +41,6 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:development_environments).overridable }
   it { should have_config_option(:api_key).                 overridable }
   it { should have_config_option(:polling_delay).           overridable.default(300) }
-  it { should have_config_option(:logger).                  overridable }
   it { should have_config_option(:framework).               overridable }
 
   it "should provide default values for secure connections" do
@@ -157,7 +156,7 @@ describe CopycopterClient::Configuration do
 
     config = CopycopterClient::Configuration.new
     Logger.should have_received(:new).with($stdout)
-    config.logger.should == logger
+    config.logger.original_logger.should == logger
   end
 
   it "generates environment info without a framework" do
@@ -170,6 +169,17 @@ describe CopycopterClient::Configuration do
     subject.framework = 'Sinatra: 1.0.0'
     subject.environment_info.
       should == "[Ruby: #{RUBY_VERSION}] [Sinatra: 1.0.0] [Env: production]"
+  end
+
+  it "prefixes log entries" do
+    logger = FakeLogger.new
+    config = CopycopterClient::Configuration.new
+
+    config.logger = logger
+
+    prefixed_logger = config.logger
+    prefixed_logger.should be_a(CopycopterClient::PrefixedLogger)
+    prefixed_logger.original_logger.should == logger
   end
 end
 
@@ -197,15 +207,11 @@ share_examples_for "applied configuration" do
   end
 
   it "logs that it's ready" do
-    logger.should have_entry(:info,
-                             "** [Copycopter] Client #{CopycopterClient::VERSION} ready"),
-                  logger.entries[:info].inspect
+    logger.should have_entry(:info, "Client #{CopycopterClient::VERSION} ready")
   end
 
   it "logs environment info" do
-    logger.should have_entry(:info,
-                             "** [Copycopter] Environment Info: #{subject.environment_info}"),
-                  logger.entries[:info].inspect
+    logger.should have_entry(:info, "Environment Info: #{subject.environment_info}")
   end
 
   it "stores the client" do

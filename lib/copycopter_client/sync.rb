@@ -33,10 +33,10 @@ module CopycopterClient
     # poller starts in each spawned process.
     def start
       if spawner?
-        logger.info(LOG_PREFIX + "Not polling from spawner process")
+        logger.info("Not polling from spawner process")
         register_spawn_hooks
       else
-        logger.info(LOG_PREFIX + "Starting poller")
+        logger.info("Starting poller")
         @pending = true
         Thread.new { poll }
       end
@@ -71,7 +71,7 @@ module CopycopterClient
     # Waits until the first download has finished.
     def wait_for_download
       if @pending
-        logger.info(LOG_PREFIX + "Waiting for first sync")
+        logger.info("Waiting for first sync")
         while @pending
           sleep(0.1)
         end
@@ -88,7 +88,7 @@ module CopycopterClient
         sleep(polling_delay)
       end
     rescue InvalidApiKey => error
-      logger.error(LOG_PREFIX + error.message)
+      logger.error(error.message)
     end
 
     def sync
@@ -99,7 +99,7 @@ module CopycopterClient
           client.upload(queued)
         end
       rescue ConnectionError => error
-        logger.error(LOG_PREFIX + error.message)
+        logger.error(error.message)
       end
     ensure
       @pending = false

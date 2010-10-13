@@ -84,7 +84,7 @@ describe CopycopterClient::Sync do
     sync.start
     sleep(2)
 
-    logger.should have_entry(:error, "** [Copycopter] #{failure}"),
+    logger.should have_entry(:error, failure),
                   logger.entries.inspect
 
     client['test.key'] = 'test value'
@@ -103,7 +103,7 @@ describe CopycopterClient::Sync do
     sync.start
     sleep(2)
 
-    logger.should have_entry(:error, "** [Copycopter] #{failure}"),
+    logger.should have_entry(:error, failure),
                   logger.entries.inspect
 
     client['test.key'] = 'test value'
@@ -122,14 +122,14 @@ describe CopycopterClient::Sync do
     sleep(2)
 
     client.should_not be_downloaded
-    logger.should have_entry(:info, "** [Copycopter] Not polling from spawner process"),
+    logger.should have_entry(:info, "Not polling from spawner process"),
                   "Got entries: #{logger.entries.inspect}"
 
     passenger.spawn
     sleep(2)
 
     client.should be_downloaded
-    logger.should have_entry(:info, "** [Copycopter] Starting poller"),
+    logger.should have_entry(:info, "Starting poller"),
                   "Got entries: #{logger.entries.inspect}"
   end
 
@@ -146,7 +146,7 @@ describe CopycopterClient::Sync do
       finished = true
     end
 
-    logger.should have_entry(:info, "** [Copycopter] Waiting for first sync")
+    logger.should have_entry(:info, "Waiting for first sync")
     finished.should == false
 
     sleep(3)
@@ -188,7 +188,7 @@ describe CopycopterClient::Sync do
     sleep(1)
 
     finished.should == true
-    logger.should_not have_entry(:info, "** [Copycopter] Waiting for first sync")
+    logger.should_not have_entry(:info, "Waiting for first sync")
   end
 
   describe "given locked mutex" do
