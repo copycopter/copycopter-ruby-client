@@ -2,6 +2,7 @@ require 'logger'
 require 'copycopter_client/i18n_backend'
 require 'copycopter_client/client'
 require 'copycopter_client/sync'
+require 'copycopter_client/prefixed_logger'
 
 module CopycopterClient
   # Used to set up and modify settings for the client.
@@ -69,24 +70,25 @@ module CopycopterClient
     attr_accessor :polling_delay
 
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
-    attr_accessor :logger
+    attr_reader :logger
 
     alias_method :secure?, :secure
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
     def initialize
-      @secure                   = false
-      @host                     = 'copycopter.com'
-      @http_open_timeout        = 2
-      @http_read_timeout        = 5
-      @development_environments = %w(development staging)
-      @test_environments        = %w(test cucumber)
-      @client_name              = 'Copycopter Client'
-      @client_version           = VERSION
-      @client_url               = 'http://copycopter.com'
-      @applied                  = false
-      @polling_delay            = 300
-      @logger                   = Logger.new($stdout)
+      self.secure                   = false
+      self.host                     = 'copycopter.com'
+      self.http_open_timeout        = 2
+      self.http_read_timeout        = 5
+      self.development_environments = %w(development staging)
+      self.test_environments        = %w(test cucumber)
+      self.client_name              = 'Copycopter Client'
+      self.client_version           = VERSION
+      self.client_url               = 'http://copycopter.com'
+      self.polling_delay            = 300
+      self.logger                   = Logger.new($stdout)
+
+      @applied = false
     end
 
     # Allows config options to be read like a hash
@@ -145,8 +147,8 @@ module CopycopterClient
       I18n.backend = I18nBackend.new(sync, to_hash)
       CopycopterClient.client = client
       @applied = true
-      logger.info("#{LOG_PREFIX}Client #{VERSION} ready")
-      logger.info("#{LOG_PREFIX}Environment Info: #{environment_info}")
+      logger.info("Client #{VERSION} ready")
+      logger.info("Environment Info: #{environment_info}")
       sync.start unless test?
     end
 
@@ -169,6 +171,13 @@ module CopycopterClient
     def environment_info
       parts = ["Ruby: #{RUBY_VERSION}", framework, "Env: #{environment_name}"]
       parts.compact.map { |part| "[#{part}]" }.join(" ")
+    end
+
+    # Wraps the given logger in a PrefixedLogger. This way, CopycopterClient
+    # log messages are recognizable.
+    # @param original_logger [Logger] the upstream logger to use, which must respond to the standard +Logger+ severity methods.
+    def logger=(original_logger)
+      @logger = PrefixedLogger.new("** [Copycopter]", original_logger)
     end
 
     private

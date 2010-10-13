@@ -56,10 +56,14 @@ Then /^the copycopter client version and environment should have been logged$/ d
 end
 
 Then /^the log should contain "([^"]*)"$/ do |line|
-  line = "** [Copycopter] #{line}"
+  prefix = "** [Copycopter] "
+  pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
+  log_path = "log/development.log"
   in_current_dir do
-    File.open("log/development.log") do |file|
-      file.readlines.map { |file_line| file_line.rstrip }.should include(line)
+    File.open(log_path) do |file|
+      unless file.readlines.any? { |file_line| file_line =~ pattern }
+        raise "In log file:\n#{IO.read(log_path)}\n\nMissing line:\n#{pattern}"
+      end
     end
   end
 end

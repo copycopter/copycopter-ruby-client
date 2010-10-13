@@ -111,7 +111,7 @@ module CopycopterClient
     end
 
     def log(message)
-      logger.info(LOG_PREFIX + message)
+      logger.info(message)
     end
   end
 end

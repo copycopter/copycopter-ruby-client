@@ -122,7 +122,7 @@ describe CopycopterClient do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
     client.download
-    logger.should have_entry(:info, "** [Copycopter] Downloaded translations")
+    logger.should have_entry(:info, "Downloaded translations")
   end
 
   it "downloads draft blurbs for an existing project" do
@@ -164,7 +164,7 @@ describe CopycopterClient do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
     client.upload({})
-    logger.should have_entry(:info, "** [Copycopter] Uploaded missing translations")
+    logger.should have_entry(:info, "Uploaded missing translations")
   end
 
   it "deploys from the top-level constant" do
@@ -198,7 +198,7 @@ describe CopycopterClient do
       'key.one'   => "expected one",
       'key.two'   => "expected two"
     }
-    logger.should have_entry(:info, "** [Copycopter] Deployed")
+    logger.should have_entry(:info, "Deployed")
   end
 
   it "handles deploy errors" do
