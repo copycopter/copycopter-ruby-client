@@ -70,21 +70,31 @@ describe CopycopterClient::I18nBackend do
 
   describe "with a fallback" do
     let(:fallback) { I18n::Backend::Simple.new }
-    subject { build_backend(:fallback_backend => fallback) }
+    subject { build_backend(:fallback_backend => fallback, :public => false) }
 
     it "uses the fallback as a default" do
       fallback.store_translations('en', 'test' => { 'key' => 'Expected' })
-      subject.translate('en', 'test.key', :default => 'Unexpected').should == 'Expected'
+      subject.translate('en', 'test.key', :default => 'Unexpected').
+        should include('Expected')
     end
 
     it "uses the default if the fallback doesn't have the key" do
-      subject.translate('en', 'test.key', :default => 'expected').should == 'expected'
+      subject.translate('en', 'test.key', :default => 'Expected').
+        should include('Expected')
     end
 
     it "uses the syncd key when present" do
-      fallback.store_translations('en', 'test' => { 'key' => 'unxpected' })
-      sync['en.test.key'] = 'expected'
-      subject.translate('en', 'test.key', :default => 'default').should == 'expected'
+      fallback.store_translations('en', 'test' => { 'key' => 'Unexpected' })
+      sync['en.test.key'] = 'Expected'
+      subject.translate('en', 'test.key', :default => 'default').
+        should include('Expected')
+    end
+
+    it "returns a hash directly without storing" do
+      nested = { :nested => 'value' }
+      fallback.store_translations('en', 'key' => nested)
+      subject.translate('en', 'key', :default => 'Unexpected').should == nested
+      sync['en.key'].should be_nil
     end
   end
 end
