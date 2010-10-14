@@ -13,7 +13,7 @@ module CopycopterClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
-        :framework].freeze
+        :framework, :fallback_backend].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -71,6 +71,9 @@ module CopycopterClient
 
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
     attr_reader :logger
+
+    # @return [I18n::Backend::Base] where to look for translations missing on the Copycopter server
+    attr_accessor :fallback_backend
 
     alias_method :secure?, :secure
 
