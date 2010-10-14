@@ -42,7 +42,8 @@ module CopycopterClient
     # Translates the given local and key. See the I81n API documentation for details.
     # @return [String] the translated key
     def translate(locale, key, options = {})
-      content = super(locale, key, options)
+      default = fallback(locale, key, options) || options.delete(:default)
+      content = super(locale, key, options.update(:default => default))
       html = wrap_with_link_in_private(content, edit_url(locale, key))
       if html.respond_to?(:html_safe)
         html.html_safe
@@ -70,7 +71,7 @@ module CopycopterClient
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key = parts.join('.')
-      sync[key] || find_and_sync_default(key, options)
+      sync[key]
     end
 
     attr_reader :sync, :base_url, :api_key
@@ -83,17 +84,19 @@ module CopycopterClient
       base_url.merge("/edit/#{api_key}/#{locale}.#{key}").to_s
     end
 
-    def fallback(key_with_locale, options)
+    def fallback(locale, key, options)
       if @fallback
-        locale, key = *key_with_locale.split('.', 2)
         @fallback.translate(locale, key, options)
       end
+    rescue I18n::MissingTranslationData
+      nil
     end
 
-    def find_and_sync_default(key, options)
-      default = fallback(key, options) || options[:default]
-      sync[key] = default.to_str if default.respond_to?(:to_str)
-      default
+    def default(locale, object, subject, options = {})
+      key = [locale, object].join(".")
+      content = super(locale, object, subject, options)
+      sync[key] = content.to_str if content.respond_to?(:to_str)
+      content
     end
   end
 end

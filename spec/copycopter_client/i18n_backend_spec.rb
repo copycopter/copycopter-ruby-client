@@ -5,8 +5,13 @@ describe CopycopterClient::I18nBackend do
 
   def build_backend(config = {})
     default_config = CopycopterClient::Configuration.new.to_hash
-    CopycopterClient::I18nBackend.new(sync, default_config.update(config))
+    backend = CopycopterClient::I18nBackend.new(sync, default_config.update(config))
+    I18n.backend = backend
+    backend
   end
+
+  before { @default_backend = I18n.backend }
+  after { I18n.backend = @default_backend }
 
   subject { build_backend }
 
@@ -68,6 +73,13 @@ describe CopycopterClient::I18nBackend do
     backend.translate('en', 'test.key').should be_html_safe
   end
 
+  it "looks up an array of defaults" do
+    sync['en.key.one'] = "Expected"
+    backend = build_backend
+    backend.translate('en', 'key.three', :default => [:"key.two", :"key.one"]).
+      should == 'Expected'
+  end
+
   describe "with a fallback" do
     let(:fallback) { I18n::Backend::Simple.new }
     subject { build_backend(:fallback_backend => fallback, :public => false) }
@@ -76,6 +88,7 @@ describe CopycopterClient::I18nBackend do
       fallback.store_translations('en', 'test' => { 'key' => 'Expected' })
       subject.translate('en', 'test.key', :default => 'Unexpected').
         should include('Expected')
+      sync['en.test.key'].should == 'Expected'
     end
 
     it "uses the default if the fallback doesn't have the key" do
@@ -95,6 +108,12 @@ describe CopycopterClient::I18nBackend do
       fallback.store_translations('en', 'key' => nested)
       subject.translate('en', 'key', :default => 'Unexpected').should == nested
       sync['en.key'].should be_nil
+    end
+
+    it "looks up an array of defaults" do
+      fallback.store_translations('en', 'key' => { 'one' => 'Expected' })
+      subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"]).
+        should include('Expected')
     end
   end
 end

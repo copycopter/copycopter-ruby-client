@@ -24,13 +24,35 @@ Then /^the "([^"]*)" project should have the following blurbs:$/ do |api_key, ta
     key = blurb_hash['key']
 
     if blurb_hash['draft content']
-      project.draft[key].should == blurb_hash['draft content']
+      unless project.draft[key] == blurb_hash['draft content']
+        raise "Expected #{blurb_hash['draft content']} for #{key} but got #{project.draft[key]}\nExisting keys: #{project.draft.inspect}"
+      end
     end
 
     if blurb_hash['published content']
-      project.published[key].should == blurb_hash['published content']
+      unless project.published[key] == blurb_hash['published content']
+        raise "Expected #{blurb_hash['published content']} for #{key} but got #{project.published[key]}\nExisting keys: #{project.published.inspect}"
+      end
     end
   end
+end
+
+Then /^the "([^"]*)" project should have the following error blurbs:$/ do |api_key, table|
+  if Rails::VERSION::MAJOR == 3
+    prefix = 'en.activerecord.errors.models'
+  else
+    prefix = 'en.models'
+  end
+
+  rows = table.hashes.map do |error_blurb|
+    "| #{prefix}.#{error_blurb['key']} | #{error_blurb['draft content']} |"
+  end
+
+  steps %{
+    Then the "#{api_key}" project should have the following blurbs:
+      | key | draft content  |
+      #{rows.join("\n")}
+  }
 end
 
 Then /^the "([^"]*)" project should not have the "([^"]*)" blurb$/ do |api_key, blurb_key|

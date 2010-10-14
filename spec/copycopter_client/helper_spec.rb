@@ -15,7 +15,7 @@ describe CopycopterClient::Helper do
   Spec::Matchers.define :have_translated do |key, default|
     match do |ignored_subject|
       extend Mocha::API
-      I18n.should have_received(:translate).with(key, default)
+      I18n.should have_received(:translate).with(key, :default => default)
     end
   end
 
