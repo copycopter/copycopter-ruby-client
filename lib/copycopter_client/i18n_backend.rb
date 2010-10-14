@@ -60,7 +60,7 @@ module CopycopterClient
     private
 
     def wrap_with_link_in_private(content, url)
-      if public?
+      if public? || !content.respond_to?(:to_str)
         content
       else
         %{#{content} <a href="#{url}" target="_blank">Edit</a>}
@@ -70,12 +70,7 @@ module CopycopterClient
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key = parts.join('.')
-      if content = sync[key]
-        content
-      else
-        parts.shift
-        sync[key] = fallback(locale, parts.join('.'), options) || options[:default]
-      end
+      sync[key] || find_and_sync_default(key, options)
     end
 
     attr_reader :sync, :base_url, :api_key
@@ -88,8 +83,17 @@ module CopycopterClient
       base_url.merge("/edit/#{api_key}/#{locale}.#{key}").to_s
     end
 
-    def fallback(locale, key, options)
-      @fallback.translate(locale, key, options) if @fallback
+    def fallback(key_with_locale, options)
+      if @fallback
+        locale, key = *key_with_locale.split('.', 2)
+        @fallback.translate(locale, key, options)
+      end
+    end
+
+    def find_and_sync_default(key, options)
+      default = fallback(key, options) || options[:default]
+      sync[key] = default.to_str if default.respond_to?(:to_str)
+      default
     end
   end
 end

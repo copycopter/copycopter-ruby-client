@@ -33,6 +33,11 @@ Then /^the "([^"]*)" project should have the following blurbs:$/ do |api_key, ta
   end
 end
 
+Then /^the "([^"]*)" project should not have the "([^"]*)" blurb$/ do |api_key, blurb_key|
+  project = FakeCopycopterApp.project(api_key)
+  project.draft[blurb_key].should be_nil
+end
+
 When /^I wait for changes to be synchronized$/ do
   sleep(3)
 end

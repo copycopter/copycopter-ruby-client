@@ -225,3 +225,27 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the output should contain "Hello"
 
+  Scenario: preserve localization keys
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        render
+      end
+    end
+    """
+    When I write to "config/routes.rb" with:
+    """
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :users
+    end
+    """
+    When I write to "app/views/users/index.html.erb" with:
+    """
+    <%= number_to_currency(2.5) %>
+    """
+    When I start the application
+    And I visit /users/
+    Then the output should contain "$2.50"
+    When I wait for changes to be synchronized
+    Then the "abc123" project should not have the "en.number.format" blurb
