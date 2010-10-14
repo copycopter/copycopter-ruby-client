@@ -8,6 +8,10 @@ module CopycopterClient
   # This backend will be used as the default I81n backend when the client is
   # configured, so you will not need to instantiate this class from the
   # application. Instead, just use methods on the I81n class.
+  #
+  # If a fallback backend is provided, keys available in the fallback backend
+  # will be used as defaults when those keys aren't available on the Copycopter
+  # server.
   class I18nBackend
     include I18n::Backend::Base
 
@@ -19,11 +23,13 @@ module CopycopterClient
     # @option options [String] :host the host to use for edit links
     # @option options [Fixnum] :port the port to use for edit links
     # @option options [String] :api_key the api key to use in edit links
+    # @option options [I18n::Backend::Base] :fallback_backend I18n backend where missing translations can be found
     def initialize(sync, options)
       @sync     = sync
       @public   = options[:public]
       @base_url = URI.parse("#{options[:protocol]}://#{options[:host]}:#{options[:port]}")
       @api_key  = options[:api_key]
+      @fallback = options[:fallback_backend]
     end
 
     # This is invoked by frameworks when locales should be loaded. The
@@ -67,8 +73,8 @@ module CopycopterClient
       if content = sync[key]
         content
       else
-        sync[key] = options[:default]
-        nil
+        parts.shift
+        sync[key] = fallback(locale, parts.join('.'), options) || options[:default]
       end
     end
 
@@ -80,6 +86,10 @@ module CopycopterClient
 
     def edit_url(locale, key)
       base_url.merge("/edit/#{api_key}/#{locale}.#{key}").to_s
+    end
+
+    def fallback(locale, key, options)
+      @fallback.translate(locale, key, options) if @fallback
     end
   end
 end

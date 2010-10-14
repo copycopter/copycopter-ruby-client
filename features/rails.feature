@@ -200,3 +200,28 @@ Feature: Using copycopter in a rails app
       | test.one | expected one  | expected one      |
       | test.two | expected two  | expected two      |
 
+  Scenario: fallback on the simple I18n backend
+    When I write to "config/locales/en.yml" with:
+    """
+    en:
+      test:
+        key: Hello
+    """
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        render :text => t("test.key")
+      end
+    end
+    """
+    When I write to "config/routes.rb" with:
+    """
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :users
+    end
+    """
+    When I start the application
+    And I visit /users/
+    Then the output should contain "Hello"
+

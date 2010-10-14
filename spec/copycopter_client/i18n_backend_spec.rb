@@ -67,4 +67,24 @@ describe CopycopterClient::I18nBackend do
     backend = build_backend(:public => true)
     backend.translate('en', 'test.key').should be_html_safe
   end
+
+  describe "with a fallback" do
+    let(:fallback) { I18n::Backend::Simple.new }
+    subject { build_backend(:fallback_backend => fallback) }
+
+    it "uses the fallback as a default" do
+      fallback.store_translations('en', 'test' => { 'key' => 'Expected' })
+      subject.translate('en', 'test.key', :default => 'Unexpected').should == 'Expected'
+    end
+
+    it "uses the default if the fallback doesn't have the key" do
+      subject.translate('en', 'test.key', :default => 'expected').should == 'expected'
+    end
+
+    it "uses the syncd key when present" do
+      fallback.store_translations('en', 'test' => { 'key' => 'unxpected' })
+      sync['en.test.key'] = 'expected'
+      subject.translate('en', 'test.key', :default => 'default').should == 'expected'
+    end
+  end
 end
