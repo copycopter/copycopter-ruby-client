@@ -249,3 +249,51 @@ Feature: Using copycopter in a rails app
     Then the output should contain "$2.50"
     When I wait for changes to be synchronized
     Then the "abc123" project should not have the "en.number.format" blurb
+
+  Scenario: view validation errors
+    When I write to "app/models/user.rb" with:
+    """
+    class User < ActiveRecord::Base
+      validates_presence_of :name
+    end
+    """
+    When I write to "db/migrate/1_create_users.rb" with:
+      """
+      class CreateUsers < ActiveRecord::Migration
+        def self.up
+          create_table :users do |t|
+            t.string :name
+          end
+        end
+      end
+      """
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        @user = User.new
+        @user.valid?
+        render
+      end
+    end
+    """
+    When I write to "config/routes.rb" with:
+    """
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :users
+    end
+    """
+    When I write to "app/views/users/index.html.erb" with:
+    """
+    <%= @user.errors.full_messages.first %>
+    """
+    When I successfully rake "db:migrate"
+    And I configure the copycopter client to used published data
+    And I start the application
+    And I visit /users/
+    Then the output should contain "Name can't be blank"
+    When I wait for changes to be synchronized
+    Then the "abc123" project should have the following error blurbs:
+      | key                        | draft content  |
+      | user.attributes.name.blank | can't be blank |
+

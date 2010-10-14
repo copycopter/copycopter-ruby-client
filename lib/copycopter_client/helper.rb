@@ -13,10 +13,9 @@ module CopycopterClient
                   default
                 end
 
-      args = [scope_copycopter_key_by_partial(key), default]
-      introspected_args = args.map { |arg| arg.inspect }.join(', ')
-      warn("WARNING: #s is deprecated; use t(#{introspected_args}) instead.")
-      I18n.translate(*args)
+      key = scope_copycopter_key_by_partial(key)
+      warn("WARNING: #s is deprecated; use t(#{key.inspect}, :default => #{default.inspect}) instead.")
+      I18n.translate(key, { :default => default })
     end
     alias_method :s, :copy_for
 

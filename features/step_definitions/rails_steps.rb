@@ -85,6 +85,9 @@ When /^I successfully rake "([^"]*)"$/ do |task|
       Rake::Task[task].invoke
     end
     Process.wait(pid)
+    unless $?.exitstatus == 0
+      raise "rake task exited with status #{$?.exitstatus}"
+    end
   end
 end
 
