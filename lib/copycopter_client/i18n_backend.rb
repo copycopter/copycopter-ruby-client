@@ -18,17 +18,10 @@ module CopycopterClient
     # Usually instantiated when {Configuration#apply} is invoked.
     # @param sync [Sync] must act like a hash, returning and accept blurbs by key.
     # @param options [Hash]
-    # @option options [Boolean] :public when +true+, edit links will not be inserted.
-    # @option options [String] :protocol the protocol to use for edit links
-    # @option options [String] :host the host to use for edit links
-    # @option options [Fixnum] :port the port to use for edit links
-    # @option options [String] :api_key the api key to use in edit links
     # @option options [I18n::Backend::Base] :fallback_backend I18n backend where missing translations can be found
     def initialize(sync, options)
       @sync     = sync
-      @public   = options[:public]
       @base_url = URI.parse("#{options[:protocol]}://#{options[:host]}:#{options[:port]}")
-      @api_key  = options[:api_key]
       @fallback = options[:fallback_backend]
     end
 
@@ -44,11 +37,10 @@ module CopycopterClient
     def translate(locale, key, options = {})
       default = fallback(locale, key, options) || options.delete(:default)
       content = super(locale, key, options.update(:default => default))
-      html = wrap_with_link_in_private(content, edit_url(locale, key))
-      if html.respond_to?(:html_safe)
-        html.html_safe
+      if content.respond_to?(:html_safe)
+        content.html_safe
       else
-        html
+        content
       end
     end
 
@@ -60,29 +52,13 @@ module CopycopterClient
 
     private
 
-    def wrap_with_link_in_private(content, url)
-      if public? || !content.respond_to?(:to_str)
-        content
-      else
-        %{#{content} <a href="#{url}" target="_blank">Edit</a>}
-      end
-    end
-
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key = parts.join('.')
       sync[key]
     end
 
-    attr_reader :sync, :base_url, :api_key
-
-    def public?
-      @public
-    end
-
-    def edit_url(locale, key)
-      base_url.merge("/edit/#{api_key}/#{locale}.#{key}").to_s
-    end
+    attr_reader :sync
 
     def fallback(locale, key, options)
       if @fallback
