@@ -68,16 +68,6 @@ Then /^the log should contain "([^"]*)"$/ do |line|
   end
 end
 
-Then /^the output should contain a link to edit "([^"]*)" from "([^"]*)"$/ do |blurb_key, api_key|
-  steps %{
-    Then the output should contain:
-    """
-    <a href="http://copycopter.com/edit/#{api_key}/#{blurb_key}" target="_blank">Edit</a>
-    """
-  }
-end
-
-
 When /^I successfully rake "([^"]*)"$/ do |task|
   in_current_dir do
     pid = fork do
@@ -89,10 +79,6 @@ When /^I successfully rake "([^"]*)"$/ do |task|
       raise "rake task exited with status #{$?.exitstatus}"
     end
   end
-end
-
-Then /^the output should not contain an edit link$/ do
-  steps %{Then the output should not contain "<a href"}
 end
 
 After do

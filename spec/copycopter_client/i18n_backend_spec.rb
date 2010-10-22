@@ -31,7 +31,7 @@ describe CopycopterClient::I18nBackend do
     value = 'hello'
     sync['en.prefix.test.key'] = value
 
-    backend = build_backend(:public => true)
+    backend = build_backend
 
     backend.translate('en', 'test.key', :scope => 'prefix').should == value
   end
@@ -51,25 +51,9 @@ describe CopycopterClient::I18nBackend do
     sync['en.test.key'].should == default
   end
 
-  it "adds edit links in development" do
-    backend = build_backend(:public   => false,
-                            :host     => 'example.com',
-                            :protocol => 'https',
-                            :port     => 443,
-                            :api_key  => 'xyzabc')
-    backend.translate('en', 'test.key', :default => 'default').
-      should include(%{<a href="https://example.com/edit/xyzabc/en.test.key" target="_blank">Edit</a>})
-  end
-
-  it "doesn't add edit links in public" do
-    backend = build_backend(:public   => true)
-    backend.translate('en', 'test.key', :default => 'default').
-      should_not include("<a href")
-  end
-
   it "marks strings as html safe" do
     sync['en.test.key'] = FakeHtmlSafeString.new("Hello")
-    backend = build_backend(:public => true)
+    backend = build_backend
     backend.translate('en', 'test.key').should be_html_safe
   end
 
@@ -82,7 +66,7 @@ describe CopycopterClient::I18nBackend do
 
   describe "with a fallback" do
     let(:fallback) { I18n::Backend::Simple.new }
-    subject { build_backend(:fallback_backend => fallback, :public => false) }
+    subject { build_backend(:fallback_backend => fallback) }
 
     it "uses the fallback as a default" do
       fallback.store_translations('en', 'test' => { 'key' => 'Expected' })
