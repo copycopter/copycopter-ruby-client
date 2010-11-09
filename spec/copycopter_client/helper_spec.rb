@@ -41,7 +41,7 @@ describe CopycopterClient::Helper do
 
   describe "default assignment" do
     before do
-      stubs(:scope_key_by_partial => '.key')
+      stubs(:scope_copycopter_key_by_partial => '.key')
       CopycopterClient.stubs(:copy_for)
     end
 

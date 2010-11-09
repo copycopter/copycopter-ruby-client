@@ -9,7 +9,7 @@ module CopycopterClient
                   default
                 end
 
-      result = CopycopterClient.copy_for(scope_key_by_partial(key), default)
+      result = CopycopterClient.copy_for(scope_copycopter_key_by_partial(key), default)
       result = CGI.unescapeHTML(result.to_s)
       result
     end
@@ -17,7 +17,7 @@ module CopycopterClient
 
     private
 
-    def scope_key_by_partial(key)
+    def scope_copycopter_key_by_partial(key)
       if key.to_s.first == "."
         if defined?(template)
           "#{template.path_without_format_and_extension.gsub(%r{/_?}, '.')}#{key}"
