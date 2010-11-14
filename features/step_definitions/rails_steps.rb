@@ -32,7 +32,7 @@ When "I start the application" do
 end
 
 When "I visit /$path" do |path|
-  @last_stdout = RailsServer.get(path)
+  @last_response = RailsServer.get(path)
 end
 
 When /^I configure the copycopter client to used published data$/ do
@@ -79,6 +79,10 @@ When /^I successfully rake "([^"]*)"$/ do |task|
       raise "rake task exited with status #{$?.exitstatus}"
     end
   end
+end
+
+Then /^the response should contain "([^"]+)"$/ do |text|
+  @last_response.should include(text)
 end
 
 After do
