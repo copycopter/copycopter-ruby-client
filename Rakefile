@@ -1,7 +1,6 @@
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('rails3-Gemfile')
-
 require 'rubygems'
 require 'bundler/setup'
+require 'appraisal'
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
@@ -10,21 +9,15 @@ require 'cucumber/rake/task'
 require 'spec/rake/spectask'
 require 'yard'
 
-desc 'Default: run specs and cucumber features on both Rails 2 and 3'
-task :default => [:spec, :cucumber, 'cucumber:rails2']
+desc 'Default: run the specs and features.'
+task :default => :spec do
+  system("rake -s appraisal cucumber;")
+end
 
 desc 'Test the copycopter_client plugin.'
 Spec::Rake::SpecTask.new do |t|
   t.spec_opts = ['--options', "spec/spec.opts"]
   t.spec_files = FileList['spec/copycopter_client/**/*_spec.rb']
-end
-
-namespace :cucumber do
-  desc "Run cucumber features on Rails 2"
-  task :rails2 do
-    ENV['BUNDLE_GEMFILE'] = File.expand_path('rails2-Gemfile')
-    exec("rake cucumber")
-  end
 end
 
 desc "Run cucumber features"

@@ -1,12 +1,11 @@
 source "http://rubygems.org"
 
-gem "rails", "~> 2.3"
+gem "rails"
 gem "sqlite3-ruby", :require => false
-gem "rspec"
+gem "rspec", "~> 1.3"
 gem "bourne"
 gem "webmock"
 gem "rake"
-gem "httparty"
 gem "sham_rack"
 gem "cucumber"
 gem "sinatra", :require => false
@@ -16,4 +15,5 @@ gem "ruby-debug"
 gem "json"
 gem "thin"
 gem "i18n"
+gem "appraisal", :require => false
 
