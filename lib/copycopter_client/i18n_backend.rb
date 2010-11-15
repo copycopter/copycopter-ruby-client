@@ -33,9 +33,17 @@ module CopycopterClient
     end
 
     # Translates the given local and key. See the I81n API documentation for details.
-    # @return [String] the translated key
+    #
+    # Because the Copycopter API only supports copy text and doesn't support
+    # nested structures or arrays, the fallback value will be returned without
+    # using the Copycopter API if that value doesn't respond to to_str.
+    #
+    # @return [Object] the translated key (usually a String)
     def translate(locale, key, options = {})
-      default = fallback(locale, key, options) || options.delete(:default)
+      fallback_value = fallback(locale, key, options)
+      return fallback_value if fallback_value && !fallback_value.respond_to?(:to_str)
+
+      default = fallback_value || options.delete(:default)
       content = super(locale, key, options.update(:default => default))
       if content.respond_to?(:html_safe)
         content.html_safe
