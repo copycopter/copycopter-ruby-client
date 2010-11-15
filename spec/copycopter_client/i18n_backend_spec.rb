@@ -94,6 +94,13 @@ describe CopycopterClient::I18nBackend do
       sync['en.key'].should be_nil
     end
 
+    it "returns an array directly without storing" do
+      array = ['value']
+      fallback.store_translations('en', 'key' => array)
+      subject.translate('en', 'key', :default => 'Unexpected').should == array
+      sync['en.key'].should be_nil
+    end
+
     it "looks up an array of defaults" do
       fallback.store_translations('en', 'key' => { 'one' => 'Expected' })
       subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"]).
