@@ -1,3 +1,4 @@
+@disable-bundler
 Feature: Using copycopter in a rails app
 
   Background:
@@ -5,7 +6,6 @@ Feature: Using copycopter in a rails app
     When I generate a rails application
     And I configure the copycopter client with api key "abc123"
 
-  @disable-bundler
   Scenario: copycopter in the controller
     Given the "abc123" project has the following blurbs:
       | key                            | draft content  |
@@ -18,13 +18,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= @text %>
     """
@@ -34,8 +29,8 @@ Feature: Using copycopter in a rails app
     Then the log should contain "Downloaded translations"
     When I visit /users/
     Then the response should contain "This is a test"
+    And the log should not contain "DEPRECATION WARNING"
 
-  @disable-bundler
   Scenario: copycopter in the view
     Given the "abc123" project has the following blurbs:
       | key                      | draft content  |
@@ -48,13 +43,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= t(".view-test", :default => "default") %>
     """
@@ -63,7 +53,6 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the response should contain "This is a test"
 
-  @disable-bundler
   Scenario: copycopter detects updates to copy
     Given the "abc123" project has the following blurbs:
       | key                            | draft content |
@@ -76,13 +65,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= @text %>
     """
@@ -97,7 +81,6 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the response should contain "New content"
 
-  @disable-bundler
   Scenario: missing key
     When I write to "app/controllers/users_controller.rb" with:
     """
@@ -107,13 +90,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= t(".404", :default => "not found") %>
     """
@@ -126,7 +104,6 @@ Feature: Using copycopter in a rails app
       | en.users.index.404 | not found     |
     And the log should contain "Uploaded missing translations"
 
-  @disable-bundler
   Scenario: copycopter in production
     Given the "abc123" project has the following blurbs:
       | key                            | published content | draft content |
@@ -139,13 +116,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= @text %>
     """
@@ -155,7 +127,6 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the response should contain "This is a test"
 
-  @disable-bundler
   Scenario: backwards compatibility
     Given the "abc123" project has the following blurbs:
       | key                            | draft content    |
@@ -170,13 +141,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= @text %>
     <%= s(".view-test", "default") %>
@@ -187,14 +153,12 @@ Feature: Using copycopter in a rails app
     Then the response should contain "Controller blurb"
     And the response should contain "View blurb"
 
-  @disable-bundler
   Scenario: configure a bad api key
     When I configure the copycopter client with api key "bogus"
-    When I start the application
+    And I start the application
     And I wait for changes to be synchronized
     Then the log should contain "Invalid API key: bogus"
 
-  @disable-bundler
   Scenario: deploy
     Given the "abc123" project has the following blurbs:
       | key      | draft content | published content |
@@ -206,7 +170,6 @@ Feature: Using copycopter in a rails app
       | test.one | expected one  | expected one      |
       | test.two | expected two  | expected two      |
 
-  @disable-bundler
   Scenario: fallback on the simple I18n backend
     When I write to "config/locales/en.yml" with:
     """
@@ -222,17 +185,11 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I start the application
+    When I route the "users" resource
+    And I start the application
     And I visit /users/
     Then the response should contain "Hello"
 
-  @disable-bundler
   Scenario: preserve localization keys
     When I write to "app/controllers/users_controller.rb" with:
     """
@@ -242,13 +199,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= number_to_currency(2.5) %>
     """
@@ -258,7 +210,6 @@ Feature: Using copycopter in a rails app
     When I wait for changes to be synchronized
     Then the "abc123" project should not have the "en.number.format" blurb
 
-  @disable-bundler
   Scenario: view validation errors
     When I write to "app/models/user.rb" with:
     """
@@ -286,13 +237,8 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I write to "config/routes.rb" with:
-    """
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :users
-    end
-    """
-    When I write to "app/views/users/index.html.erb" with:
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
     """
     <%= @user.errors.full_messages.first %>
     """
