@@ -68,6 +68,17 @@ Then /^the log should contain "([^"]*)"$/ do |line|
   end
 end
 
+Then /^the log should not contain "([^"]*)"$/ do |line|
+  log_path = "log/development.log"
+  in_current_dir do
+    File.open(log_path) do |file|
+      if bad_line = file.readlines.detect { |file_line| file_line.include?(line) }
+        raise "In log file:\n#{log_path}\n\nGot unexpected line:\n#{bad_line}"
+      end
+    end
+  end
+end
+
 When /^I successfully rake "([^"]*)"$/ do |task|
   in_current_dir do
     pid = fork do
@@ -83,6 +94,18 @@ end
 
 Then /^the response should contain "([^"]+)"$/ do |text|
   @last_response.should include(text)
+end
+
+When /^I route the "([^"]+)" resource$/ do |resource|
+  if Rails::VERSION::MAJOR == 3
+    draw = "Testapp::Application.routes.draw do\n"
+  else
+    draw = "ActionController::Routing::Routes.draw do |map|\nmap."
+  end
+
+  routes = "#{draw}resources :#{resource}\nend"
+
+  create_file("config/routes.rb", routes, false)
 end
 
 After do

@@ -32,7 +32,12 @@ class RailsServer
         $stderr = output
       end
       require 'config/environment'
-      app = Identify.new(ActionController::Dispatcher.new)
+      if Rails::VERSION::MAJOR == 3
+        rails = Rails.application
+      else
+        rails = ActionController::Dispatcher.new
+      end
+      app = Identify.new(rails)
       Rack::Handler::Thin.run(app, :Port => @port, :AccessLog => [])
     end
     wait_until_responsive

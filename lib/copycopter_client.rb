@@ -41,3 +41,8 @@ module CopycopterClient
     configuration.apply if apply
   end
 end
+
+if defined?(Rails)
+  require 'copycopter_client/rails'
+end
+

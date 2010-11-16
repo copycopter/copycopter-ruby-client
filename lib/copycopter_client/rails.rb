@@ -1,4 +1,3 @@
-require 'copycopter_client'
 require 'copycopter_client/helper'
 
 if defined?(ActionController::Base)
