@@ -52,7 +52,7 @@ end
 <%= t(".welcome", :default => "Why hello there") %>
 
 # Global scope (for example, in a Rake task)
-I81n.translate("system.tasks_complete", :default => "Tasks complete")
+I18n.translate("system.tasks_complete", :default => "Tasks complete")
 </pre>
 
 See the "I18n documentation":http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile documentation for more examples.
