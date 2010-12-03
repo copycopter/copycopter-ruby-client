@@ -53,6 +53,9 @@ end
 
 # Global scope (for example, in a Rake task)
 I18n.translate("system.tasks_complete", :default => "Tasks complete")
+
+# Interpolation
+I18n.translate("mailer.welcome", :default => "Welcome, %{name}!", :name => @user.name)
 </pre>
 
 See the "I18n documentation":http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile documentation for more examples.
