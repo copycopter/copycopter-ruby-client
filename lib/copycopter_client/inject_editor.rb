@@ -19,7 +19,7 @@ module CopycopterClient
       status, headers, body =*response
 
       if status == 200 && headers['Content-Type'].include?('text/html')
-        [status, headers, inject_into(body, keys)]
+        inject_into(headers, body, keys)
       else
         [status, headers, body]
       end
@@ -29,10 +29,11 @@ module CopycopterClient
 
     attr_reader :host
 
-    def inject_into(body_parts, keys)
+    def inject_into(headers, body_parts, keys)
       body = ""
       body_parts.each { |part| body << part }
-      [body.sub("</body>", "#{editor_html_for(keys)}</body>")]
+      injected_body = body.sub("</body>", "#{editor_html_for(keys)}</body>")
+      [200, headers.merge('Content-Length' => injected_body.size.to_s), [injected_body]]
     end
 
     def editor_html_for(keys)

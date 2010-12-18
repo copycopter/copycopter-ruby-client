@@ -41,7 +41,9 @@ describe CopycopterClient::InjectEditor do
     response = call('Content-Type'  => 'text/html; charset=utf-8',
                     'Response-Code' => 200,
                     'Response-Body' => "<body>hello</body>")
-    response.last.should == ["<body>hello#{editor_code}</body>"]
+    expected_body = "<body>hello#{editor_code}</body>"
+    response.last.should == [expected_body]
+    response[1]['Content-Length'].should == expected_body.size.to_s
   end
 
   it "doesn't inject a translated key into html without a body tag" do
