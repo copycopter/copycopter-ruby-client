@@ -16,4 +16,5 @@ gem "json"
 gem "thin"
 gem "i18n"
 gem "appraisal", :require => false
+gem "RedCloth", :require => false
 
