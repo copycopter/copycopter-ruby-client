@@ -12,5 +12,6 @@ CopycopterClient.configure(false) do |config|
   config.logger           = Rails.logger
   config.framework        = "Rails: #{Rails::VERSION::STRING}"
   config.fallback_backend = I18n.backend
+  config.middleware       = Rails.configuration.middleware
 end
 

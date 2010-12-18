@@ -252,3 +252,31 @@ Feature: Using copycopter in a rails app
       | key                        | draft content  |
       | user.attributes.name.blank | can't be blank |
 
+  Scenario: view keys used on a page
+    Given the "abc123" project has the following blurbs:
+      | key                            | draft content  |
+      | en.users.index.controller-test | This is a test |
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        t("test.one", :default => "default")
+        t("test.two", :default => "default")
+      end
+    end
+    """
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
+    """
+    <html>
+    <body>
+    Original body
+    </body>
+    </html>
+    """
+    When I start the application
+    And I wait for changes to be synchronized
+    And I visit /users/
+    Then the response should contain "Original body"
+    And the response should contain "test.one"
+    And the response should contain "test.two"
