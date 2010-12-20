@@ -5,33 +5,37 @@ When "I generate a rails application" do
     subcommand = ''
   end
 
-  steps %{
-    When I run "rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp"
-    And I cd to "testapp"
-  }
+  run_simple("rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp")
+  cd("testapp")
+
+  if Rails::VERSION::MAJOR == 3
+    append_to_file("Gemfile", <<-GEMS)
+      gem "thin"
+      gem "sham_rack"
+      gem "sinatra"
+      gem "json"
+    GEMS
+  end
 end
 
 When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
-  steps %{
-    When I run "rm -f vendor/plugins/copycopter"
-    And I run "ln -s #{PROJECT_ROOT} vendor/plugins/copycopter"
-    And I write to "config/initializers/copycopter.rb" with:
-      """
-      CopycopterClient.configure do |config|
-        config.api_key = "#{api_key}"
-        config.polling_delay = 1
-      end
-      """
-  }
+  create_file("config/initializers/copycopter.rb", <<-RUBY)
+    CopycopterClient.configure do |config|
+      config.api_key = "#{api_key}"
+      config.polling_delay = 1
+    end
+  RUBY
+  in_current_dir { FileUtils.rm_f("vendor/plugins/copycopter") }
+  run_simple("ln -s #{PROJECT_ROOT} vendor/plugins/copycopter")
 end
 
 When "I start the application" do
   in_current_dir do
-    RailsServer.start(ENV['RAILS_PORT'])
+    RailsServer.start(ENV['RAILS_PORT'], @announce_stderr)
   end
 end
 
-When "I visit /$path" do |path|
+When /^I visit (\/.*)$/ do |path|
   @last_response = RailsServer.get(path)
 end
 
@@ -93,7 +97,7 @@ When /^I successfully rake "([^"]*)"$/ do |task|
 end
 
 Then /^the response should contain "([^"]+)"$/ do |text|
-  @last_response.should include(text)
+  @last_response.body.should include(text)
 end
 
 When /^I route the "([^"]+)" resource$/ do |resource|
