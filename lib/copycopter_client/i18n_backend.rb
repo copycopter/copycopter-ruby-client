@@ -67,7 +67,9 @@ module CopycopterClient
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key = parts.join('.')
-      sync[key]
+      content = sync[key]
+      sync[key] = "" if content.nil?
+      content
     end
 
     attr_reader :sync
