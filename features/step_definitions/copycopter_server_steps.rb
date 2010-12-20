@@ -38,11 +38,7 @@ Then /^the "([^"]*)" project should have the following blurbs:$/ do |api_key, ta
 end
 
 Then /^the "([^"]*)" project should have the following error blurbs:$/ do |api_key, table|
-  if Rails::VERSION::MAJOR == 3
-    prefix = 'en.activerecord.errors.models'
-  else
-    prefix = 'en.models'
-  end
+  prefix = 'en.activerecord.errors.models'
 
   rows = table.hashes.map do |error_blurb|
     "| #{prefix}.#{error_blurb['key']} | #{error_blurb['draft content']} |"
