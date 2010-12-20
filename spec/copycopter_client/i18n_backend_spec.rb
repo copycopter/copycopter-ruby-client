@@ -51,6 +51,15 @@ describe CopycopterClient::I18nBackend do
     sync['en.test.key'].should == default
   end
 
+  it "queues missing keys with scope" do
+    default = 'default value'
+
+    subject.translate('en', 'key', :default => default, :scope => ['test']).
+      should == default
+
+    sync['en.test.key'].should == default
+  end
+
   it "marks strings as html safe" do
     sync['en.test.key'] = FakeHtmlSafeString.new("Hello")
     backend = build_backend

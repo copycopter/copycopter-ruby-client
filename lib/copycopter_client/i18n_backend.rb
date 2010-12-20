@@ -86,9 +86,12 @@ module CopycopterClient
     end
 
     def default(locale, object, subject, options = {})
-      key = [locale, object].join(".")
       content = super(locale, object, subject, options)
-      sync[key] = content.to_str if content.respond_to?(:to_str)
+      if content.respond_to?(:to_str)
+        parts = I18n.normalize_keys(locale, object, options[:scope], options[:separator])
+        key = parts.join('.')
+        sync[key] = content.to_str
+      end
       content
     end
   end
