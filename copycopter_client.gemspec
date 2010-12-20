@@ -4,7 +4,8 @@ include_files = ["README", "MIT-LICENSE", "Rakefile", "init.rb", "{lib,tasks,spe
   Dir[glob]
 end.flatten
 
-require File.join(File.dirname(__FILE__), 'lib', 'copycopter_client', 'version')
+$LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
+require 'copycopter_client/version'
 
 Gem::Specification.new do |s|
   s.name = "copycopter_client"

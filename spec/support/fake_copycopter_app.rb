@@ -1,7 +1,19 @@
 require 'sinatra/base'
 require 'json'
+require 'thin'
 
 class FakeCopycopterApp < Sinatra::Base
+  def self.start
+    Thread.new do
+      Thin::Logging.silent = true
+      Rack::Handler::Thin.run(self, :Port => port)
+    end
+  end
+
+  def self.port
+    (ENV['COPYCOPTER_PORT'] || 3002).to_i
+  end
+
   def self.add_project(api_key)
     Project.create(api_key)
   end
@@ -121,6 +133,4 @@ class FakeCopycopterApp < Sinatra::Base
     end
   end
 end
-
-ShamRack.mount(FakeCopycopterApp.new, "copycopter.com")
 

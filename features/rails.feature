@@ -1,4 +1,4 @@
-@disable-bundler
+@disable-bundler @puts @announce
 Feature: Using copycopter in a rails app
 
   Background:

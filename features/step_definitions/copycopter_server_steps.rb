@@ -60,7 +60,6 @@ When /^I wait for changes to be synchronized$/ do
   sleep(3)
 end
 
-After do
-  FakeCopycopterApp.reset
-end
+FakeCopycopterApp.start
+After { FakeCopycopterApp.reset }
 

@@ -23,10 +23,19 @@ When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
     CopycopterClient.configure do |config|
       config.api_key = "#{api_key}"
       config.polling_delay = 1
+      config.host = 'localhost'
+      config.port = #{FakeCopycopterApp.port}
     end
   RUBY
-  in_current_dir { FileUtils.rm_f("vendor/plugins/copycopter") }
-  run_simple("ln -s #{PROJECT_ROOT} vendor/plugins/copycopter")
+
+  if Rails::VERSION::MAJOR == 3
+    append_to_file("Gemfile", <<-GEMS)
+      gem "copycopter_client", :path => "../../.."
+    GEMS
+  else
+    in_current_dir { FileUtils.rm_f("vendor/plugins/copycopter") }
+    run_simple("ln -s #{PROJECT_ROOT} vendor/plugins/copycopter")
+  end
 end
 
 When "I start the application" do
@@ -84,16 +93,7 @@ Then /^the log should not contain "([^"]*)"$/ do |line|
 end
 
 When /^I successfully rake "([^"]*)"$/ do |task|
-  in_current_dir do
-    pid = fork do
-      load('Rakefile')
-      Rake::Task[task].invoke
-    end
-    Process.wait(pid)
-    unless $?.exitstatus == 0
-      raise "rake task exited with status #{$?.exitstatus}"
-    end
-  end
+  run_simple("rake #{task}")
 end
 
 Then /^the response should contain "([^"]+)"$/ do |text|

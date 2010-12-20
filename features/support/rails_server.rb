@@ -28,12 +28,8 @@ class RailsServer
   end
 
   def self.run(port, silent)
-    require 'config/boot'
-    require 'thin'
-    require 'daemons'
-    require 'sham_rack'
-    require File.expand_path("../../../spec/support/fake_copycopter_app", __FILE__)
     require 'config/environment'
+    require 'thin'
 
     if Rails::VERSION::MAJOR == 3
       rails = Rails.application
