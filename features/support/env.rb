@@ -1,5 +1,5 @@
 require 'sham_rack'
-require 'aruba'
+require 'aruba/cucumber'
 require 'rails/version'
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
