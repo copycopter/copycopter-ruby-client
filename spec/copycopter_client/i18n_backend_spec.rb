@@ -75,6 +75,13 @@ describe CopycopterClient::I18nBackend do
       sync['en.test.key'].should == 'Expected'
     end
 
+    it "preserves interpolation markers in the fallback" do
+      fallback.store_translations('en', 'test' => { 'key' => '%{interpolate}' })
+      subject.translate('en', 'test.key', :interpolate => 'interpolated').
+        should include('interpolated')
+      sync['en.test.key'].should == '%{interpolate}'
+    end
+
     it "uses the default if the fallback doesn't have the key" do
       subject.translate('en', 'test.key', :default => 'Expected').
         should include('Expected')

@@ -15,6 +15,10 @@ module CopycopterClient
   class I18nBackend
     include I18n::Backend::Base
 
+    # These keys aren't used in interpolation
+    RESERVED_KEYS = [:scope, :default, :separator, :resolve, :object,
+      :fallback, :format, :cascade, :raise, :rescue_format].freeze
+
     # Usually instantiated when {Configuration#apply} is invoked.
     # @param sync [Sync] must act like a hash, returning and accept blurbs by key.
     # @param options [Hash]
@@ -70,7 +74,12 @@ module CopycopterClient
 
     def fallback(locale, key, options)
       if @fallback
-        @fallback.translate(locale, key, options)
+        fallback_options = options.dup
+        (fallback_options.keys - RESERVED_KEYS).each do |interpolated_key|
+          fallback_options[interpolated_key] = "%{#{interpolated_key}}"
+        end
+
+        @fallback.translate(locale, key, fallback_options)
       end
     rescue I18n::MissingTranslationData
       nil

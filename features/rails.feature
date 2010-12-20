@@ -175,20 +175,24 @@ Feature: Using copycopter in a rails app
     """
     en:
       test:
-        key: Hello
+        key: Hello, %{name}
     """
     When I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
-        render :text => t("test.key")
+      render :text => t("test.key", :name => 'Joe')
       end
     end
     """
     When I route the "users" resource
     And I start the application
     And I visit /users/
-    Then the response should contain "Hello"
+    Then the response should contain "Hello, Joe"
+    When I wait for changes to be synchronized
+    Then the "abc123" project should have the following blurbs:
+      | key         | draft content  |
+      | en.test.key | Hello, %{name} |
 
   Scenario: preserve localization keys
     When I write to "app/controllers/users_controller.rb" with:
