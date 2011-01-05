@@ -19,6 +19,27 @@ describe CopycopterClient::Sync do
 
   after { @syncs.each { |sync| sync.stop } }
 
+  it "syncs when the process terminates" do
+    api_key = "12345"
+    FakeCopycopterApp.add_project api_key
+    pid = fork do
+      config = { :logger => FakeLogger.new, :polling_delay => 86400, :api_key => api_key }
+      default_config = CopycopterClient::Configuration.new.to_hash.update(config)
+      real_client = CopycopterClient::Client.new(default_config)
+      sync = CopycopterClient::Sync.new(real_client, default_config)
+      sync.start
+      sleep 2
+      sync['test.key'] = 'value'
+      Signal.trap("INT") { exit }
+      sleep
+    end
+    sleep 3
+    Process.kill("INT", pid)
+    Process.wait
+    project = FakeCopycopterApp.project(api_key)
+    project.draft['test.key'].should == 'value'
+  end
+
   it "provides access to downloaded data" do
     client['en.test.key']       = 'expected'
     client['en.test.other_key'] = 'expected'
