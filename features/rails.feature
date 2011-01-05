@@ -121,7 +121,7 @@ Feature: Using copycopter in a rails app
     """
     <%= @text %>
     """
-    When I configure the copycopter client to used published data
+    When I configure the copycopter client to use published data
     And I start the application
     And I wait for changes to be synchronized
     And I visit /users/
@@ -247,7 +247,7 @@ Feature: Using copycopter in a rails app
     <%= @user.errors.full_messages.first %>
     """
     When I successfully rake "db:migrate"
-    And I configure the copycopter client to used published data
+    And I configure the copycopter client to use published data
     And I start the application
     And I visit /users/
     Then the response should contain "Name can't be blank"
@@ -255,4 +255,13 @@ Feature: Using copycopter in a rails app
     Then the "abc123" project should have the following error blurbs:
       | key                        | draft content  |
       | user.attributes.name.blank | can't be blank |
+
+
+  Scenario: ensure keys are synced with short lived processes
+    When I configure the copycopter client to have a polling delay of 86400 seconds
+    And I start the application
+    And I run a short lived process that sets the key "threaded.key" to "all your base"
+    Then the "abc123" project should have the following blurbs:
+      | key             | draft content |
+      | en.threaded.key | all your base |
 

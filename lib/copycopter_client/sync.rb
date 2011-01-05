@@ -38,6 +38,7 @@ module CopycopterClient
       else
         logger.info("Starting poller")
         @pending = true
+        at_exit { sync }
         Thread.new { poll }
       end
     end

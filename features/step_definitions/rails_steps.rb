@@ -48,11 +48,20 @@ When /^I visit (\/.*)$/ do |path|
   @last_response = RailsServer.get(path)
 end
 
-When /^I configure the copycopter client to used published data$/ do
+When /^I configure the copycopter client to use published data$/ do
   in_current_dir do
     config_path = "config/initializers/copycopter.rb"
     contents = IO.read(config_path)
     contents.sub!("end", "  config.development_environments = []\nend")
+    File.open(config_path, "w") { |file| file.write(contents) }
+  end
+end
+
+When /^I configure the copycopter client to have a polling delay of (\d+) seconds$/ do |polling_delay|
+  in_current_dir do
+    config_path = "config/initializers/copycopter.rb"
+    contents = IO.read(config_path)
+    contents.sub!(/config.polling_delay = .+/, "config.polling_delay = #{polling_delay}")
     File.open(config_path, "w") { |file| file.write(contents) }
   end
 end
@@ -110,6 +119,14 @@ When /^I route the "([^"]+)" resource$/ do |resource|
   routes = "#{draw}resources :#{resource}\nend"
 
   create_file("config/routes.rb", routes, false)
+end
+
+When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)"$/ do |key, value|
+  if Rails::VERSION::MAJOR == 3
+    run_simple %[script/rails runner 'I18n.translate("#{key}", :default => "#{value}")']
+  else
+    run_simple %[script/runner 'I18n.translate("#{key}", :default => "#{value}")']
+  end
 end
 
 After do
