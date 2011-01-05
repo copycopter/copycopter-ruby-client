@@ -149,6 +149,7 @@ module CopycopterClient
       sync = Sync.new(client, to_hash)
       I18n.backend = I18nBackend.new(sync, to_hash)
       CopycopterClient.client = client
+      CopycopterClient.sync = sync
       @applied = true
       logger.info("Client #{VERSION} ready")
       logger.info("Environment Info: #{environment_info}")

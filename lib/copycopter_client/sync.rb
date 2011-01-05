@@ -33,7 +33,6 @@ module CopycopterClient
     # poller starts in each spawned process.
     def start
       if spawner?
-        logger.info("Not polling from spawner process")
         register_spawn_hooks
       else
         logger.info("Starting poller")
@@ -122,13 +121,23 @@ module CopycopterClient
     end
 
     def spawner?
-      $0.include?("ApplicationSpawner")
+      $0.include?("ApplicationSpawner") || $0 =~ /unicorn.*master/
     end
 
     def register_spawn_hooks
       if defined?(PhusionPassenger)
+        logger.info("Registered Phusion Passenger fork hook")
         PhusionPassenger.on_event(:starting_worker_process) do |forked|
           start
+        end
+      elsif defined?(Unicorn::HttpServer)
+        logger.info("Registered Unicorn fork hook")
+        Unicorn::HttpServer.class_eval do
+          alias_method :worker_loop_without_copycopter, :worker_loop
+          def worker_loop(worker)
+            CopycopterClient.start_sync
+            worker_loop_without_copycopter(worker)
+          end
         end
       end
     end

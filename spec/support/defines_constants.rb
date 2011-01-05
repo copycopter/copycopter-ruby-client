@@ -7,17 +7,31 @@ share_as :DefinesConstants do
     klass
   end
 
-  def define_constant(name, value)
-    Object.const_set(name, value)
-    @defined_constants << name
+  def define_constant(path, value)
+    parse_constant(path) do |parent, name|
+      parent.const_set(name, value)
+    end
+
+    @defined_constants << path
     value
+  end
+
+  def parse_constant(path)
+    parent_names = path.split('::')
+    name = parent_names.pop
+    parent = parent_names.inject(Object) do |ref, child_name|
+      ref.const_get(child_name)
+    end
+    yield(parent, name)
   end
 
   before { @defined_constants = [] }
 
   after do
-    @defined_constants.each do |class_name|
-      Object.send(:remove_const, class_name)
+    @defined_constants.reverse.each do |path|
+      parse_constant(path) do |parent, name|
+        parent.send(:remove_const, name)
+      end
     end
   end
 end

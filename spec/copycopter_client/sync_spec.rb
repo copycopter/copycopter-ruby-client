@@ -143,8 +143,7 @@ describe CopycopterClient::Sync do
     sleep(2)
 
     client.should_not be_downloaded
-    logger.should have_entry(:info, "Not polling from spawner process"),
-                  "Got entries: #{logger.entries.inspect}"
+    logger.should have_entry(:info, "Registered Phusion Passenger fork hook")
 
     passenger.spawn
     sleep(2)
@@ -152,6 +151,27 @@ describe CopycopterClient::Sync do
     client.should be_downloaded
     logger.should have_entry(:info, "Starting poller"),
                   "Got entries: #{logger.entries.inspect}"
+  end
+
+  it "starts after spawning when using unicorn" do
+    logger = FakeLogger.new
+    define_constant('Unicorn', Module.new)
+    unicorn = define_constant('Unicorn::HttpServer', FakeUnicornServer).new
+    unicorn.become_master
+    sync = build_sync(:polling_delay => 1, :logger => logger)
+    CopycopterClient.sync = sync
+
+    sync.start
+    sleep(2)
+
+    client.should_not be_downloaded
+    logger.should have_entry(:info, "Registered Unicorn fork hook")
+
+    unicorn.spawn
+    sleep(2)
+
+    client.should be_downloaded
+    logger.should have_entry(:info, "Starting poller")
   end
 
   it "blocks until the first download is complete" do
@@ -260,6 +280,16 @@ describe CopycopterClient::Sync do
     it "synchronizes write access to keys between threads" do
       Thread.new { sync['test.key'] = 'value' }.should finish_after_unlocking(mutex)
     end
+  end
+
+  it "starts from the top-level constant" do
+    sync = build_sync
+    CopycopterClient.sync = sync
+    sync.stubs(:start)
+
+    CopycopterClient.start_sync
+
+    sync.should have_received(:start)
   end
 end
 

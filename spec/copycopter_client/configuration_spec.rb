@@ -218,6 +218,10 @@ share_examples_for "applied configuration" do
   it "stores the client" do
     CopycopterClient.client.should == client
   end
+
+  it "stores the sync" do
+    CopycopterClient.sync.should == sync
+  end
 end
 
 describe CopycopterClient::Configuration, "applied when testing" do

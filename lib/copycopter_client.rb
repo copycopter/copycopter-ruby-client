@@ -16,12 +16,22 @@ module CopycopterClient
     # Must act like a hash and return sensible values for all Copycopter
     # configuration options. Usually set when {.configure} is called.
     attr_accessor :configuration
+
+    # @return [Sync] instance used to synchronize changes.
+    # This is set when {.configure} is called.
+    attr_accessor :sync
   end
 
   # Issues a new deploy, marking all draft blurbs as published.
   # This is called when the copycopter:deploy rake task is invoked.
   def self.deploy
     client.deploy
+  end
+
+  # Starts the polling process.
+  # This is called from Unicorn worker processes.
+  def self.start_sync
+    sync.start
   end
 
   # Call this method to modify defaults in your initializers.
