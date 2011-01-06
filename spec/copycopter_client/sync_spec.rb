@@ -95,6 +95,17 @@ describe CopycopterClient::Sync do
     client.uploaded.should == { 'test.key' => 'test value' }
   end
 
+  it "uploads changes when flushed" do
+    sync = build_sync(:polling_delay => 86400)
+    sync.start
+    sleep 2
+    sync['test.key'] = 'test value'
+    sync.flush
+    sleep(2)
+
+    client.uploaded.should == { 'test.key' => 'test value' }
+  end
+
   it "handles connection errors when polling" do
     failure = "server is napping"
     logger = FakeLogger.new
@@ -151,6 +162,39 @@ describe CopycopterClient::Sync do
     client.should be_downloaded
     logger.should have_entry(:info, "Starting poller"),
                   "Got entries: #{logger.entries.inspect}"
+  end
+
+  it "flushes after running a resque job" do
+    define_constant('Resque', Module.new)
+    job = define_constant('Resque::Job', FakeResqueJob).new(:key => 'test.key', :value => 'all your base')
+
+    api_key = "12345"
+    FakeCopycopterApp.add_project api_key
+    logger = FakeLogger.new
+
+    config = { :logger => logger, :polling_delay => 86400, :api_key => api_key }
+    default_config = CopycopterClient::Configuration.new.to_hash.update(config)
+    real_client = CopycopterClient::Client.new(default_config)
+    sync = CopycopterClient::Sync.new(real_client, default_config)
+    CopycopterClient.sync = sync
+    job.sync = sync
+
+    sync.start
+    sleep(2)
+
+    logger.should have_entry(:info, "Registered Resque after_perform hook")
+
+    if fork
+      Process.wait
+    else
+      job.perform
+      exit!
+    end
+    sleep(2)
+
+    project = FakeCopycopterApp.project(api_key)
+    project.draft['test.key'].should == 'all your base'
+
   end
 
   it "starts after spawning when using unicorn" do

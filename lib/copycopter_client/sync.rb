@@ -35,6 +35,7 @@ module CopycopterClient
       if spawner?
         register_spawn_hooks
       else
+        register_job_hooks
         logger.info("Starting poller")
         @pending = true
         at_exit { sync }
@@ -78,6 +79,12 @@ module CopycopterClient
       end
     end
 
+    def flush
+      with_queued_changes do |queued|
+        client.upload(queued)
+      end
+    end
+
     private
 
     attr_reader :client, :polling_delay, :logger
@@ -95,9 +102,7 @@ module CopycopterClient
       begin
         downloaded_blurbs = client.download
         lock { @blurbs = downloaded_blurbs }
-        with_queued_changes do |queued|
-          client.upload(queued)
-        end
+        flush
       rescue ConnectionError => error
         logger.error(error.message)
       end
@@ -122,6 +127,20 @@ module CopycopterClient
 
     def spawner?
       $0.include?("ApplicationSpawner") || $0 =~ /unicorn.*master/
+    end
+
+    def register_job_hooks
+      if defined?(Resque)
+        logger.info("Registered Resque after_perform hook")
+        Resque::Job.class_eval do
+          alias_method :perform_without_copycopter, :perform
+          def perform
+            job_was_performed = perform_without_copycopter
+            CopycopterClient.sync.flush
+            job_was_performed
+          end
+        end
+      end
     end
 
     def register_spawn_hooks
