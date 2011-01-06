@@ -136,7 +136,7 @@ module CopycopterClient
           alias_method :perform_without_copycopter, :perform
           def perform
             job_was_performed = perform_without_copycopter
-            CopycopterClient.sync.flush
+            CopycopterClient.flush
             job_was_performed
           end
         end

@@ -34,6 +34,12 @@ module CopycopterClient
     sync.start
   end
 
+  # Flush queued changed synchronously
+  # This is called from the Resque after perform "hook"
+  def self.flush
+    sync.flush
+  end
+
   # Call this method to modify defaults in your initializers.
   #
   # @example

@@ -335,5 +335,15 @@ describe CopycopterClient::Sync do
 
     sync.should have_received(:start)
   end
+
+  it "flushes from the top level" do
+    sync = build_sync
+    CopycopterClient.sync = sync
+    sync.stubs(:flush)
+
+    CopycopterClient.flush
+
+    sync.should have_received(:flush)
+  end
 end
 
