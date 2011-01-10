@@ -3,6 +3,6 @@ appraise "2.3" do
 end
 
 appraise "3.0" do
-  gem "rails", "~> 3.0"
+  gem "rails", "~> 3.0.3"
 end
 
