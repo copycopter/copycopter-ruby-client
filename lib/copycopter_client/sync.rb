@@ -75,6 +75,7 @@ module CopycopterClient
     def wait_for_download
       if @pending
         logger.info("Waiting for first sync")
+        logger.flush if logger.respond_to?(:flush)
         while @pending
           sleep(0.1)
         end

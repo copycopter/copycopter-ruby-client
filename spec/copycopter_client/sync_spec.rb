@@ -220,6 +220,7 @@ describe CopycopterClient::Sync do
 
   it "blocks until the first download is complete" do
     logger = FakeLogger.new
+    logger.stubs(:flush)
     client.delay = 1
     sync = build_sync(:logger => logger)
 
@@ -232,6 +233,7 @@ describe CopycopterClient::Sync do
     end
 
     logger.should have_entry(:info, "Waiting for first sync")
+    logger.should have_received(:flush)
     finished.should == false
 
     sleep(3)
