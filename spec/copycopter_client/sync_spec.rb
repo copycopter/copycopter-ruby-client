@@ -276,6 +276,15 @@ describe CopycopterClient::Sync do
     logger.should_not have_entry(:info, "Waiting for first sync")
   end
 
+  it "logs an error if the background thread can't start" do
+    Thread.stubs(:new => nil)
+    logger = FakeLogger.new
+
+    build_sync(:logger => logger).start
+
+    logger.should have_entry(:error, "Couldn't start poller thread")
+  end
+
   describe "given locked mutex" do
     Spec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|
