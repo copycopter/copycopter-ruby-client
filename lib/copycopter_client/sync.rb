@@ -94,6 +94,7 @@ module CopycopterClient
     def poll
       until @stop
         sync
+        logger.flush if logger.respond_to?(:flush)
         sleep(polling_delay)
       end
     rescue InvalidApiKey => error

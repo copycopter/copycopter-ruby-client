@@ -176,6 +176,7 @@ describe CopycopterClient::Sync do
     default_config = CopycopterClient::Configuration.new.to_hash.update(config)
     real_client = CopycopterClient::Client.new(default_config)
     sync = CopycopterClient::Sync.new(real_client, default_config)
+    sync.stubs(:at_exit)
     CopycopterClient.sync = sync
     job.sync = sync
 
@@ -194,7 +195,6 @@ describe CopycopterClient::Sync do
 
     project = FakeCopycopterApp.project(api_key)
     project.draft['test.key'].should == 'all your base'
-
   end
 
   it "starts after spawning when using unicorn" do
@@ -283,6 +283,17 @@ describe CopycopterClient::Sync do
     build_sync(:logger => logger).start
 
     logger.should have_entry(:error, "Couldn't start poller thread")
+  end
+
+  it "flushes the log when polling" do
+    logger = FakeLogger.new
+    logger.stubs(:flush)
+    sync = build_sync(:polling_delay => 1, :logger =>  logger)
+
+    sync.start
+    sleep(2)
+
+    logger.should have_received(:flush).at_least_once
   end
 
   describe "given locked mutex" do

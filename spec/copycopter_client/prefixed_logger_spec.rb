@@ -22,4 +22,16 @@ describe CopycopterClient::PrefixedLogger do
       output_logger.should have_entry(level, "#{prefix} #{thread_info} #{message}")
     end
   end
+
+  it "calls flush for a logger that responds to flush" do
+    output_logger.stubs(:flush)
+
+    subject.flush
+
+    output_logger.should have_received(:flush)
+  end
+
+  it "doesn't call flush for a logger that doesn't respond to flush" do
+    lambda { subject.flush }.should_not raise_error
+  end
 end

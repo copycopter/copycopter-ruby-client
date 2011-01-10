@@ -27,6 +27,10 @@ module CopycopterClient
       log(:fatal, message, &block)
     end
 
+    def flush
+      original_logger.flush if original_logger.respond_to?(:flush)
+    end
+
     private
 
     def log(severity, message, &block)
