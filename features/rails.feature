@@ -106,13 +106,15 @@ Feature: Using copycopter in a rails app
 
   Scenario: copycopter in production
     Given the "abc123" project has the following blurbs:
-      | key                            | published content | draft content |
-      | en.users.index.controller-test | This is a test    | Extra extra   |
+      | key                             | published content | draft content |
+      | en.users.index.controller-test  | This is a test    | Extra extra   |
+      | en.users.index.unpublished-test |                   | Extra extra   |
     When I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
         @text = t("users.index.controller-test", :default => "default")
+        @unpublished = t("users.index.unpublished-test", :default => "Unpublished")
       end
     end
     """
@@ -120,12 +122,14 @@ Feature: Using copycopter in a rails app
     And I write to "app/views/users/index.html.erb" with:
     """
     <%= @text %>
+    <%= @unpublished %>
     """
     When I configure the copycopter client to use published data
     And I start the application
     And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "This is a test"
+    And the response should contain "Unpublished"
 
   Scenario: backwards compatibility
     Given the "abc123" project has the following blurbs:

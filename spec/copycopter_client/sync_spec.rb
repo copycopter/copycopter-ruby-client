@@ -296,6 +296,16 @@ describe CopycopterClient::Sync do
     logger.should have_received(:flush).at_least_once
   end
 
+  it "doesn't return blank copy" do
+    client['en.test.key'] = ''
+    sync = build_sync(:polling_delay => 1)
+
+    sync.start
+    sleep(2)
+
+    sync['en.test.key'].should be_nil
+  end
+
   describe "given locked mutex" do
     Spec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|

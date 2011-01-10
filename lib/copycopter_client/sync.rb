@@ -103,8 +103,7 @@ module CopycopterClient
 
     def sync
       begin
-        downloaded_blurbs = client.download
-        lock { @blurbs = downloaded_blurbs }
+        download
         flush
       rescue ConnectionError => error
         logger.error(error.message)
@@ -122,6 +121,12 @@ module CopycopterClient
         end
       end
       yield(changes_to_push) if changes_to_push
+    end
+
+    def download
+      downloaded_blurbs = client.download
+      downloaded_blurbs.reject! { |key, value| value == "" }
+      lock { @blurbs = downloaded_blurbs }
     end
 
     def lock(&block)
