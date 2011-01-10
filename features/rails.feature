@@ -115,6 +115,7 @@ Feature: Using copycopter in a rails app
       def index
         @text = t("users.index.controller-test", :default => "default")
         @unpublished = t("users.index.unpublished-test", :default => "Unpublished")
+        t("users.index.unknown-test", :default => "Unknown")
       end
     end
     """
@@ -124,12 +125,15 @@ Feature: Using copycopter in a rails app
     <%= @text %>
     <%= @unpublished %>
     """
-    When I configure the copycopter client to use published data
-    And I start the application
+    When I start the application in the "production" environment
     And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "This is a test"
     And the response should contain "Unpublished"
+    And I wait for changes to be synchronized
+    And the "abc123" project should have the following blurbs:
+      | key                         | draft content |
+      | en.users.index.unknown-test | Unknown       |
 
   Scenario: backwards compatibility
     Given the "abc123" project has the following blurbs:

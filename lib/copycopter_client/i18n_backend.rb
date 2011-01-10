@@ -48,7 +48,7 @@ module CopycopterClient
       return fallback_value if fallback_value && !fallback_value.respond_to?(:to_str)
 
       default = fallback_value || options.delete(:default)
-      content = super(locale, key, options.update(:default => default))
+      content = super(locale, key, options.update(:default => default, :fallback => true))
       if content.respond_to?(:html_safe)
         content.html_safe
       else

@@ -130,4 +130,22 @@ describe CopycopterClient::I18nBackend do
         should include('Expected')
     end
   end
+
+  describe "with a backend using fallbacks" do
+    subject { build_backend }
+
+    before do
+      CopycopterClient::I18nBackend.class_eval do
+        include I18n::Backend::Fallbacks
+      end
+    end
+
+    it "queues missing keys with default" do
+      default = 'default value'
+
+      subject.translate('en', 'test.key', :default => default).should == default
+
+      sync['en.test.key'].should == default
+    end
+  end
 end

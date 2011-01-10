@@ -44,6 +44,18 @@ When "I start the application" do
   end
 end
 
+When /^I start the application in the "([^"]+)" environment$/ do |environment|
+  in_current_dir do
+    old_environment = ENV['RAILS_ENV']
+    begin
+      ENV['RAILS_ENV'] = environment
+      RailsServer.start(ENV['RAILS_PORT'], @announce_stderr)
+    ensure
+      ENV['RAILS_ENV'] = old_environment
+    end
+  end
+end
+
 When /^I visit (\/.*)$/ do |path|
   @last_response = RailsServer.get(path)
 end
