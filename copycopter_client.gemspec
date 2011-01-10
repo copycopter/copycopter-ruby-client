@@ -23,4 +23,5 @@ Gem::Specification.new do |s|
   s.summary = "Client for the Copycopter content management service"
 
   s.add_dependency 'i18n'
+  s.add_dependency 'json'
 end
