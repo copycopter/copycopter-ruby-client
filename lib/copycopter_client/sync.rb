@@ -135,7 +135,15 @@ module CopycopterClient
     end
 
     def spawner?
-      $0.include?("ApplicationSpawner") || $0 =~ /unicorn.*master/
+      passenger_spawner? || unicorn_spawner?
+    end
+
+    def passenger_spawner?
+      $0.include?("ApplicationSpawner")
+    end
+
+    def unicorn_spawner?
+      $0.include?("unicorn") && !caller.any? { |line| line.include?("worker_loop") }
     end
 
     def register_job_hooks

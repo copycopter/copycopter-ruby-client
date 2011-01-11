@@ -1,10 +1,9 @@
 class FakeUnicornServer
   def become_master
-    $0 = "unicorn master"
+    $0 = "unicorn"
   end
 
   def spawn
-    $0 = "PassengerFork"
     worker_loop(nil)
   end
 

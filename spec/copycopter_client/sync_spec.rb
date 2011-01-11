@@ -15,9 +15,13 @@ describe CopycopterClient::Sync do
 
   before do
     @syncs = []
+    @original_process_name = $0
   end
 
-  after { @syncs.each { |sync| sync.stop } }
+  after do
+    $0 = @original_process_name
+    @syncs.each { |sync| sync.stop }
+  end
 
   it "syncs when the process terminates" do
     api_key = "12345"
