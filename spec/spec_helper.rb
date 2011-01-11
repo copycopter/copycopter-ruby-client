@@ -20,7 +20,7 @@ ShamRack.mount(FakeCopycopterApp.new, "copycopter.com")
 
 Spec::Runner.configure do |config|
   config.include ClientSpecHelpers
-  config.include WebMock
+  config.include WebMock::API
   config.mock_with :mocha
   config.before do
     FakeCopycopterApp.reset

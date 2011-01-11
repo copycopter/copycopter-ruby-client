@@ -1,4 +1,12 @@
-share_as :DefinesConstants do
+module DefinesConstants
+  def self.included(example_group)
+    super
+    example_group.class_eval do
+      before { @defined_constants = [] }
+      after { undefine_constants }
+    end
+  end
+
   def define_class(class_name, base = Object, &block)
     class_name = class_name.to_s.camelize
     klass = Class.new(base)
@@ -25,9 +33,7 @@ share_as :DefinesConstants do
     yield(parent, name)
   end
 
-  before { @defined_constants = [] }
-
-  after do
+  def undefine_constants
     @defined_constants.reverse.each do |path|
       parse_constant(path) do |parent, name|
         parent.send(:remove_const, name)
