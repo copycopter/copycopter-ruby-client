@@ -42,7 +42,6 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:api_key).                 overridable }
   it { should have_config_option(:polling_delay).           overridable.default(300) }
   it { should have_config_option(:framework).               overridable }
-  it { should have_config_option(:fallback_backend).        overridable }
 
   it "should provide default values for secure connections" do
     config = CopycopterClient::Configuration.new
@@ -72,7 +71,7 @@ describe CopycopterClient::Configuration do
     [:api_key, :environment_name, :host, :http_open_timeout,
       :http_read_timeout, :client_name, :client_url, :client_version, :port,
       :protocol, :proxy_host, :proxy_pass, :proxy_port, :proxy_user, :secure,
-      :development_environments, :logger, :framework, :fallback_backend].each do |option|
+      :development_environments, :logger, :framework].each do |option|
       hash[option].should == config[option]
     end
     hash[:public].should == config.public?
@@ -203,7 +202,7 @@ share_examples_for "applied configuration" do
   it "builds and assigns an I18n backend" do
     CopycopterClient::Client.should have_received(:new).with(subject.to_hash)
     CopycopterClient::Sync.should have_received(:new).with(client, subject.to_hash)
-    CopycopterClient::I18nBackend.should have_received(:new).with(sync, subject.to_hash)
+    CopycopterClient::I18nBackend.should have_received(:new).with(sync)
     I18n.backend.should == backend
   end
 

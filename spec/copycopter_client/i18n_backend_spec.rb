@@ -3,24 +3,28 @@ require 'spec_helper'
 describe CopycopterClient::I18nBackend do
   let(:sync) { {} }
 
-  def build_backend(config = {})
-    default_config = CopycopterClient::Configuration.new.to_hash
-    backend = CopycopterClient::I18nBackend.new(sync, default_config.update(config))
+  def build_backend
+    backend = CopycopterClient::I18nBackend.new(sync)
     I18n.backend = backend
     backend
   end
 
-  before { @default_backend = I18n.backend }
+  before do
+    @default_backend = I18n.backend
+    sync.stubs(:wait_for_download)
+  end
+
   after { I18n.backend = @default_backend }
 
   subject { build_backend }
 
-  it "waits until the first download when reloaded" do
-    sync.stubs(:wait_for_download)
-
+  it "reloads locale files and waits for the sync to complete" do
+    I18n.stubs(:load_path => [])
     subject.reload!
+    subject.translate('en', 'test.key', :default => 'something')
 
     sync.should have_received(:wait_for_download)
+    I18n.should have_received(:load_path)
   end
 
   it "includes the base i18n backend" do
@@ -36,11 +40,14 @@ describe CopycopterClient::I18nBackend do
     backend.translate('en', 'test.key', :scope => 'prefix').should == value
   end
 
-  it "finds available locales" do
+  it "finds available locales from locale files and sync" do
+    YAML.stubs(:load_file => { 'es' => { 'key' => 'value' } })
+    I18n.stubs(:load_path => ["test.yml"])
+
     sync['en.key'] = ''
     sync['fr.key'] = ''
 
-    subject.available_locales.should =~ %w(en fr)
+    subject.available_locales.should =~ [:en, :es, :fr]
   end
 
   it "queues missing keys with default" do
@@ -80,52 +87,51 @@ describe CopycopterClient::I18nBackend do
       should == 'Expected'
   end
 
-  describe "with a fallback" do
-    let(:fallback) { I18n::Backend::Simple.new }
-    subject { build_backend(:fallback_backend => fallback) }
+  describe "with stored translations" do
+    subject { build_backend }
 
-    it "uses the fallback as a default" do
-      fallback.store_translations('en', 'test' => { 'key' => 'Expected' })
+    it "uses stored translations as a default" do
+      subject.store_translations('en', 'test' => { 'key' => 'Expected' })
       subject.translate('en', 'test.key', :default => 'Unexpected').
         should include('Expected')
       sync['en.test.key'].should == 'Expected'
     end
 
-    it "preserves interpolation markers in the fallback" do
-      fallback.store_translations('en', 'test' => { 'key' => '%{interpolate}' })
+    it "preserves interpolation markers in the stored translation" do
+      subject.store_translations('en', 'test' => { 'key' => '%{interpolate}' })
       subject.translate('en', 'test.key', :interpolate => 'interpolated').
         should include('interpolated')
       sync['en.test.key'].should == '%{interpolate}'
     end
 
-    it "uses the default if the fallback doesn't have the key" do
+    it "uses the default if the stored translations don't have the key" do
       subject.translate('en', 'test.key', :default => 'Expected').
         should include('Expected')
     end
 
     it "uses the syncd key when present" do
-      fallback.store_translations('en', 'test' => { 'key' => 'Unexpected' })
+      subject.store_translations('en', 'test' => { 'key' => 'Unexpected' })
       sync['en.test.key'] = 'Expected'
       subject.translate('en', 'test.key', :default => 'default').
         should include('Expected')
     end
 
-    it "returns a hash directly without storing" do
+    it "stores a nested hash" do
       nested = { :nested => 'value' }
-      fallback.store_translations('en', 'key' => nested)
+      subject.store_translations('en', 'key' => nested)
       subject.translate('en', 'key', :default => 'Unexpected').should == nested
-      sync['en.key'].should be_nil
+      sync['en.key.nested'].should == 'value'
     end
 
     it "returns an array directly without storing" do
       array = ['value']
-      fallback.store_translations('en', 'key' => array)
+      subject.store_translations('en', 'key' => array)
       subject.translate('en', 'key', :default => 'Unexpected').should == array
       sync['en.key'].should be_nil
     end
 
     it "looks up an array of defaults" do
-      fallback.store_translations('en', 'key' => { 'one' => 'Expected' })
+      subject.store_translations('en', 'key' => { 'one' => 'Expected' })
       subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"]).
         should include('Expected')
     end

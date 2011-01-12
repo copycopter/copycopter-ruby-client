@@ -264,7 +264,6 @@ Feature: Using copycopter in a rails app
       | key                        | draft content  |
       | user.attributes.name.blank | can't be blank |
 
-
   Scenario: ensure keys are synced with short lived processes
     When I configure the copycopter client to have a polling delay of 86400 seconds
     And I start the application
@@ -272,4 +271,29 @@ Feature: Using copycopter in a rails app
     Then the "abc123" project should have the following blurbs:
       | key             | draft content |
       | en.threaded.key | all your base |
+
+  Scenario: support pluralization
+    When I write to "app/controllers/users_controller.rb" with:
+    """
+    class UsersController < ActionController::Base
+      def index
+        render
+      end
+    end
+    """
+    When I route the "users" resource
+    And I write to "app/views/users/index.html.erb" with:
+    """
+    <%= time_ago_in_words(1.hour.ago) %> ago
+    <%= time_ago_in_words(2.hours.ago) %> ago
+    """
+    When I start the application
+    And I visit /users/
+    Then the response should contain "1 hour ago"
+    And the response should contain "2 hours ago"
+    When I wait for changes to be synchronized
+    Then the "abc123" project should have the following blurbs:
+      | key                                               | draft content        |
+      | en.datetime.distance_in_words.about_x_hours.one   | about 1 hour         |
+      | en.datetime.distance_in_words.about_x_hours.other | about %{count} hours |
 
