@@ -173,6 +173,7 @@ Feature: Using copycopter in a rails app
       | test.one | expected one  | unexpected one    |
       | test.two | expected two  | unexpected two    |
     When I successfully rake "copycopter:deploy"
+    And the output should contain "Successfully marked all blurbs as published"
     Then the "abc123" project should have the following blurbs:
       | key      | draft content | published content |
       | test.one | expected one  | expected one      |
