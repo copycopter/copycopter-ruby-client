@@ -42,6 +42,7 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:api_key).                 overridable }
   it { should have_config_option(:polling_delay).           overridable.default(300) }
   it { should have_config_option(:framework).               overridable }
+  it { should have_config_option(:middleware).              overridable }
 
   it "should provide default values for secure connections" do
     config = CopycopterClient::Configuration.new
@@ -105,12 +106,14 @@ describe CopycopterClient::Configuration do
     config.development_environments = %w(development)
     config.environment_name = 'production'
     config.should be_public
+    config.should_not be_development
   end
 
-  it "should not be public in a development environment" do
+  it "should be development in a development environment" do
     config = CopycopterClient::Configuration.new
     config.development_environments = %w(staging)
     config.environment_name = 'staging'
+    config.should be_development
     config.should_not be_public
   end
 
@@ -246,6 +249,48 @@ describe CopycopterClient::Configuration, "applied when not testing" do
 
   it "starts sync" do
     sync.should have_received(:start)
+  end
+end
+
+describe CopycopterClient::Configuration, "applied when developing with middleware" do
+  it_should_behave_like "applied configuration"
+
+  let(:middleware) { MiddlewareStack.new }
+
+  before do
+    subject.middleware = middleware
+    subject.environment_name = 'development'
+    subject.apply
+  end
+
+  it "adds the sync middleware" do
+    middleware.should include(CopycopterClient::RequestSync)
+  end
+end
+
+describe CopycopterClient::Configuration, "applied when developing without middleware" do
+  it_should_behave_like "applied configuration"
+
+  before do
+    subject.middleware = nil
+    subject.environment_name = 'development'
+    subject.apply
+  end
+end
+
+describe CopycopterClient::Configuration, "applied with middleware when not developing" do
+  it_should_behave_like "applied configuration"
+
+  let(:middleware) { MiddlewareStack.new }
+
+  before do
+    subject.middleware = middleware
+    subject.environment_name = 'production'
+    subject.apply
+  end
+
+  it "doesn't add the sync middleware" do
+    middleware.should_not include(CopycopterClient::RequestSync)
   end
 end
 

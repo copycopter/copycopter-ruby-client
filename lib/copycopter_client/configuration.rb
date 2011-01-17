@@ -3,6 +3,7 @@ require 'copycopter_client/i18n_backend'
 require 'copycopter_client/client'
 require 'copycopter_client/sync'
 require 'copycopter_client/prefixed_logger'
+require 'copycopter_client/request_sync'
 
 module CopycopterClient
   # Used to set up and modify settings for the client.
@@ -13,7 +14,7 @@ module CopycopterClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
-        :framework].freeze
+        :framework, :middleware].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -72,6 +73,9 @@ module CopycopterClient
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
     attr_reader :logger
 
+    # @return the middleware stack, if any, which should respond to +use+
+    attr_accessor :middleware
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
@@ -116,10 +120,17 @@ module CopycopterClient
       to_hash.merge(hash)
     end
 
-    # Determines if the content will be editable
-    # @return [Boolean] Returns +false+ if in a development environment, +true+ otherwise.
+    # Determines if the published or draft content will be used
+    # @return [Boolean] Returns +false+ if in a development or test
+    # environment, +true+ otherwise.
     def public?
       !(development_environments + test_environments).include?(environment_name)
+    end
+
+    # Determines if the content will be editable
+    # @return [Boolean] Returns +true+ if in a development environment, +false+ otherwise.
+    def development?
+      development_environments.include?(environment_name)
     end
 
     # Determines if the content will fetched from the server
@@ -134,7 +145,7 @@ module CopycopterClient
       @applied
     end
 
-      # Applies the configuration (internal).
+    # Applies the configuration (internal).
     #
     # Called automatically when {CopycopterClient.configure} is called in the application.
     #
@@ -147,6 +158,7 @@ module CopycopterClient
       I18n.backend = I18nBackend.new(sync)
       CopycopterClient.client = client
       CopycopterClient.sync = sync
+      middleware.use(RequestSync, :sync => sync) if middleware && !public?
       @applied = true
       logger.info("Client #{VERSION} ready")
       logger.info("Environment Info: #{environment_info}")

@@ -17,6 +17,7 @@ module CopycopterClient
         config.environment_name = ::Rails.env
         config.logger           = ::Rails.logger
         config.framework        = "Rails: #{::Rails::VERSION::STRING}"
+        config.middleware       = ::Rails.configuration.middleware
       end
     end
   end

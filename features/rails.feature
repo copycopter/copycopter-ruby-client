@@ -98,8 +98,7 @@ Feature: Using copycopter in a rails app
     When I start the application
     And I visit /users/
     Then the response should contain "not found"
-    When I wait for changes to be synchronized
-    Then the "abc123" project should have the following blurbs:
+    And the "abc123" project should have the following blurbs:
       | key                | draft content |
       | en.users.index.404 | not found     |
     And the log should contain "Uploaded missing translations"
