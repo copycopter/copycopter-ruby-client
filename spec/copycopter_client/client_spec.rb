@@ -29,28 +29,28 @@ describe CopycopterClient do
     it "should timeout when connecting" do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_open_timeout => 4)
-      client.download
+      client.download { |ignore| }
       http.open_timeout.should == 4
     end
 
     it "should timeout when reading" do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_read_timeout => 4)
-      client.download
+      client.download { |ignore| }
       http.read_timeout.should == 4
     end
 
     it "uses ssl when secure" do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => true)
-      client.download
+      client.download { |ignore| }
       http.use_ssl.should == true
     end
 
     it "doesn't use ssl when insecure" do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => false)
-      client.download
+      client.download { |ignore| }
       http.use_ssl.should == false
     end
 
@@ -68,7 +68,7 @@ describe CopycopterClient do
       errors.each do |original_error|
         http.stubs(:get).raises(original_error)
         client = build_client_with_project
-        expect { client.download }.
+        expect { client.download { |ignore| } }.
           to raise_error(CopycopterClient::ConnectionError) { |error|
             error.message.
               should == "#{original_error.class.name}: #{original_error.message}"
@@ -78,7 +78,8 @@ describe CopycopterClient do
 
     it "handles 500 errors from downloads with ConnectionError" do
       client = build_client(:api_key => 'raise_error')
-      expect { client.download }.to raise_error(CopycopterClient::ConnectionError)
+      expect { client.download { |ignore| } }.
+        to raise_error(CopycopterClient::ConnectionError)
     end
 
     it "handles 500 errors from uploads with ConnectionError" do
@@ -88,7 +89,8 @@ describe CopycopterClient do
 
     it "handles 404 errors from downloads with ConnectionError" do
       client = build_client(:api_key => 'bogus')
-      expect { client.download }.to raise_error(CopycopterClient::InvalidApiKey)
+      expect { client.download { |ignore| } }.
+        to raise_error(CopycopterClient::InvalidApiKey)
     end
 
     it "handles 404 errors from uploads with ConnectionError" do
@@ -109,8 +111,10 @@ describe CopycopterClient do
         'key.two' => "expected two"
       }
     })
+    client = build_client(:api_key => project.api_key, :public => true)
+    blurbs = nil
 
-    blurbs = build_client(:api_key => project.api_key, :public => true).download
+    client.download { |yielded| blurbs = yielded }
 
     blurbs.should == {
       'key.one' => 'expected one',
@@ -121,7 +125,7 @@ describe CopycopterClient do
   it "logs that it performed a download" do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
-    client.download
+    client.download { |ignore| }
     logger.should have_entry(:info, "Downloaded translations")
   end
 
@@ -137,8 +141,10 @@ describe CopycopterClient do
         'key.three' => "unexpected three"
       }
     })
+    client = build_client(:api_key => project.api_key, :public => false)
+    blurbs = nil
 
-    blurbs = build_client(:api_key => project.api_key, :public => false).download
+    client.download { |yielded| blurbs = yielded }
 
     blurbs.should == {
       'key.one' => 'expected one',

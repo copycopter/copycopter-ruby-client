@@ -125,9 +125,10 @@ module CopycopterClient
     end
 
     def download
-      downloaded_blurbs = client.download
-      downloaded_blurbs.reject! { |key, value| value == "" }
-      lock { @blurbs = downloaded_blurbs }
+      client.download do |downloaded_blurbs|
+        downloaded_blurbs.reject! { |key, value| value == "" }
+        lock { @blurbs = downloaded_blurbs }
+      end
     end
 
     def lock(&block)

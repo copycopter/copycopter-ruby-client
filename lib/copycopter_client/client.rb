@@ -35,14 +35,14 @@ module CopycopterClient
     # If the +public+ option was set to +true+, this will use published blurbs.
     # Otherwise, draft content is fetched.
     #
-    # @return [Hash] blurbs
+    # @yield [Hash] downloaded blurbs
     # @raise [ConnectionError] if the connection fails
     def download
       connect do |http|
         response = http.get(uri(download_resource))
         check(response)
         log("Downloaded translations")
-        JSON.parse(response.body)
+        yield JSON.parse(response.body)
       end
     end
 

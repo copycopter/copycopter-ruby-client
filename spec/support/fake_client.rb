@@ -16,7 +16,8 @@ class FakeClient
   def download
     wait_for_delay
     @downloads += 1
-    @data.dup
+    yield @data.dup
+    nil
   end
 
   def upload(data)
