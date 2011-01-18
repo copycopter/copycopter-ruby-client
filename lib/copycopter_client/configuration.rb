@@ -158,7 +158,7 @@ module CopycopterClient
       I18n.backend = I18nBackend.new(sync)
       CopycopterClient.client = client
       CopycopterClient.sync = sync
-      middleware.use(RequestSync, :sync => sync) if middleware && !public?
+      middleware.use(RequestSync, :sync => sync) if middleware && development?
       @applied = true
       logger.info("Client #{VERSION} ready")
       logger.info("Environment Info: #{environment_info}")

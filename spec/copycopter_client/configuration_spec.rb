@@ -285,7 +285,7 @@ describe CopycopterClient::Configuration, "applied with middleware when not deve
 
   before do
     subject.middleware = middleware
-    subject.environment_name = 'production'
+    subject.environment_name = 'test'
     subject.apply
   end
 
