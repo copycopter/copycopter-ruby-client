@@ -86,6 +86,17 @@ module CopycopterClient
       with_queued_changes do |queued|
         client.upload(queued)
       end
+    rescue ConnectionError => error
+      logger.error(error.message)
+    end
+
+    def download
+      client.download do |downloaded_blurbs|
+        downloaded_blurbs.reject! { |key, value| value == "" }
+        lock { @blurbs = downloaded_blurbs }
+      end
+    rescue ConnectionError => error
+      logger.error(error.message)
     end
 
     private
@@ -103,12 +114,8 @@ module CopycopterClient
     end
 
     def sync
-      begin
-        download
-        flush
-      rescue ConnectionError => error
-        logger.error(error.message)
-      end
+      download
+      flush
     ensure
       @pending = false
     end
@@ -122,13 +129,6 @@ module CopycopterClient
         end
       end
       yield(changes_to_push) if changes_to_push
-    end
-
-    def download
-      client.download do |downloaded_blurbs|
-        downloaded_blurbs.reject! { |key, value| value == "" }
-        lock { @blurbs = downloaded_blurbs }
-      end
     end
 
     def lock(&block)

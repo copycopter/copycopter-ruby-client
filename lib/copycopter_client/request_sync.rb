@@ -1,5 +1,5 @@
 module CopycopterClient
-  # Rack middleware that synchronizes with Copycopter after each request.
+  # Rack middleware that synchronizes with Copycopter during each request.
   #
   # This is injected into the Rails middleware stack in development environments.
   class RequestSync
@@ -14,6 +14,7 @@ module CopycopterClient
     # Invokes the upstream Rack application and flushes the sync after each
     # request.
     def call(env)
+      @sync.download
       response = @app.call(env)
       @sync.flush
       response

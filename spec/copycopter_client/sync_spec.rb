@@ -100,14 +100,44 @@ describe CopycopterClient::Sync do
   end
 
   it "uploads changes when flushed" do
-    sync = build_sync(:polling_delay => 86400)
-    sync.start
-    sleep 2
+    sync = build_sync
     sync['test.key'] = 'test value'
+
     sync.flush
-    sleep(2)
 
     client.uploaded.should == { 'test.key' => 'test value' }
+  end
+
+  it "downloads changes" do
+    client['test.key'] = 'test value'
+    sync = build_sync
+
+    sync.download
+
+    sync['test.key'].should == 'test value'
+  end
+
+  it "handles connection errors when flushing" do
+    failure = "server is napping"
+    logger = FakeLogger.new
+    client.stubs(:upload).raises(CopycopterClient::ConnectionError.new(failure))
+    sync = build_sync(:logger => logger)
+    sync['upload.key'] = 'upload'
+
+    sync.flush
+
+    logger.should have_entry(:error, failure)
+  end
+
+  it "handles connection errors when downloading" do
+    failure = "server is napping"
+    logger = FakeLogger.new
+    client.stubs(:download).raises(CopycopterClient::ConnectionError.new(failure))
+    sync = build_sync(:logger => logger)
+
+    sync.download
+
+    logger.should have_entry(:error, failure)
   end
 
   it "handles connection errors when polling" do

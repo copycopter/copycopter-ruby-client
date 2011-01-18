@@ -71,13 +71,11 @@ Feature: Using copycopter in a rails app
     <%= @text %>
     """
     When I start the application
-    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Old content"
     When the the following blurbs are updated in the "abc123" project:
       | key                            | draft content |
       | en.users.index.controller-test | New content   |
-    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "New content"
 
