@@ -37,11 +37,17 @@ class FakeCopycopterApp < Sinatra::Base
   end
 
   get "/api/v2/projects/:api_key/published_blurbs" do |api_key|
-    with_project(api_key) { |project| project.published.to_json }
+    with_project(api_key) do |project|
+      etag project.etag
+      project.published.to_json
+    end
   end
 
   get "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
-    with_project(api_key) { |project| project.draft.to_json }
+    with_project(api_key) do |project|
+      etag project.etag
+      project.draft.to_json
+    end
   end
 
   post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
@@ -66,10 +72,12 @@ class FakeCopycopterApp < Sinatra::Base
       @api_key   = attrs['api_key']
       @draft     = attrs['draft']     || {}
       @published = attrs['published'] || {}
+      @etag      = attrs['etag']      || 1
     end
 
     def to_hash
       { 'api_key'   => @api_key,
+        'etag'      => @etag,
         'draft'     => @draft,
         'published' => @published }
     end
@@ -77,6 +85,7 @@ class FakeCopycopterApp < Sinatra::Base
     def update(attrs)
       @draft.    update(attrs['draft'])     if attrs['draft']
       @published.update(attrs['published']) if attrs['published']
+      @etag += 1
       self.class.save(self)
     end
 
@@ -87,6 +96,10 @@ class FakeCopycopterApp < Sinatra::Base
     def deploy
       @published.update(@draft)
       self.class.save(self)
+    end
+
+    def etag
+      @etag.to_s
     end
 
     def self.create(api_key)

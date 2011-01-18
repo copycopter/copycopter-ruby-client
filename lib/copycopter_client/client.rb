@@ -35,14 +35,23 @@ module CopycopterClient
     # If the +public+ option was set to +true+, this will use published blurbs.
     # Otherwise, draft content is fetched.
     #
+    # The client tracks ETags between download requests, and will return
+    # without yielding anything if the server returns a not modified response.
+    #
     # @yield [Hash] downloaded blurbs
     # @raise [ConnectionError] if the connection fails
     def download
       connect do |http|
-        response = http.get(uri(download_resource))
-        check(response)
-        log("Downloaded translations")
-        yield JSON.parse(response.body)
+        request = Net::HTTP::Get.new(uri(download_resource))
+        request['If-None-Match'] = @etag
+        response = http.request(request)
+        if check(response)
+          log("Downloaded translations")
+          yield JSON.parse(response.body)
+        else
+          log("No new translations")
+        end
+        @etag = response['ETag']
       end
     end
 
@@ -101,11 +110,14 @@ module CopycopterClient
     end
 
     def check(response)
-      if Net::HTTPNotFound === response
+      case response
+      when Net::HTTPNotFound
         raise InvalidApiKey, "Invalid API key: #{api_key}"
-      end
-
-      unless Net::HTTPSuccess === response
+      when Net::HTTPNotModified
+        false
+      when Net::HTTPSuccess
+        true
+      else
         raise ConnectionError, "#{response.code}: #{response.body}"
       end
     end

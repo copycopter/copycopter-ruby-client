@@ -66,7 +66,7 @@ describe CopycopterClient do
       ]
 
       errors.each do |original_error|
-        http.stubs(:get).raises(original_error)
+        http.stubs(:request).raises(original_error)
         client = build_client_with_project
         expect { client.download { |ignore| } }.
           to raise_error(CopycopterClient::ConnectionError) { |error|
@@ -150,6 +150,23 @@ describe CopycopterClient do
       'key.one' => 'expected one',
       'key.two' => 'expected two'
     }
+  end
+
+  it "handles a 304 response when downloading" do
+    project = add_project
+    project.update('draft' => { 'key.one' => "expected one" })
+    logger = FakeLogger.new
+    client = build_client(:api_key => project.api_key,
+                          :public  => false,
+                          :logger  => logger)
+    yields = 0
+
+    2.times do
+      client.download { |ignore| yields += 1 }
+    end
+
+    yields.should == 1
+    logger.should have_entry(:info, "No new translations")
   end
 
   it "uploads defaults for missing blurbs in an existing project" do
