@@ -44,6 +44,12 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:framework).               overridable }
   it { should have_config_option(:middleware).              overridable }
 
+  it "provides the root ssl certificate" do
+    should have_config_option(:ca_file).
+      overridable.
+      default(File.join(PROJECT_ROOT, "AddTrustExternalCARoot.crt"))
+  end
+
   it "should provide default values for secure connections" do
     config = CopycopterClient::Configuration.new
     config.secure = true
@@ -72,7 +78,7 @@ describe CopycopterClient::Configuration do
     [:api_key, :environment_name, :host, :http_open_timeout,
       :http_read_timeout, :client_name, :client_url, :client_version, :port,
       :protocol, :proxy_host, :proxy_pass, :proxy_port, :proxy_user, :secure,
-      :development_environments, :logger, :framework].each do |option|
+      :development_environments, :logger, :framework, :ca_file].each do |option|
       hash[option].should == config[option]
     end
     hash[:public].should == config.public?

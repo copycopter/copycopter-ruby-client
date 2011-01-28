@@ -14,7 +14,10 @@ module CopycopterClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
-        :framework, :middleware].freeze
+        :framework, :middleware, :ca_file].freeze
+
+    # Default root certificate used to verify ssl sessions.
+    CA_FILE = File.expand_path('../../../AddTrustExternalCARoot.crt', __FILE__).freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -76,6 +79,9 @@ module CopycopterClient
     # @return the middleware stack, if any, which should respond to +use+
     attr_accessor :middleware
 
+    # @return [String] the path to a root certificate file used to verify ssl sessions. Default's to the root certificate file for copycopter.com.
+    attr_accessor :ca_file
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
@@ -91,6 +97,7 @@ module CopycopterClient
       self.client_url               = 'http://copycopter.com'
       self.polling_delay            = 300
       self.logger                   = Logger.new($stdout)
+      self.ca_file                  = CA_FILE
 
       @applied = false
     end

@@ -23,9 +23,10 @@ module CopycopterClient
     # @option options [Fixnum] :http_open_timeout how long to wait before timing out when opening the socket
     # @option options [Boolean] :secure whether to use SSL
     # @option options [Logger] :logger where to log transactions
+    # @option options [String] :ca_file path to root certificate file for ssl verification
     def initialize(options)
       [:api_key, :host, :port, :public, :http_read_timeout,
-        :http_open_timeout, :secure, :logger].each do |option|
+        :http_open_timeout, :secure, :logger, :ca_file].each do |option|
         instance_variable_set("@#{option}", options[option])
       end
     end
@@ -79,7 +80,7 @@ module CopycopterClient
     private
 
     attr_reader :host, :port, :api_key, :http_read_timeout,
-      :http_open_timeout, :secure, :logger
+      :http_open_timeout, :secure, :logger, :ca_file
 
     def public?
       @public
@@ -102,6 +103,8 @@ module CopycopterClient
       http.open_timeout = http_open_timeout
       http.read_timeout = http_read_timeout
       http.use_ssl      = secure
+      http.verify_mode  = OpenSSL::SSL::VERIFY_PEER
+      http.ca_file      = ca_file
       begin
         yield(http)
       rescue *HTTP_ERRORS => exception

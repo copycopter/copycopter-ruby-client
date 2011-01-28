@@ -40,11 +40,13 @@ describe CopycopterClient do
       http.read_timeout.should == 4
     end
 
-    it "uses ssl when secure" do
+    it "uses verified ssl when secure" do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => true)
       client.download { |ignore| }
       http.use_ssl.should == true
+      http.verify_mode.should == OpenSSL::SSL::VERIFY_PEER
+      http.ca_file.should == CopycopterClient::Configuration::CA_FILE
     end
 
     it "doesn't use ssl when insecure" do
