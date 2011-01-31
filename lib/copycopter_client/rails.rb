@@ -1,12 +1,3 @@
-require 'copycopter_client/helper'
-
-if defined?(ActionController::Base)
-  ActionController::Base.send :include, CopycopterClient::Helper
-end
-if defined?(ActionView::Base)
-  ActionView::Base.send :include, CopycopterClient::Helper
-end
-
 module CopycopterClient
   # Responsible for Rails initialization
   module Rails
