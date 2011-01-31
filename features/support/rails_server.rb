@@ -28,6 +28,12 @@ class RailsServer
   end
 
   def self.run(port, silent)
+    if silent
+      require 'stringio'
+      $stdout = StringIO.new
+      $stderr = StringIO.new
+    end
+
     require 'config/environment'
     require 'thin'
 

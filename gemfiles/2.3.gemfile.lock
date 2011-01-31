@@ -15,27 +15,30 @@ GEM
     appraisal (0.1)
       bundler
       rake
-    aruba (0.2.5)
-      background_process
-      cucumber (~> 0.9.4)
-    background_process (1.2)
+    aruba (0.3.2)
+      childprocess (~> 0.1.6)
+      cucumber (~> 0.10.0)
+      rspec (~> 2.3.0)
     bourne (1.0)
       mocha (= 0.9.8)
-    builder (2.1.2)
+    builder (3.0.0)
+    childprocess (0.1.6)
+      ffi (~> 0.6.3)
     columnize (0.3.1)
     crack (0.1.8)
-    cucumber (0.9.4)
-      builder (~> 2.1.2)
+    cucumber (0.10.0)
+      builder (>= 2.1.2)
       diff-lcs (~> 1.1.2)
-      gherkin (~> 2.2.9)
+      gherkin (~> 2.3.2)
       json (~> 1.4.6)
       term-ansicolor (~> 1.0.5)
     daemons (1.1.0)
     diff-lcs (1.1.2)
     eventmachine (0.12.10)
-    gherkin (2.2.9)
+    ffi (0.6.3)
+      rake (>= 0.8.7)
+    gherkin (2.3.3)
       json (~> 1.4.6)
-      term-ansicolor (~> 1.0.5)
     i18n (0.4.2)
     json (1.4.6)
     linecache (0.43)
@@ -84,9 +87,9 @@ PLATFORMS
 
 DEPENDENCIES
   appraisal
-  aruba
+  aruba (~> 0.3.2)
   bourne
-  cucumber
+  cucumber (~> 0.10.0)
   i18n
   json
   rails (~> 2.3)

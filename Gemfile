@@ -7,10 +7,10 @@ gem "bourne"
 gem "webmock"
 gem "rake"
 gem "sham_rack"
-gem "cucumber"
+gem "cucumber", "~> 0.10.0"
 gem "sinatra", :require => false
 gem "yard", :require => false
-gem "aruba"
+gem "aruba", "~> 0.3.2"
 gem "ruby-debug"
 gem "json"
 gem "thin"

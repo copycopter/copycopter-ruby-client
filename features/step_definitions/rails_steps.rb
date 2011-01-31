@@ -19,7 +19,7 @@ When "I generate a rails application" do
 end
 
 When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
-  create_file("config/initializers/copycopter.rb", <<-RUBY)
+  write_file("config/initializers/copycopter.rb", <<-RUBY)
     CopycopterClient.configure do |config|
       config.api_key = "#{api_key}"
       config.polling_delay = 1
@@ -131,7 +131,7 @@ When /^I route the "([^"]+)" resource$/ do |resource|
 
   routes = "#{draw}resources :#{resource}\nend"
 
-  create_file("config/routes.rb", routes, false)
+  overwrite_file("config/routes.rb", routes)
 end
 
 When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)"$/ do |key, value|

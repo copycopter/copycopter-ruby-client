@@ -9,11 +9,11 @@ gem "bourne"
 gem "sham_rack"
 gem "rspec", "~> 2.3"
 gem "yard", {:require=>false}
-gem "aruba"
+gem "aruba", "~> 0.3.2"
 gem "thin"
 gem "sinatra", {:require=>false}
 gem "json"
-gem "cucumber"
+gem "cucumber", "~> 0.10.0"
 gem "i18n"
 gem "appraisal", {:require=>false}
 gem "webmock"

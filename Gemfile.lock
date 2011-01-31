@@ -33,13 +33,15 @@ GEM
       bundler
       rake
     arel (2.0.6)
-    aruba (0.2.7)
-      background_process
+    aruba (0.3.2)
+      childprocess (~> 0.1.6)
       cucumber (~> 0.10.0)
-    background_process (1.2)
+      rspec (~> 2.3.0)
     bourne (1.0)
       mocha (= 0.9.8)
     builder (2.1.2)
+    childprocess (0.1.6)
+      ffi (~> 0.6.3)
     columnize (0.3.2)
     crack (0.1.8)
     cucumber (0.10.0)
@@ -53,6 +55,8 @@ GEM
     erubis (2.6.6)
       abstract (>= 1.0.0)
     eventmachine (0.12.10)
+    ffi (0.6.3)
+      rake (>= 0.8.7)
     gherkin (2.3.3)
       json (~> 1.4.6)
     i18n (0.5.0)
@@ -125,9 +129,9 @@ PLATFORMS
 
 DEPENDENCIES
   appraisal
-  aruba
+  aruba (~> 0.3.2)
   bourne
-  cucumber
+  cucumber (~> 0.10.0)
   i18n
   json
   rails (~> 3.0.3)
