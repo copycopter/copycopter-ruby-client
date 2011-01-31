@@ -24,6 +24,7 @@ When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
       config.api_key = "#{api_key}"
       config.polling_delay = 1
       config.host = 'localhost'
+      config.secure = false
       config.port = #{FakeCopycopterApp.port}
     end
   RUBY

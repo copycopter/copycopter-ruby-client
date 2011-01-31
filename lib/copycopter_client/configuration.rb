@@ -86,7 +86,7 @@ module CopycopterClient
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
     def initialize
-      self.secure                   = false
+      self.secure                   = true
       self.host                     = 'copycopter.com'
       self.http_open_timeout        = 2
       self.http_read_timeout        = 5
