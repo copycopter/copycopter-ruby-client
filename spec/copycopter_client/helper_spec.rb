@@ -12,7 +12,7 @@ describe CopycopterClient::Helper do
     I18n.stubs(:translate)
   end
 
-  Spec::Matchers.define :have_translated do |key, default|
+  RSpec::Matchers.define :have_translated do |key, default|
     match do |ignored_subject|
       extend Mocha::API
       I18n.should have_received(:translate).with(key, :default => default)

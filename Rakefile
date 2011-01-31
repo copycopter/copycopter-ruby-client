@@ -6,7 +6,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'cucumber/rake/task'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 require 'yard'
 
 desc 'Default: run the specs and features.'
@@ -15,9 +15,9 @@ task :default => :spec do
 end
 
 desc 'Test the copycopter_client plugin.'
-Spec::Rake::SpecTask.new do |t|
-  t.spec_opts = ['--options', "spec/spec.opts"]
-  t.spec_files = FileList['spec/copycopter_client/**/*_spec.rb']
+RSpec::Core::RakeTask.new do |t|
+  t.rspec_opts = ['--color', "--format progress"]
+  t.pattern = 'spec/copycopter_client/**/*_spec.rb'
 end
 
 desc "Run cucumber features"

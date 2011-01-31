@@ -343,7 +343,7 @@ describe CopycopterClient::Sync do
   end
 
   describe "given locked mutex" do
-    Spec::Matchers.define :finish_after_unlocking do |mutex|
+    RSpec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|
         sleep(0.1)
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CopycopterClient::Configuration do
-  Spec::Matchers.define :have_config_option do |option|
+  RSpec::Matchers.define :have_config_option do |option|
     match do |config|
       config.should respond_to(option)
 
@@ -204,6 +204,7 @@ share_examples_for "applied configuration" do
     CopycopterClient::Client.stubs(:new => client)
     CopycopterClient::Sync.stubs(:new => sync)
     subject.logger = logger
+    apply
   end
 
   it { should be_applied }
@@ -233,51 +234,51 @@ share_examples_for "applied configuration" do
 end
 
 describe CopycopterClient::Configuration, "applied when testing" do
-  it_should_behave_like "applied configuration"
-
-  before do
-    subject.environment_name = 'test'
-    subject.apply
+  it_should_behave_like "applied configuration" do
+    it "doesn't start sync" do
+      sync.should have_received(:start).never
+    end
   end
 
-  it "doesn't start sync" do
-    sync.should have_received(:start).never
+  def apply
+    subject.environment_name = 'test'
+    subject.apply
   end
 end
 
 describe CopycopterClient::Configuration, "applied when not testing" do
-  it_should_behave_like "applied configuration"
-
-  before do
-    subject.environment_name = 'development'
-    subject.apply
+  it_should_behave_like "applied configuration" do
+    it "starts sync" do
+      sync.should have_received(:start)
+    end
   end
 
-  it "starts sync" do
-    sync.should have_received(:start)
+  def apply
+    subject.environment_name = 'development'
+    subject.apply
   end
 end
 
 describe CopycopterClient::Configuration, "applied when developing with middleware" do
-  it_should_behave_like "applied configuration"
+  it_should_behave_like "applied configuration" do
+    it "adds the sync middleware" do
+      middleware.should include(CopycopterClient::RequestSync)
+    end
+  end
 
   let(:middleware) { MiddlewareStack.new }
 
-  before do
+  def apply
     subject.middleware = middleware
     subject.environment_name = 'development'
     subject.apply
-  end
-
-  it "adds the sync middleware" do
-    middleware.should include(CopycopterClient::RequestSync)
   end
 end
 
 describe CopycopterClient::Configuration, "applied when developing without middleware" do
   it_should_behave_like "applied configuration"
 
-  before do
+  def apply
     subject.middleware = nil
     subject.environment_name = 'development'
     subject.apply
@@ -289,7 +290,7 @@ describe CopycopterClient::Configuration, "applied with middleware when not deve
 
   let(:middleware) { MiddlewareStack.new }
 
-  before do
+  def apply
     subject.middleware = middleware
     subject.environment_name = 'test'
     subject.apply

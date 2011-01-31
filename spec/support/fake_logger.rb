@@ -41,7 +41,7 @@ class FakeLogger
   attr_reader :entries
 end
 
-Spec::Matchers.define :have_entry do |severity, entry|
+RSpec::Matchers.define :have_entry do |severity, entry|
   match do |logger|
     @logger = logger
     logger.has_entry?(severity, entry)

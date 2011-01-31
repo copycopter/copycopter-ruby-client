@@ -1,6 +1,5 @@
 require 'rubygems'
-require 'spec'
-require 'spec/autorun'
+require 'rspec'
 require 'bourne'
 require 'sham_rack'
 require 'webmock/rspec'
@@ -18,7 +17,7 @@ end
 WebMock.disable_net_connect!
 ShamRack.mount(FakeCopycopterApp.new, "copycopter.com", 443)
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   config.include ClientSpecHelpers
   config.include WebMock::API
   config.mock_with :mocha
