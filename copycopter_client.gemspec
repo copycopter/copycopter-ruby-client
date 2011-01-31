@@ -11,7 +11,6 @@ Gem::Specification.new do |s|
   s.name = "copycopter_client"
   s.version = CopycopterClient::VERSION
   s.authors = ["thoughtbot"]
-  s.date = "2010-06-04"
   s.email = "support@thoughtbot.com"
   s.files = include_files
   s.homepage = "http://github.com/thoughtbot/copycopter_client"
