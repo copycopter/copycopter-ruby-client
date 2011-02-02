@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-include_files = ["README*", "MIT-LICENSE", "Rakefile", "init.rb", "AddTrustExternalCARoot", "{lib,tasks,spec,features,rails}/**/*"].map do |glob|
+include_files = ["README*", "MIT-LICENSE", "Rakefile", "init.rb", "AddTrustExternalCARoot.crt", "{lib,tasks,spec,features,rails}/**/*"].map do |glob|
   Dir[glob]
 end.flatten
 
