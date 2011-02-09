@@ -1,9 +1,9 @@
 Copycopter Client
 =================
 
-This is the client gem for integrating apps with "Copycopter":http://copycopter.com.
+This is the client gem for integrating apps with [Copycopter](http://copycopter.com).
 
-The client integrates with the I18n gem so that you can access copy text and translations from a Copycopter project.
+The client integrates with the I18n gem so that you can access copy and translations from a Copycopter project.
 
 Installation
 ------------
