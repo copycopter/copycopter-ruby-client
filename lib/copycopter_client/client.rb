@@ -12,7 +12,7 @@ module CopycopterClient
     # These errors will be rescued when connecting Copycopter.
     HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
                    Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
-                   Net::ProtocolError]
+                   Net::ProtocolError, SocketError]
 
     # Usually instantiated from {Configuration#apply}. Copies options.
     # @param options [Hash]
