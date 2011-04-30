@@ -6,8 +6,9 @@ module CopycopterClient
   class ProcessGuard
     # @param options [Hash]
     # @option options [Logger] :logger where errors should be logged
-    def initialize(sync, options)
+    def initialize(sync, poller, options)
       @sync   = sync
+      @poller = poller
       @logger = options[:logger]
     end
 
@@ -18,14 +19,14 @@ module CopycopterClient
       else
         register_exit_hooks
         register_job_hooks
-        start_sync
+        start_polling
       end
     end
 
     private
 
-    def start_sync
-      @sync.start
+    def start_polling
+      @poller.start
     end
 
     def spawner?
@@ -51,17 +52,17 @@ module CopycopterClient
     def register_passenger_hook
       @logger.info("Registered Phusion Passenger fork hook")
       PhusionPassenger.on_event(:starting_worker_process) do |forked|
-        start_sync
+        start_polling
       end
     end
 
     def register_unicorn_hook
       @logger.info("Registered Unicorn fork hook")
-      sync = @sync
+      poller = @poller
       Unicorn::HttpServer.class_eval do
         alias_method :worker_loop_without_copycopter, :worker_loop
         define_method :worker_loop do |worker|
-          sync.start
+          poller.start
           worker_loop_without_copycopter(worker)
         end
       end

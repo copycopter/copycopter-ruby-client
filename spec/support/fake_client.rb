@@ -7,7 +7,7 @@ class FakeClient
   end
 
   attr_reader :uploaded, :uploads, :downloads
-  attr_accessor :delay
+  attr_accessor :delay, :error
 
   def []=(key, value)
     @data[key] = value
@@ -15,6 +15,7 @@ class FakeClient
 
   def download
     wait_for_delay
+    raise_error_if_present
     @downloads += 1
     yield @data.dup
     nil
@@ -22,6 +23,7 @@ class FakeClient
 
   def upload(data)
     wait_for_delay
+    raise_error_if_present
     @uploaded.update(data)
     @uploads += 1
   end
@@ -38,6 +40,10 @@ class FakeClient
 
   def wait_for_delay
     sleep(delay) if delay
+  end
+
+  def raise_error_if_present
+    raise error if error
   end
 end
 

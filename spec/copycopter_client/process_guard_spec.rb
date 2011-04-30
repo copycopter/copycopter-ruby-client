@@ -11,11 +11,12 @@ describe CopycopterClient::ProcessGuard do
     $0 = @original_process_name
   end
 
-  let(:sync) { stub('sync', :start => nil, :flush => nil) }
+  let(:sync) { stub('sync', :flush => nil) }
+  let(:poller) { stub('poller', :start => nil) }
 
   def build_process_guard(options = {})
     options[:logger] ||= FakeLogger.new
-    CopycopterClient::ProcessGuard.new(sync, options)
+    CopycopterClient::ProcessGuard.new(sync, poller, options)
   end
 
   it "starts polling from a worker process" do
@@ -23,7 +24,7 @@ describe CopycopterClient::ProcessGuard do
 
     process_guard.start
 
-    sync.should have_received(:start)
+    poller.should have_received(:start)
   end
 
   it "registers passenger hooks from the passenger master" do
@@ -35,7 +36,7 @@ describe CopycopterClient::ProcessGuard do
     process_guard.start
 
     logger.should have_entry(:info, "Registered Phusion Passenger fork hook")
-    sync.should have_received(:start).never
+    poller.should have_received(:start).never
   end
 
   it "starts polling from a passenger worker" do
@@ -47,7 +48,7 @@ describe CopycopterClient::ProcessGuard do
     process_guard.start
     passenger.spawn
 
-    sync.should have_received(:start)
+    poller.should have_received(:start)
   end
 
   it "registers unicorn hooks from the unicorn master" do
@@ -61,7 +62,7 @@ describe CopycopterClient::ProcessGuard do
     process_guard.start
 
     logger.should have_entry(:info, "Registered Unicorn fork hook")
-    sync.should have_received(:start).never
+    poller.should have_received(:start).never
   end
 
   it "starts polling from a unicorn worker" do
@@ -75,7 +76,7 @@ describe CopycopterClient::ProcessGuard do
     process_guard.start
     unicorn.spawn
 
-    sync.should have_received(:start)
+    poller.should have_received(:start)
   end
 
   it "flushes when the process terminates" do
@@ -86,7 +87,8 @@ describe CopycopterClient::ProcessGuard do
       default_config = CopycopterClient::Configuration.new.to_hash.update(config)
       client = CopycopterClient::Client.new(default_config)
       sync = CopycopterClient::Sync.new(client, default_config)
-      process_guard = CopycopterClient::ProcessGuard.new(sync, default_config)
+      poller = CopycopterClient::Poller.new(sync, default_config)
+      process_guard = CopycopterClient::ProcessGuard.new(sync, poller, default_config)
       process_guard.start
       sync['test.key'] = 'value'
       Signal.trap("INT") { exit }
@@ -111,8 +113,9 @@ describe CopycopterClient::ProcessGuard do
     default_config = CopycopterClient::Configuration.new.to_hash.update(config)
     client = CopycopterClient::Client.new(default_config)
     sync = CopycopterClient::Sync.new(client, default_config)
+    poller = CopycopterClient::Poller.new(sync, default_config)
     job = job_class.new { sync["test.key"] = "expected value" }
-    process_guard = CopycopterClient::ProcessGuard.new(sync, default_config)
+    process_guard = CopycopterClient::ProcessGuard.new(sync, poller, default_config)
 
     process_guard.start
 

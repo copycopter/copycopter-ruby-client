@@ -20,6 +20,10 @@ module CopycopterClient
     # @return [Sync] instance used to synchronize changes.
     # This is set when {.configure} is called.
     attr_accessor :sync
+
+    # @return [Poller] instance used to poll for changes.
+    # This is set when {.configure} is called.
+    attr_accessor :poller
   end
 
   # Issues a new deploy, marking all draft blurbs as published.
@@ -29,8 +33,8 @@ module CopycopterClient
   end
 
   # Starts the polling process.
-  def self.start_sync
-    sync.start
+  def self.start_poller
+    poller.start
   end
 
   # Flush queued changed synchronously

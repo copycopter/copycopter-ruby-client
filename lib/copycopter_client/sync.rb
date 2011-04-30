@@ -6,38 +6,20 @@ module CopycopterClient
   # like a Hash. Applications using the client will not need to interact with
   # this class directly.
   #
-  # Responsible for:
-  # * Starting and running the background polling thread
-  # * Locking down access to data used by both threads
+  # Responsible for locking down access to data used by both threads.
   class Sync
     # Usually instantiated when {Configuration#apply} is invoked.
     # @param client [Client] the client used to fetch and upload data
     # @param options [Hash]
-    # @option options [Fixnum] :polling_delay the number of seconds in between each synchronization with the server
     # @option options [Logger] :logger where errors should be logged
     def initialize(client, options)
-      @client        = client
-      @blurbs        = {}
-      @polling_delay = options[:polling_delay]
-      @stop          = false
-      @queued        = {}
-      @mutex         = Mutex.new
-      @logger        = options[:logger]
-      @pending       = false
-    end
-
-    # Starts the polling thread. The polling thread doesn't run in test environments.
-    def start
-      logger.info("Starting poller")
-      @pending = true
-      unless Thread.new { poll }
-        logger.error("Couldn't start poller thread")
-      end
-    end
-
-    # Stops the polling thread after the next run.
-    def stop
-      @stop = true
+      @client     = client
+      @blurbs     = {}
+      @queued     = {}
+      @mutex      = Mutex.new
+      @logger     = options[:logger]
+      @started    = false
+      @downloaded = false
     end
 
     # Returns content for the given blurb.
@@ -48,7 +30,7 @@ module CopycopterClient
     end
 
     # Sets content for the given blurb. The content will be pushed to the
-    # server on the next poll.
+    # server on the next flush.
     # @param key [String] the key of the blurb to update
     # @param value [String] the new contents of the blurb
     def []=(key, value)
@@ -63,10 +45,10 @@ module CopycopterClient
 
     # Waits until the first download has finished.
     def wait_for_download
-      if @pending
-        logger.info("Waiting for first sync")
+      if pending?
+        logger.info("Waiting for first download")
         logger.flush if logger.respond_to?(:flush)
-        while @pending
+        while pending?
           sleep(0.1)
         end
       end
@@ -81,34 +63,26 @@ module CopycopterClient
     end
 
     def download
+      @started = true
       client.download do |downloaded_blurbs|
         downloaded_blurbs.reject! { |key, value| value == "" }
         lock { @blurbs = downloaded_blurbs }
       end
     rescue ConnectionError => error
       logger.error(error.message)
+    ensure
+      @downloaded = true
+    end
+
+    # Downloads and then flushes
+    def sync
+      download
+      flush
     end
 
     private
 
-    attr_reader :client, :polling_delay, :logger
-
-    def poll
-      until @stop
-        sync
-        logger.flush if logger.respond_to?(:flush)
-        sleep(polling_delay)
-      end
-    rescue InvalidApiKey => error
-      logger.error(error.message)
-    end
-
-    def sync
-      download
-      flush
-    ensure
-      @pending = false
-    end
+    attr_reader :client, :logger
 
     def with_queued_changes
       changes_to_push = nil
@@ -123,6 +97,10 @@ module CopycopterClient
 
     def lock(&block)
       @mutex.synchronize(&block)
+    end
+
+    def pending?
+      @started && !@downloaded
     end
   end
 end
