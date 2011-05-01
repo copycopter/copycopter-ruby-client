@@ -29,13 +29,11 @@ module CopycopterClient
   end
 
   # Starts the polling process.
-  # This is called from Unicorn worker processes.
   def self.start_sync
     sync.start
   end
 
   # Flush queued changed synchronously
-  # This is called from the Resque after perform "hook"
   def self.flush
     sync.flush
   end

@@ -27,21 +27,11 @@ module CopycopterClient
     end
 
     # Starts the polling thread. The polling thread doesn't run in test environments.
-    #
-    # If this sync was created from a master spawner (as in the case for
-    # phusion passenger), it will instead register after fork hooks so that the
-    # poller starts in each spawned process.
     def start
-      if spawner?
-        register_spawn_hooks
-      else
-        register_job_hooks
-        logger.info("Starting poller")
-        @pending = true
-        at_exit { sync }
-        unless Thread.new { poll }
-          logger.error("Couldn't start poller thread")
-        end
+      logger.info("Starting poller")
+      @pending = true
+      unless Thread.new { poll }
+        logger.error("Couldn't start poller thread")
       end
     end
 
@@ -133,50 +123,6 @@ module CopycopterClient
 
     def lock(&block)
       @mutex.synchronize(&block)
-    end
-
-    def spawner?
-      passenger_spawner? || unicorn_spawner?
-    end
-
-    def passenger_spawner?
-      $0.include?("ApplicationSpawner")
-    end
-
-    def unicorn_spawner?
-      $0.include?("unicorn") && !caller.any? { |line| line.include?("worker_loop") }
-    end
-
-    def register_job_hooks
-      if defined?(Resque)
-        logger.info("Registered Resque after_perform hook")
-        Resque::Job.class_eval do
-          alias_method :perform_without_copycopter, :perform
-          def perform
-            job_was_performed = perform_without_copycopter
-            CopycopterClient.flush
-            job_was_performed
-          end
-        end
-      end
-    end
-
-    def register_spawn_hooks
-      if defined?(PhusionPassenger)
-        logger.info("Registered Phusion Passenger fork hook")
-        PhusionPassenger.on_event(:starting_worker_process) do |forked|
-          start
-        end
-      elsif defined?(Unicorn::HttpServer)
-        logger.info("Registered Unicorn fork hook")
-        Unicorn::HttpServer.class_eval do
-          alias_method :worker_loop_without_copycopter, :worker_loop
-          def worker_loop(worker)
-            CopycopterClient.start_sync
-            worker_loop_without_copycopter(worker)
-          end
-        end
-      end
     end
   end
 end

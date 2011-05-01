@@ -15,33 +15,10 @@ describe CopycopterClient::Sync do
 
   before do
     @syncs = []
-    @original_process_name = $0
   end
 
   after do
-    $0 = @original_process_name
     @syncs.each { |sync| sync.stop }
-  end
-
-  it "syncs when the process terminates" do
-    api_key = "12345"
-    FakeCopycopterApp.add_project api_key
-    pid = fork do
-      config = { :logger => FakeLogger.new, :polling_delay => 86400, :api_key => api_key }
-      default_config = CopycopterClient::Configuration.new.to_hash.update(config)
-      real_client = CopycopterClient::Client.new(default_config)
-      sync = CopycopterClient::Sync.new(real_client, default_config)
-      sync.start
-      sleep 2
-      sync['test.key'] = 'value'
-      Signal.trap("INT") { exit }
-      sleep
-    end
-    sleep 3
-    Process.kill("INT", pid)
-    Process.wait
-    project = FakeCopycopterApp.project(api_key)
-    project.draft['test.key'].should == 'value'
   end
 
   it "provides access to downloaded data" do
@@ -176,80 +153,6 @@ describe CopycopterClient::Sync do
     sleep(2)
 
     sync['test.key'].should be_nil
-  end
-
-  it "starts after spawning when using passenger" do
-    logger = FakeLogger.new
-    passenger = define_constant('PhusionPassenger', FakePassenger.new)
-    passenger.become_master
-    sync = build_sync(:polling_delay => 1, :logger => logger)
-
-    sync.start
-    sleep(2)
-
-    client.should_not be_downloaded
-    logger.should have_entry(:info, "Registered Phusion Passenger fork hook")
-
-    passenger.spawn
-    sleep(2)
-
-    client.should be_downloaded
-    logger.should have_entry(:info, "Starting poller"),
-                  "Got entries: #{logger.entries.inspect}"
-  end
-
-  it "flushes after running a resque job" do
-    define_constant('Resque', Module.new)
-    job = define_constant('Resque::Job', FakeResqueJob).new(:key => 'test.key', :value => 'all your base')
-
-    api_key = "12345"
-    FakeCopycopterApp.add_project api_key
-    logger = FakeLogger.new
-
-    config = { :logger => logger, :polling_delay => 86400, :api_key => api_key }
-    default_config = CopycopterClient::Configuration.new.to_hash.update(config)
-    real_client = CopycopterClient::Client.new(default_config)
-    sync = CopycopterClient::Sync.new(real_client, default_config)
-    sync.stubs(:at_exit)
-    CopycopterClient.sync = sync
-    job.sync = sync
-
-    sync.start
-    sleep(2)
-
-    logger.should have_entry(:info, "Registered Resque after_perform hook")
-
-    if fork
-      Process.wait
-    else
-      job.perform
-      exit!
-    end
-    sleep(2)
-
-    project = FakeCopycopterApp.project(api_key)
-    project.draft['test.key'].should == 'all your base'
-  end
-
-  it "starts after spawning when using unicorn" do
-    logger = FakeLogger.new
-    define_constant('Unicorn', Module.new)
-    unicorn = define_constant('Unicorn::HttpServer', FakeUnicornServer).new
-    unicorn.become_master
-    sync = build_sync(:polling_delay => 1, :logger => logger)
-    CopycopterClient.sync = sync
-
-    sync.start
-    sleep(2)
-
-    client.should_not be_downloaded
-    logger.should have_entry(:info, "Registered Unicorn fork hook")
-
-    unicorn.spawn
-    sleep(2)
-
-    client.should be_downloaded
-    logger.should have_entry(:info, "Starting poller")
   end
 
   it "blocks until the first download is complete" do

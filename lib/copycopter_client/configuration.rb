@@ -2,6 +2,7 @@ require 'logger'
 require 'copycopter_client/i18n_backend'
 require 'copycopter_client/client'
 require 'copycopter_client/sync'
+require 'copycopter_client/process_guard'
 require 'copycopter_client/prefixed_logger'
 require 'copycopter_client/request_sync'
 
@@ -162,6 +163,7 @@ module CopycopterClient
     def apply
       client = Client.new(to_hash)
       sync = Sync.new(client, to_hash)
+      process_guard = ProcessGuard.new(sync, to_hash)
       I18n.backend = I18nBackend.new(sync)
       CopycopterClient.client = client
       CopycopterClient.sync = sync
@@ -169,7 +171,7 @@ module CopycopterClient
       @applied = true
       logger.info("Client #{VERSION} ready")
       logger.info("Environment Info: #{environment_info}")
-      sync.start unless test?
+      process_guard.start unless test?
     end
 
     def port

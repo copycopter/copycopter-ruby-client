@@ -194,8 +194,9 @@ end
 
 share_examples_for "applied configuration" do
   let(:backend) { stub('i18n-backend') }
-  let(:sync)    { stub('sync', :start => nil) }
+  let(:sync)    { stub('sync') }
   let(:client)  { stub('client') }
+  let(:process_guard) { stub('process_guard', :start => nil) }
   let(:logger)  { FakeLogger.new }
   subject { CopycopterClient::Configuration.new }
 
@@ -203,6 +204,7 @@ share_examples_for "applied configuration" do
     CopycopterClient::I18nBackend.stubs(:new => backend)
     CopycopterClient::Client.stubs(:new => client)
     CopycopterClient::Sync.stubs(:new => sync)
+    CopycopterClient::ProcessGuard.stubs(:new => process_guard)
     subject.logger = logger
     apply
   end
@@ -214,6 +216,10 @@ share_examples_for "applied configuration" do
     CopycopterClient::Sync.should have_received(:new).with(client, subject.to_hash)
     CopycopterClient::I18nBackend.should have_received(:new).with(sync)
     I18n.backend.should == backend
+  end
+
+  it "builds a process guard" do
+    CopycopterClient::ProcessGuard.should have_received(:new).with(sync, subject.to_hash)
   end
 
   it "logs that it's ready" do
@@ -235,8 +241,8 @@ end
 
 describe CopycopterClient::Configuration, "applied when testing" do
   it_should_behave_like "applied configuration" do
-    it "doesn't start sync" do
-      sync.should have_received(:start).never
+    it "doesn't start the process guard" do
+      process_guard.should have_received(:start).never
     end
   end
 
@@ -248,8 +254,8 @@ end
 
 describe CopycopterClient::Configuration, "applied when not testing" do
   it_should_behave_like "applied configuration" do
-    it "starts sync" do
-      sync.should have_received(:start)
+    it "starts the process guard" do
+      process_guard.should have_received(:start)
     end
   end
 

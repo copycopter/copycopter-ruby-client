@@ -1,11 +1,10 @@
 class FakeResqueJob
-  attr_accessor :sync
-  def initialize(hash)
-    @key = hash[:key]
-    @value = hash[:value]
+  def initialize(&action)
+    @action = action
   end
+
   def perform
-    sync[@key] = @value
+    @action.call
     true
   end
 end
