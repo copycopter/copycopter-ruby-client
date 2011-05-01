@@ -16,7 +16,8 @@ describe CopycopterClient::ProcessGuard do
 
   def build_process_guard(options = {})
     options[:logger] ||= FakeLogger.new
-    CopycopterClient::ProcessGuard.new(cache, poller, options)
+    options[:cache] ||= cache
+    CopycopterClient::ProcessGuard.new(options[:cache], poller, options)
   end
 
   it "starts polling from a worker process" do
@@ -80,54 +81,29 @@ describe CopycopterClient::ProcessGuard do
   end
 
   it "flushes when the process terminates" do
-    api_key = "12345"
-    FakeCopycopterApp.add_project api_key
+    cache = WritingCache.new
     pid = fork do
-      config = { :logger => FakeLogger.new, :polling_delay => 86400, :api_key => api_key }
-      default_config = CopycopterClient::Configuration.new.to_hash.update(config)
-      client = CopycopterClient::Client.new(default_config)
-      cache = CopycopterClient::Cache.new(client, default_config)
-      poller = CopycopterClient::Poller.new(cache, default_config)
-      process_guard = CopycopterClient::ProcessGuard.new(cache, poller, default_config)
+      process_guard = build_process_guard(:cache => cache)
       process_guard.start
-      cache['test.key'] = 'value'
-      Signal.trap("INT") { exit }
-      sleep
+      exit
     end
-    sleep(0.5)
-    Process.kill("INT", pid)
     Process.wait
-    project = FakeCopycopterApp.project(api_key)
-    project.draft['test.key'].should == 'value'
+
+    cache.should be_written
   end
 
   it "flushes after running a resque job" do
+    logger = FakeLogger.new
+    cache = WritingCache.new
     define_constant('Resque', Module.new)
     job_class = define_constant('Resque::Job', FakeResqueJob)
-
-    api_key = "12345"
-    FakeCopycopterApp.add_project api_key
-    logger = FakeLogger.new
-
-    config = { :logger => logger, :polling_delay => 86400, :api_key => api_key }
-    default_config = CopycopterClient::Configuration.new.to_hash.update(config)
-    client = CopycopterClient::Client.new(default_config)
-    cache = CopycopterClient::Cache.new(client, default_config)
-    poller = CopycopterClient::Poller.new(cache, default_config)
-    job = job_class.new { cache["test.key"] = "expected value" }
-    process_guard = CopycopterClient::ProcessGuard.new(cache, poller, default_config)
+    job = job_class.new
+    process_guard = build_process_guard(:cache => cache, :logger => logger)
 
     process_guard.start
+    job.fork_and_perform
 
-    if fork
-      Process.wait
-    else
-      job.perform
-      exit!
-    end
-
-    project = FakeCopycopterApp.project(api_key)
-    project.draft['test.key'].should == 'expected value'
+    cache.should be_written
     logger.should have_entry(:info, "Registered Resque after_perform hook")
   end
 end
