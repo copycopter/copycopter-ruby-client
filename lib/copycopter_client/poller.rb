@@ -1,15 +1,15 @@
 require 'thread'
-require 'copycopter_client/sync'
+require 'copycopter_client/cache'
 
 module CopycopterClient
   # Starts a background thread that continually resynchronizes with the remote
-  # server using the given {Sync} after a set delay.
+  # server using the given {Cache} after a set delay.
   class Poller
     # @param options [Hash]
     # @option options [Logger] :logger where errors should be logged
     # @option options [Fixnum] :polling_delay how long to wait in between requests
-    def initialize(sync, options)
-      @sync          = sync
+    def initialize(cache, options)
+      @cache         = cache
       @polling_delay = options[:polling_delay]
       @logger        = options[:logger]
       @stop          = false
@@ -25,11 +25,11 @@ module CopycopterClient
 
     private
 
-    attr_reader :sync, :logger, :polling_delay
+    attr_reader :cache, :logger, :polling_delay
 
     def poll
       until @stop
-        sync.sync
+        cache.sync
         logger.flush if logger.respond_to?(:flush)
         delay
       end

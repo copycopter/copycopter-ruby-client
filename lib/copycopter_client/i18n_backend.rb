@@ -14,9 +14,9 @@ module CopycopterClient
     include I18n::Backend::Simple::Implementation
 
     # Usually instantiated when {Configuration#apply} is invoked.
-    # @param sync [Sync] must act like a hash, returning and accept blurbs by key.
-    def initialize(sync)
-      @sync = sync
+    # @param cache [Cache] must act like a hash, returning and accept blurbs by key.
+    def initialize(cache)
+      @cache = cache
     end
 
     # Translates the given local and key. See the I18n API documentation for details.
@@ -34,14 +34,14 @@ module CopycopterClient
     # Returns locales availabile for this Copycopter project.
     # @return [Array<String>] available locales
     def available_locales
-      sync_locales = sync.keys.map { |key| key.split('.').first }
-      (sync_locales + super).uniq.map { |locale| locale.to_sym }
+      cached_locales = cache.keys.map { |key| key.split('.').first }
+      (cached_locales + super).uniq.map { |locale| locale.to_sym }
     end
 
     # Stores the given translations.
     #
     # Updates will be visible in the current process immediately, and will
-    # propagate to Copycopter during the next sync.
+    # propagate to Copycopter during the next flush.
     #
     # @param [String] locale the locale (ie "en") to store translations for
     # @param [Hash] data nested key-value pairs to be added as blurbs
@@ -56,8 +56,8 @@ module CopycopterClient
     def lookup(locale, key, scope = [], options = {})
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key_with_locale = parts.join('.')
-      content = sync[key_with_locale] || super
-      sync[key_with_locale] = "" if content.nil?
+      content = cache[key_with_locale] || super
+      cache[key_with_locale] = "" if content.nil?
       content
     end
 
@@ -68,13 +68,13 @@ module CopycopterClient
         end
       elsif data.respond_to?(:to_str)
         key = ([locale] + scope).join('.')
-        sync[key] = data.to_str
+        cache[key] = data.to_str
       end
     end
 
     def load_translations(*filenames)
       super
-      sync.wait_for_download
+      cache.wait_for_download
     end
 
     def default(locale, object, subject, options = {})
@@ -82,11 +82,11 @@ module CopycopterClient
       if content.respond_to?(:to_str)
         parts = I18n.normalize_keys(locale, object, options[:scope], options[:separator])
         key = parts.join('.')
-        sync[key] = content.to_str
+        cache[key] = content.to_str
       end
       content
     end
 
-    attr_reader :sync
+    attr_reader :cache
   end
 end

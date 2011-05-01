@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe CopycopterClient::RequestSync do
 
-  let(:sync) { {} }
+  let(:cache) { {} }
   let(:response) { 'response' }
   let(:env) { 'env' }
   let(:app) { stub('app', :call => response) }
-  before { sync.stubs(:flush => nil, :download => nil) }
-  subject { CopycopterClient::RequestSync.new(app, :sync => sync) }
+  before { cache.stubs(:flush => nil, :download => nil) }
+  subject { CopycopterClient::RequestSync.new(app, :cache => cache) }
 
   it "invokes the upstream app" do
     result = subject.call(env)
@@ -17,11 +17,11 @@ describe CopycopterClient::RequestSync do
 
   it "flushes defaults" do
     subject.call(env)
-    sync.should have_received(:flush)
+    cache.should have_received(:flush)
   end
 
   it "downloads new copy" do
     subject.call(env)
-    sync.should have_received(:download)
+    cache.should have_received(:download)
   end
 end

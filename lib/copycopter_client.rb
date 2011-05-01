@@ -17,9 +17,9 @@ module CopycopterClient
     # configuration options. Usually set when {.configure} is called.
     attr_accessor :configuration
 
-    # @return [Sync] instance used to synchronize changes.
+    # @return [Cache] instance used to synchronize changes.
     # This is set when {.configure} is called.
-    attr_accessor :sync
+    attr_accessor :cache
 
     # @return [Poller] instance used to poll for changes.
     # This is set when {.configure} is called.
@@ -39,7 +39,7 @@ module CopycopterClient
 
   # Flush queued changed synchronously
   def self.flush
-    sync.flush
+    cache.flush
   end
 
   # Call this method to modify defaults in your initializers.

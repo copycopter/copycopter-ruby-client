@@ -1,29 +1,29 @@
 require 'spec_helper'
 
 describe CopycopterClient::I18nBackend do
-  let(:sync) { {} }
+  let(:cache) { {} }
 
   def build_backend
-    backend = CopycopterClient::I18nBackend.new(sync)
+    backend = CopycopterClient::I18nBackend.new(cache)
     I18n.backend = backend
     backend
   end
 
   before do
     @default_backend = I18n.backend
-    sync.stubs(:wait_for_download)
+    cache.stubs(:wait_for_download)
   end
 
   after { I18n.backend = @default_backend }
 
   subject { build_backend }
 
-  it "reloads locale files and waits for the sync to complete" do
+  it "reloads locale files and waits for the download to complete" do
     I18n.stubs(:load_path => [])
     subject.reload!
     subject.translate('en', 'test.key', :default => 'something')
 
-    sync.should have_received(:wait_for_download)
+    cache.should have_received(:wait_for_download)
     I18n.should have_received(:load_path)
   end
 
@@ -31,21 +31,21 @@ describe CopycopterClient::I18nBackend do
     should be_kind_of(I18n::Backend::Base)
   end
 
-  it "looks up a key in sync" do
+  it "looks up a key in cache" do
     value = 'hello'
-    sync['en.prefix.test.key'] = value
+    cache['en.prefix.test.key'] = value
 
     backend = build_backend
 
     backend.translate('en', 'test.key', :scope => 'prefix').should == value
   end
 
-  it "finds available locales from locale files and sync" do
+  it "finds available locales from locale files and cache" do
     YAML.stubs(:load_file => { 'es' => { 'key' => 'value' } })
     I18n.stubs(:load_path => ["test.yml"])
 
-    sync['en.key'] = ''
-    sync['fr.key'] = ''
+    cache['en.key'] = ''
+    cache['fr.key'] = ''
 
     subject.available_locales.should =~ [:en, :es, :fr]
   end
@@ -55,14 +55,14 @@ describe CopycopterClient::I18nBackend do
 
     subject.translate('en', 'test.key', :default => default).should == default
 
-    sync['en.test.key'].should == default
+    cache['en.test.key'].should == default
   end
 
   it "queues missing keys without default" do
     expect { subject.translate('en', 'test.key') }.
       to raise_error(I18n::MissingTranslationData)
 
-    sync['en.test.key'].should == ""
+    cache['en.test.key'].should == ""
   end
 
   it "queues missing keys with scope" do
@@ -71,17 +71,17 @@ describe CopycopterClient::I18nBackend do
     subject.translate('en', 'key', :default => default, :scope => ['test']).
       should == default
 
-    sync['en.test.key'].should == default
+    cache['en.test.key'].should == default
   end
 
   it "marks strings as html safe" do
-    sync['en.test.key'] = FakeHtmlSafeString.new("Hello")
+    cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
     backend = build_backend
     backend.translate('en', 'test.key').should be_html_safe
   end
 
   it "looks up an array of defaults" do
-    sync['en.key.one'] = "Expected"
+    cache['en.key.one'] = "Expected"
     backend = build_backend
     backend.translate('en', 'key.three', :default => [:"key.two", :"key.one"]).
       should == 'Expected'
@@ -94,14 +94,14 @@ describe CopycopterClient::I18nBackend do
       subject.store_translations('en', 'test' => { 'key' => 'Expected' })
       subject.translate('en', 'test.key', :default => 'Unexpected').
         should include('Expected')
-      sync['en.test.key'].should == 'Expected'
+      cache['en.test.key'].should == 'Expected'
     end
 
     it "preserves interpolation markers in the stored translation" do
       subject.store_translations('en', 'test' => { 'key' => '%{interpolate}' })
       subject.translate('en', 'test.key', :interpolate => 'interpolated').
         should include('interpolated')
-      sync['en.test.key'].should == '%{interpolate}'
+      cache['en.test.key'].should == '%{interpolate}'
     end
 
     it "uses the default if the stored translations don't have the key" do
@@ -109,9 +109,9 @@ describe CopycopterClient::I18nBackend do
         should include('Expected')
     end
 
-    it "uses the syncd key when present" do
+    it "uses the cached key when present" do
       subject.store_translations('en', 'test' => { 'key' => 'Unexpected' })
-      sync['en.test.key'] = 'Expected'
+      cache['en.test.key'] = 'Expected'
       subject.translate('en', 'test.key', :default => 'default').
         should include('Expected')
     end
@@ -120,14 +120,14 @@ describe CopycopterClient::I18nBackend do
       nested = { :nested => 'value' }
       subject.store_translations('en', 'key' => nested)
       subject.translate('en', 'key', :default => 'Unexpected').should == nested
-      sync['en.key.nested'].should == 'value'
+      cache['en.key.nested'].should == 'value'
     end
 
     it "returns an array directly without storing" do
       array = ['value']
       subject.store_translations('en', 'key' => array)
       subject.translate('en', 'key', :default => 'Unexpected').should == array
-      sync['en.key'].should be_nil
+      cache['en.key'].should be_nil
     end
 
     it "looks up an array of defaults" do
@@ -151,7 +151,7 @@ describe CopycopterClient::I18nBackend do
 
       subject.translate('en', 'test.key', :default => default).should == default
 
-      sync['en.test.key'].should == default
+      cache['en.test.key'].should == default
     end
   end
 end

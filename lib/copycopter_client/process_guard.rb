@@ -1,18 +1,18 @@
 module CopycopterClient
-  # Starts the sync from a worker process, or register hooks for a spawner
+  # Starts the poller from a worker process, or register hooks for a spawner
   # process (such as in Unicorn or Passenger). Also registers hooks for exiting
   # processes and completing background jobs. Applications using the client
   # will not need to interact with this class directly.
   class ProcessGuard
     # @param options [Hash]
     # @option options [Logger] :logger where errors should be logged
-    def initialize(sync, poller, options)
-      @sync   = sync
+    def initialize(cache, poller, options)
+      @cache  = cache
       @poller = poller
       @logger = options[:logger]
     end
 
-    # Starts the sync or registers hooks
+    # Starts the poller or registers hooks
     def start
       if spawner?
         register_spawn_hooks
@@ -70,19 +70,19 @@ module CopycopterClient
 
     def register_exit_hooks
       at_exit do
-        @sync.flush
+        @cache.flush
       end
     end
 
     def register_job_hooks
       if defined?(Resque)
         @logger.info("Registered Resque after_perform hook")
-        sync = @sync
+        cache = @cache
         Resque::Job.class_eval do
           alias_method :perform_without_copycopter, :perform
           define_method :perform do
             job_was_performed = perform_without_copycopter
-            sync.flush
+            cache.flush
             job_was_performed
           end
         end

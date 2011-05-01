@@ -1,7 +1,7 @@
 require 'logger'
 require 'copycopter_client/i18n_backend'
 require 'copycopter_client/client'
-require 'copycopter_client/sync'
+require 'copycopter_client/cache'
 require 'copycopter_client/process_guard'
 require 'copycopter_client/poller'
 require 'copycopter_client/prefixed_logger'
@@ -158,18 +158,18 @@ module CopycopterClient
     #
     # Called automatically when {CopycopterClient.configure} is called in the application.
     #
-    # This creates the {Client}, {Sync}, and {I18nBackend} and puts them together.
+    # This creates the {Client}, {Cache}, and {I18nBackend} and puts them together.
     #
-    # When {#test?} returns +false+, the sync will be started.
+    # When {#test?} returns +false+, the poller will be started.
     def apply
       client = Client.new(to_hash)
-      sync = Sync.new(client, to_hash)
-      poller = Poller.new(sync, to_hash)
-      process_guard = ProcessGuard.new(sync, poller, to_hash)
-      I18n.backend = I18nBackend.new(sync)
+      cache = Cache.new(client, to_hash)
+      poller = Poller.new(cache, to_hash)
+      process_guard = ProcessGuard.new(cache, poller, to_hash)
+      I18n.backend = I18nBackend.new(cache)
       CopycopterClient.client = client
-      CopycopterClient.sync = sync
-      middleware.use(RequestSync, :sync => sync) if middleware && development?
+      CopycopterClient.cache = cache
+      middleware.use(RequestSync, :cache => cache) if middleware && development?
       @applied = true
       logger.info("Client #{VERSION} ready")
       logger.info("Environment Info: #{environment_info}")

@@ -7,7 +7,7 @@ module CopycopterClient
   # this class directly.
   #
   # Responsible for locking down access to data used by both threads.
-  class Sync
+  class Cache
     # Usually instantiated when {Configuration#apply} is invoked.
     # @param client [Client] the client used to fetch and upload data
     # @param options [Hash]

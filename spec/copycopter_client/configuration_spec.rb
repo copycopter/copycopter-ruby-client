@@ -194,7 +194,7 @@ end
 
 share_examples_for "applied configuration" do
   let(:backend) { stub('i18n-backend') }
-  let(:sync)    { stub('sync') }
+  let(:cache)    { stub('cache') }
   let(:client)  { stub('client') }
   let(:poller)  { stub('poller') }
   let(:process_guard) { stub('process_guard', :start => nil) }
@@ -204,7 +204,7 @@ share_examples_for "applied configuration" do
   before do
     CopycopterClient::I18nBackend.stubs(:new => backend)
     CopycopterClient::Client.stubs(:new => client)
-    CopycopterClient::Sync.stubs(:new => sync)
+    CopycopterClient::Cache.stubs(:new => cache)
     CopycopterClient::Poller.stubs(:new => poller)
     CopycopterClient::ProcessGuard.stubs(:new => process_guard)
     subject.logger = logger
@@ -215,18 +215,18 @@ share_examples_for "applied configuration" do
 
   it "builds and assigns an I18n backend" do
     CopycopterClient::Client.should have_received(:new).with(subject.to_hash)
-    CopycopterClient::Sync.should have_received(:new).with(client, subject.to_hash)
-    CopycopterClient::I18nBackend.should have_received(:new).with(sync)
+    CopycopterClient::Cache.should have_received(:new).with(client, subject.to_hash)
+    CopycopterClient::I18nBackend.should have_received(:new).with(cache)
     I18n.backend.should == backend
   end
 
   it "builds and assigns a poller" do
-    CopycopterClient::Poller.should have_received(:new).with(sync, subject.to_hash)
+    CopycopterClient::Poller.should have_received(:new).with(cache, subject.to_hash)
   end
 
   it "builds a process guard" do
     CopycopterClient::ProcessGuard.should have_received(:new).
-      with(sync, poller, subject.to_hash)
+      with(cache, poller, subject.to_hash)
   end
 
   it "logs that it's ready" do
@@ -241,8 +241,8 @@ share_examples_for "applied configuration" do
     CopycopterClient.client.should == client
   end
 
-  it "stores the sync" do
-    CopycopterClient.sync.should == sync
+  it "stores the cache" do
+    CopycopterClient.cache.should == cache
   end
 end
 

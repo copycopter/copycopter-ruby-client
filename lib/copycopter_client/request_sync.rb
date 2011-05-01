@@ -5,18 +5,18 @@ module CopycopterClient
   class RequestSync
     # @param app [Rack] the upstream app into whose responses to inject the editor
     # @param options [Hash]
-    # @option options [Sync] :sync agent that should be flushed after each request
+    # @option options [Cache] :cache agent that should be flushed after each request
     def initialize(app, options)
       @app  = app
-      @sync = options[:sync]
+      @cache = options[:cache]
     end
 
-    # Invokes the upstream Rack application and flushes the sync after each
+    # Invokes the upstream Rack application and flushes the cache after each
     # request.
     def call(env)
-      @sync.download
+      @cache.download
       response = @app.call(env)
-      @sync.flush
+      @cache.flush
       response
     end
   end

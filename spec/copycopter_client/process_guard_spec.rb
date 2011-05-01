@@ -11,12 +11,12 @@ describe CopycopterClient::ProcessGuard do
     $0 = @original_process_name
   end
 
-  let(:sync) { stub('sync', :flush => nil) }
+  let(:cache) { stub('cache', :flush => nil) }
   let(:poller) { stub('poller', :start => nil) }
 
   def build_process_guard(options = {})
     options[:logger] ||= FakeLogger.new
-    CopycopterClient::ProcessGuard.new(sync, poller, options)
+    CopycopterClient::ProcessGuard.new(cache, poller, options)
   end
 
   it "starts polling from a worker process" do
@@ -86,11 +86,11 @@ describe CopycopterClient::ProcessGuard do
       config = { :logger => FakeLogger.new, :polling_delay => 86400, :api_key => api_key }
       default_config = CopycopterClient::Configuration.new.to_hash.update(config)
       client = CopycopterClient::Client.new(default_config)
-      sync = CopycopterClient::Sync.new(client, default_config)
-      poller = CopycopterClient::Poller.new(sync, default_config)
-      process_guard = CopycopterClient::ProcessGuard.new(sync, poller, default_config)
+      cache = CopycopterClient::Cache.new(client, default_config)
+      poller = CopycopterClient::Poller.new(cache, default_config)
+      process_guard = CopycopterClient::ProcessGuard.new(cache, poller, default_config)
       process_guard.start
-      sync['test.key'] = 'value'
+      cache['test.key'] = 'value'
       Signal.trap("INT") { exit }
       sleep
     end
@@ -112,10 +112,10 @@ describe CopycopterClient::ProcessGuard do
     config = { :logger => logger, :polling_delay => 86400, :api_key => api_key }
     default_config = CopycopterClient::Configuration.new.to_hash.update(config)
     client = CopycopterClient::Client.new(default_config)
-    sync = CopycopterClient::Sync.new(client, default_config)
-    poller = CopycopterClient::Poller.new(sync, default_config)
-    job = job_class.new { sync["test.key"] = "expected value" }
-    process_guard = CopycopterClient::ProcessGuard.new(sync, poller, default_config)
+    cache = CopycopterClient::Cache.new(client, default_config)
+    poller = CopycopterClient::Poller.new(cache, default_config)
+    job = job_class.new { cache["test.key"] = "expected value" }
+    process_guard = CopycopterClient::ProcessGuard.new(cache, poller, default_config)
 
     process_guard.start
 
