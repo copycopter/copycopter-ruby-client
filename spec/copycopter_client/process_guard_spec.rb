@@ -106,4 +106,13 @@ describe CopycopterClient::ProcessGuard do
     cache.should be_written
     logger.should have_entry(:info, "Registered Resque after_perform hook")
   end
+
+  it "doesn't fail if only Resque is defined and not Resque::Job" do
+    logger = FakeLogger.new
+    cache = WritingCache.new
+    define_constant('Resque', Module.new)
+    process_guard = build_process_guard(:cache => cache, :logger => logger)
+
+    process_guard.start
+  end
 end

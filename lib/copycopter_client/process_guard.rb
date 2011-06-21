@@ -75,7 +75,7 @@ module CopycopterClient
     end
 
     def register_job_hooks
-      if defined?(Resque)
+      if defined?(Resque::Job)
         @logger.info("Registered Resque after_perform hook")
         cache = @cache
         Resque::Job.class_eval do
