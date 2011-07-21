@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.3.5"
   s.summary = "Client for the Copycopter content management service"
 
-  s.add_dependency 'i18n', '~> 0.5.0'
+  s.add_dependency 'i18n', '> 0.5.0'
   s.add_dependency 'json'
 end
