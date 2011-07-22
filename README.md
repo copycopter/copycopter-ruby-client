@@ -66,6 +66,11 @@ Blurbs start out as draft copy, and won't be displayed in production environment
 
     rake copycopter:deploy
 
+Contributing
+------------
+
+Please see CONTRIBUTING.md for details.
+
 Credits
 -------
 
