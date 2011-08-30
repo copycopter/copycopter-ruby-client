@@ -43,6 +43,8 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:polling_delay).           overridable.default(300) }
   it { should have_config_option(:framework).               overridable }
   it { should have_config_option(:middleware).              overridable }
+  it { should have_config_option(:client).                  overridable }
+  it { should have_config_option(:cache).                   overridable }
 
   it "provides the root ssl certificate" do
     should have_config_option(:ca_file).
@@ -194,7 +196,7 @@ end
 
 share_examples_for "applied configuration" do
   let(:backend) { stub('i18n-backend') }
-  let(:cache)    { stub('cache') }
+  let(:cache)   { stub('cache') }
   let(:client)  { stub('client') }
   let(:poller)  { stub('poller') }
   let(:process_guard) { stub('process_guard', :start => nil) }
@@ -214,8 +216,6 @@ share_examples_for "applied configuration" do
   it { should be_applied }
 
   it "builds and assigns an I18n backend" do
-    CopycopterClient::Client.should have_received(:new).with(subject.to_hash)
-    CopycopterClient::Cache.should have_received(:new).with(client, subject.to_hash)
     CopycopterClient::I18nBackend.should have_received(:new).with(cache)
     I18n.backend.should == backend
   end
@@ -235,14 +235,6 @@ share_examples_for "applied configuration" do
 
   it "logs environment info" do
     logger.should have_entry(:info, "Environment Info: #{subject.environment_info}")
-  end
-
-  it "stores the client" do
-    CopycopterClient.client.should == client
-  end
-
-  it "stores the cache" do
-    CopycopterClient.cache.should == cache
   end
 end
 

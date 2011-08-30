@@ -196,7 +196,9 @@ describe CopycopterClient::Cache do
 
   it "flushes from the top level" do
     cache = build_cache
-    CopycopterClient.cache = cache
+    CopycopterClient.configure do |config|
+      config.cache = cache
+    end
     cache.stubs(:flush)
 
     CopycopterClient.flush

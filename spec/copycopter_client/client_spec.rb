@@ -195,7 +195,9 @@ describe CopycopterClient do
 
   it "deploys from the top-level constant" do
     client = build_client
-    CopycopterClient.client = client
+    CopycopterClient.configure do |config|
+      config.client = client
+    end
     client.stubs(:deploy)
 
     CopycopterClient.deploy
