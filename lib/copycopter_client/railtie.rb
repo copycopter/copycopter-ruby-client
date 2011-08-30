@@ -1,7 +1,7 @@
 module CopycopterClient
   # Connects to integration points for Rails 3 applications
   class Railtie < ::Rails::Railtie
-    initializer :initialize_copycopter_rails, :after => :before_initialize do
+    initializer :initialize_copycopter_rails, :before => :after_initialize do
       CopycopterClient::Rails.initialize
     end
 

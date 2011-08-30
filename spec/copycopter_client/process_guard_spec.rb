@@ -16,7 +16,7 @@ describe CopycopterClient::ProcessGuard do
 
   def build_process_guard(options = {})
     options[:logger] ||= FakeLogger.new
-    options[:cache] ||= cache
+    options[:cache]  ||= cache
     CopycopterClient::ProcessGuard.new(options[:cache], poller, options)
   end
 

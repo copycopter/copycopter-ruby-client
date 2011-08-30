@@ -84,6 +84,12 @@ module CopycopterClient
     # @return [String] the path to a root certificate file used to verify ssl sessions. Default's to the root certificate file for copycopter.com.
     attr_accessor :ca_file
 
+    # @return [Cache] instance used internally to synchronize changes.
+    attr_accessor :cache
+
+    # @return [Client] instance used to communicate with the Copycopter server.
+    attr_accessor :client
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
@@ -100,7 +106,6 @@ module CopycopterClient
       self.polling_delay            = 300
       self.logger                   = Logger.new($stdout)
       self.ca_file                  = CA_FILE
-
       @applied = false
     end
 
@@ -158,17 +163,15 @@ module CopycopterClient
     #
     # Called automatically when {CopycopterClient.configure} is called in the application.
     #
-    # This creates the {Client}, {Cache}, and {I18nBackend} and puts them together.
+    # This creates the {I18nBackend} and puts them together.
     #
     # When {#test?} returns +false+, the poller will be started.
     def apply
-      client = Client.new(to_hash)
-      cache = Cache.new(client, to_hash)
-      poller = Poller.new(cache, to_hash)
+      self.client ||= Client.new(to_hash)
+      self.cache  ||= Cache.new(client, to_hash)
+      poller        = Poller.new(cache, to_hash)
       process_guard = ProcessGuard.new(cache, poller, to_hash)
-      I18n.backend = I18nBackend.new(cache)
-      CopycopterClient.client = client
-      CopycopterClient.cache = cache
+      I18n.backend  = I18nBackend.new(cache)
       middleware.use(RequestSync, :cache => cache) if middleware && development?
       @applied = true
       logger.info("Client #{VERSION} ready")

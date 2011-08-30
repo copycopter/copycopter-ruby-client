@@ -8,18 +8,10 @@ require 'copycopter_client/configuration'
 # appropriate.
 module CopycopterClient
   class << self
-    # @return [Client] instance used to communicate with the Copycopter server.
-    # This is set when {.configure} is called.
-    attr_accessor :client
-
     # @return [Configuration] current client configuration
     # Must act like a hash and return sensible values for all Copycopter
     # configuration options. Usually set when {.configure} is called.
     attr_accessor :configuration
-
-    # @return [Cache] instance used to synchronize changes.
-    # This is set when {.configure} is called.
-    attr_accessor :cache
 
     # @return [Poller] instance used to poll for changes.
     # This is set when {.configure} is called.
@@ -40,6 +32,14 @@ module CopycopterClient
   # Flush queued changed synchronously
   def self.flush
     cache.flush
+  end
+
+  def self.cache
+    CopycopterClient.configuration.cache
+  end
+
+  def self.client
+    CopycopterClient.configuration.client
   end
 
   # Call this method to modify defaults in your initializers.
