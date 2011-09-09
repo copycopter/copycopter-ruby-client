@@ -15,6 +15,8 @@ When "I generate a rails application" do
       gem "sinatra"
       gem "json"
     GEMS
+
+    When %{I remove lines containing "rjs" from "config/environments/development.rb"}
   end
 end
 
@@ -141,6 +143,22 @@ When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)"$/ do
     run_simple %[script/runner 'I18n.translate("#{key}", :default => "#{value}")']
   end
 end
+
+When /^I remove lines containing "([^"]*)" from "([^"]*)"$/ do |content, filename|
+  in_current_dir do
+    result = ""
+    File.open(filename, "r") do |file|
+      file.each_line do |line|
+        result << line unless line.include?(content)
+      end
+    end
+
+    File.open(filename, "w") do |file|
+      file.write(result)
+    end
+  end
+end
+
 
 After do
   RailsServer.stop

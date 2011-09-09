@@ -3,8 +3,7 @@ require 'bundler/setup'
 require 'appraisal'
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require 'cucumber/rake/task'
 require 'rspec/core/rake_task'
 require 'yard'
@@ -31,7 +30,7 @@ YARD::Rake::YardocTask.new do |t|
 end
 
 eval("$specification = begin; #{IO.read('copycopter_client.gemspec')}; end")
-Rake::GemPackageTask.new($specification) do |package|
+Gem::PackageTask.new($specification) do |package|
   package.need_zip = true
   package.need_tar = true
 end
