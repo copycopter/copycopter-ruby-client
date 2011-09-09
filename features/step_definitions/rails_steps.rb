@@ -1,11 +1,17 @@
 When "I generate a rails application" do
   if Rails::VERSION::MAJOR == 3
     subcommand = 'new'
+    if Rails::VERSION::MINOR == 0
+      options = ''
+    else
+      options = '--skip-bundle'
+    end
   else
     subcommand = ''
+    options = ''
   end
 
-  run_simple("rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp")
+  run_simple("rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp #{options}")
   cd("testapp")
 
   if Rails::VERSION::MAJOR == 3

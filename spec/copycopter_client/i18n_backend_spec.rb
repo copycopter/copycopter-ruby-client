@@ -60,7 +60,7 @@ describe CopycopterClient::I18nBackend do
 
   it "queues missing keys without default" do
     expect { subject.translate('en', 'test.key') }.
-      to raise_error(I18n::MissingTranslationData)
+      to throw_symbol(:exception)
 
     cache['en.test.key'].should == ""
   end

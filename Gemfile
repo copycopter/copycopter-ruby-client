@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
-gem "json"
-gem "rails", "~> 3.0.3"
+gem "rails", "~> 3.1.0"
 gem "sqlite3-ruby", :require => false
 gem "rspec", "~> 2.3"
 gem "bourne"
