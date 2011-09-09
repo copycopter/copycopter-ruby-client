@@ -3,9 +3,15 @@ require 'json'
 require 'thin'
 
 class FakeCopycopterApp < Sinatra::Base
+  disable :show_exceptions
+
   def self.start
     Thread.new do
-      Thin::Logging.silent = true
+      if ENV['DEBUG']
+        Thin::Logging.debug = true
+      else
+        Thin::Logging.silent = true
+      end
       Rack::Handler::Thin.run(self, :Port => port)
     end
   end
