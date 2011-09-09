@@ -58,9 +58,18 @@ class FakeCopycopterApp < Sinatra::Base
 
   post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
     with_project(api_key) do |project|
-      data = JSON.parse(request.body.read)
-      project.update('draft' => data)
-      201
+      with_json_data do |data|
+        project.update('draft' => data)
+        201
+      end
+    end
+  end
+
+  def with_json_data
+    if request.content_type == 'application/json'
+      yield(JSON.parse(request.body.read))
+    else
+      406
     end
   end
 

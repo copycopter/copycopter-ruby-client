@@ -61,7 +61,7 @@ module CopycopterClient
     # @raise [ConnectionError] if the connection fails
     def upload(data)
       connect do |http|
-        response = http.post(uri("draft_blurbs"), data.to_json)
+        response = http.post(uri("draft_blurbs"), data.to_json, 'Content-Type' => 'application/json')
         check(response)
         log("Uploaded missing translations")
       end
