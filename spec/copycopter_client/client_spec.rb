@@ -65,7 +65,9 @@ describe CopycopterClient do
         Net::HTTPBadResponse.new,
         Net::HTTPHeaderSyntaxError.new,
         Net::ProtocolError.new,
-        SocketError.new
+        SocketError.new,
+        OpenSSL::SSL::SSLError.new,
+        Errno::ECONNREFUSED.new
       ]
 
       errors.each do |original_error|
