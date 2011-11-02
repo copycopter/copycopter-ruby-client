@@ -25,7 +25,7 @@ module CopycopterClient
     def translate(locale, key, options = {})
       content = super(locale, key, options.merge(:fallback => true))
       if content.respond_to?(:html_safe)
-        content.html_safe
+        String.new(content.html_safe)
       else
         content
       end
