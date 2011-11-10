@@ -245,7 +245,7 @@ Feature: Using copycopter in a rails app
       | en.threaded.key | all your base |
 
   Scenario: support pluralization
-    When I write to "app/controllers/users_controller.rb" with:
+    Given I write to "app/controllers/users_controller.rb" with:
     """
     class UsersController < ActionController::Base
       def index
@@ -253,7 +253,7 @@ Feature: Using copycopter in a rails app
       end
     end
     """
-    When I route the "users" resource
+    And I route the "users" resource
     And I write to "app/views/users/index.html.erb" with:
     """
     <%= time_ago_in_words(1.hour.ago) %> ago
