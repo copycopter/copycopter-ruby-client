@@ -14,10 +14,15 @@ module CopycopterClient
     # Invokes the upstream Rack application and flushes the cache after each
     # request.
     def call(env)
-      @cache.download
+      @cache.download unless asset_request?(env)
       response = @app.call(env)
-      @cache.flush
+      @cache.flush    unless asset_request?(env)
       response
+    end
+
+    private
+    def asset_request?(env)
+      env['PATH_INFO'] =~ /^\/assets/
     end
   end
 end
