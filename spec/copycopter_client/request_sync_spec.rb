@@ -25,3 +25,23 @@ describe CopycopterClient::RequestSync do
     cache.should have_received(:download)
   end
 end
+
+describe CopycopterClient::RequestSync, 'serving assets' do
+  let(:env) do
+    { "PATH_INFO" => '/assets/choper.png' }
+  end
+  let(:cache) { {} }
+  let(:response) { 'response' }
+  let(:app) { stub('app', :call => response) }
+  before { cache.stubs(:flush => nil, :download => nil) }
+  subject { CopycopterClient::RequestSync.new(app, :cache => cache) }
+
+  it "does not flush defaults" do
+    subject.call(env)
+    cache.should_not have_received(:flush)
+  end
+  it "does not download new copy" do
+    subject.call(env)
+    cache.should_not have_received(:download)
+  end
+end
