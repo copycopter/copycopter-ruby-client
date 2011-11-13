@@ -13,4 +13,3 @@ appraise "3.1" do
   gem "sass-rails"
   gem "coffee-rails"
 end
-
