@@ -1,9 +1,5 @@
-require 'rubygems'
-require 'bundler/setup'
+require 'bundler/gem_tasks'
 require 'appraisal'
-require 'rake'
-require 'rake/testtask'
-require 'rubygems/package_task'
 require 'cucumber/rake/task'
 require 'rspec/core/rake_task'
 require 'yard'
@@ -28,22 +24,3 @@ end
 YARD::Rake::YardocTask.new do |t|
   t.files   = ['lib/**/*.rb']
 end
-
-eval("$specification = begin; #{IO.read('copycopter_client.gemspec')}; end")
-Gem::PackageTask.new($specification) do |package|
-  package.need_zip = true
-  package.need_tar = true
-end
-
-gem_file = "pkg/#{$specification.name}-#{$specification.version}.gem"
-
-desc "Build and install the latest gem"
-task :install => :gem do
-  sh("gem install --local #{gem_file}")
-end
-
-desc "Build and release the latest gem"
-task :release => :gem do
-  sh("gem push #{gem_file}")
-end
-
