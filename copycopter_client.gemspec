@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('aruba', '~> 0.3.2')
   s.add_development_dependency('sinatra')
   s.add_development_dependency('yard')
-  s.add_development_dependency('ruby-debug')
   s.add_development_dependency('thin')
   s.add_development_dependency('i18n')
   s.add_development_dependency('appraisal', '~> 0.4')
