@@ -23,8 +23,9 @@ module CopycopterClient
     #
     # @return [Object] the translated key (usually a String)
     def translate(locale, key, options = {})
+      html_safely = options[:html_safely].blank? ? true : options[:html_safely]
       content = super(locale, key, options.merge(:fallback => true))
-      if content.respond_to?(:html_safe)
+      if content.respond_to?(:html_safe) && html_safely
         content.html_safe
       else
         content

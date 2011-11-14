@@ -74,10 +74,16 @@ describe CopycopterClient::I18nBackend do
     cache['en.test.key'].should == default
   end
 
-  it "marks strings as html safe" do
+  it "marks strings as html safe by default" do
     cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
     backend = build_backend
     backend.translate('en', 'test.key').should be_html_safe
+  end
+
+  it "doesn't mark strings as html safe if option set" do
+    cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
+    backend = build_backend
+    backend.translate('en', 'test.key', :html_safely => false).should_not be_html_safe
   end
 
   it "looks up an array of defaults" do
