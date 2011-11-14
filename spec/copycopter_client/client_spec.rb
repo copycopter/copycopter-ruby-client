@@ -44,7 +44,7 @@ describe CopycopterClient do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => true)
       client.download { |ignore| }
-      http.use_ssl.should == true
+      http.use_ssl?.should == true
       http.verify_mode.should == OpenSSL::SSL::VERIFY_PEER
       http.ca_file.should == CopycopterClient::Configuration::CA_FILE
     end
@@ -53,7 +53,7 @@ describe CopycopterClient do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => false)
       client.download { |ignore| }
-      http.use_ssl.should == false
+      http.use_ssl?.should == false
     end
 
     it "wraps HTTP errors with ConnectionError" do
