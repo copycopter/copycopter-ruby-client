@@ -92,15 +92,18 @@ describe CopycopterClient do
       expect { client.upload({}) }.to raise_error(CopycopterClient::ConnectionError)
     end
 
-    it "handles 404 errors from downloads with ConnectionError" do
+    it "handles 404 errors from downloads with message to standard error" do
       client = build_client(:api_key => 'bogus')
-      expect { client.download { |ignore| } }.
-        to raise_error(CopycopterClient::InvalidApiKey)
+      STDERR.stubs(:puts)
+      client.download { |ignore| }
+      STDERR.should have_received(:puts)
     end
 
-    it "handles 404 errors from uploads with ConnectionError" do
+    it "handles 404 errors from uploads with message to standard error" do
       client = build_client(:api_key => 'bogus')
-      expect { client.upload({}) }.to raise_error(CopycopterClient::InvalidApiKey)
+      STDERR.stubs(:puts)
+      client.upload({})
+      STDERR.should have_received(:puts)
     end
   end
 
@@ -232,7 +235,9 @@ describe CopycopterClient do
   end
 
   it "handles deploy errors" do
-    expect { build_client.deploy }.to raise_error(CopycopterClient::InvalidApiKey)
+    STDERR.stubs(:puts)
+    build_client.deploy
+    STDERR.should have_received(:puts)
   end
 end
 

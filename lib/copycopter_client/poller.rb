@@ -33,8 +33,6 @@ module CopycopterClient
         logger.flush if logger.respond_to?(:flush)
         delay
       end
-    rescue InvalidApiKey => error
-      logger.error(error.message)
     end
 
     def delay

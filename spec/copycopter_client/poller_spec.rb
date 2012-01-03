@@ -58,24 +58,6 @@ describe CopycopterClient::Poller do
     cache['test.key'].should be_nil
   end
 
-  it "stops polling with an invalid api key" do
-    failure = "server is napping"
-    logger = FakeLogger.new
-    cache.stubs(:download).raises(CopycopterClient::InvalidApiKey.new(failure))
-    poller = build_poller(:logger => logger)
-
-    cache['upload.key'] = 'upload'
-    poller.start
-    wait_for_next_sync
-
-    logger.should have_entry(:error, failure)
-
-    client['test.key'] = 'test value'
-    wait_for_next_sync
-
-    cache['test.key'].should be_nil
-  end
-
   it "logs an error if the background thread can't start" do
     Thread.stubs(:new => nil)
     logger = FakeLogger.new

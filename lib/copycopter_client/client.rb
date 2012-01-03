@@ -116,7 +116,7 @@ module CopycopterClient
     def check(response)
       case response
       when Net::HTTPNotFound
-        raise InvalidApiKey, "Invalid API key: #{api_key}"
+        STDERR.puts "Invalid API key: #{api_key}"
       when Net::HTTPNotModified
         false
       when Net::HTTPSuccess
