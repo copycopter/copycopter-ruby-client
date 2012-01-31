@@ -57,6 +57,8 @@ You can access blurbs from Copycopter by using `I18n.translate`. This is also al
     # Interpolation
     I18n.translate("mailer.welcome", :default => "Welcome, %{name}!", :name => @user.name)
 
+Note that using a preceding dot (such as ".welcome") will only work when calling t or translate from a view. The full key must be used from controllers and other places.
+
 See the [I18n documentation](http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile) documentation for more examples.
 
 Deploys
