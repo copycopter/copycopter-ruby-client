@@ -68,6 +68,15 @@ Blurbs start out as draft copy, and won't be displayed in production environment
 
     rake copycopter:deploy
 
+Exporting
+---------
+
+Blurbs are cached in-memory while your Rails application is running. If you want to export all cached blurbs to a yml file for offline access, you can use the `copycopter:export` rake task:
+
+    rake copycopter:export
+
+The exported `copycopter.yml` will be located in `config/locales/`.
+
 Contributing
 ------------
 
