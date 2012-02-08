@@ -215,7 +215,7 @@ describe CopycopterClient::Cache do
 
     let(:save_blurbs) {}
 
-    it "Can be invoked from the top-level constant" do
+    it "can be invoked from the top-level constant" do
       CopycopterClient.configure do |config|
         config.cache = @cache
       end
@@ -226,10 +226,8 @@ describe CopycopterClient::Cache do
       @cache.should have_received(:export)
     end
 
-    context "with no blurb keys" do
-      it "returns no yaml" do
-        @cache.export.should == nil
-      end
+    it "returns no yaml with no blurb keys" do
+      @cache.export.should == nil
     end
 
     context "with single-level blurb keys" do
