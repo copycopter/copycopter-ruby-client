@@ -43,6 +43,27 @@ module CopycopterClient
       lock { @blurbs.keys }
     end
 
+    # Yaml representation of all blurbs
+    # @return [String] yaml
+    def export
+      keys = {}
+      lock do
+        @blurbs.each do |blurb_key, value|
+          current = keys
+          yaml_keys = blurb_key.split('.')
+
+          0.upto(yaml_keys.size - 2) do |i|
+            key = yaml_keys[i]
+            current[key] ||= {}
+            current = current[key]
+          end
+
+          current[yaml_keys.last] = value
+        end
+      end
+      keys.to_yaml unless keys.size < 1
+    end
+
     # Waits until the first download has finished.
     def wait_for_download
       if pending?

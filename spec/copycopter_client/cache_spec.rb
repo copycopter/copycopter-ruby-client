@@ -205,5 +205,80 @@ describe CopycopterClient::Cache do
 
     cache.should have_received(:flush)
   end
+
+  describe "#export" do
+    before do
+      save_blurbs
+      @cache = build_cache
+      @cache.download
+    end
+
+    let(:save_blurbs) {}
+
+    it "Can be invoked from the top-level constant" do
+      CopycopterClient.configure do |config|
+        config.cache = @cache
+      end
+      @cache.stubs(:export)
+
+      CopycopterClient.export
+
+      @cache.should have_received(:export)
+    end
+
+    context "with no blurb keys" do
+      it "returns no yaml" do
+        @cache.export.should == nil
+      end
+    end
+
+    context "with single-level blurb keys" do
+      let(:save_blurbs) do
+        client['key']       = 'test value'
+        client['other_key'] = 'other test value'
+      end
+
+      it "returns blurbs as yaml" do
+        @cache.export.should ==
+          "---"                         + "\n" +
+          "key: test value"             + "\n" +
+          "other_key: other test value" + "\n"
+      end
+    end
+
+    context "with multi-level blurb keys" do
+      let(:save_blurbs) do
+        client['en.test.key']       = 'en test value'
+        client['en.test.other_key'] = 'en other test value'
+        client['fr.test.key']       = 'fr test value'
+      end
+
+      it "returns blurbs as yaml" do
+        @cache.export.should ==
+          "---"                                + "\n" +
+          "en:"                                + "\n" +
+          "  test:"                            + "\n" +
+          "    key: en test value"             + "\n" +
+          "    other_key: en other test value" + "\n" +
+          "fr:"                                + "\n" +
+          "  test:"                            + "\n" +
+          "    key: fr test value"             + "\n"
+      end
+    end
+
+    context "with conflicting blurb keys" do
+      let(:save_blurbs) do
+        client['en.test.key'] = 'test value'
+        client['en.test']     = 'other test value'
+      end
+
+      it "retains the new key" do
+        @cache.export.should ==
+          "---"                      + "\n" +
+          "en:"                      + "\n" +
+          "  test: other test value" + "\n"
+      end
+    end
+  end
 end
 
