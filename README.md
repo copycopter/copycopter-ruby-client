@@ -75,7 +75,7 @@ Blurbs are cached in-memory while your Rails application is running. If you want
 
     rake copycopter:export
 
-The exported `copycopter.yml` will be located in `config/locales/`.
+The exported yaml will be located at `config/locales/copycopter.yml`.
 
 Contributing
 ------------
