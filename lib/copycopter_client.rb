@@ -24,6 +24,12 @@ module CopycopterClient
     client.deploy
   end
 
+  # Issues a new export, returning yaml representation of blurb cache.
+  # This is called when the copycopter:export rake task is invoked.
+  def self.export
+    cache.export
+  end
+
   # Starts the polling process.
   def self.start_poller
     poller.start

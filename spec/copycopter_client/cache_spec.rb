@@ -205,5 +205,70 @@ describe CopycopterClient::Cache do
 
     cache.should have_received(:flush)
   end
+
+  describe "#export" do
+    before do
+      save_blurbs
+      @cache = build_cache
+      @cache.download
+    end
+
+    let(:save_blurbs) {}
+
+    it "can be invoked from the top-level constant" do
+      CopycopterClient.configure do |config|
+        config.cache = @cache
+      end
+      @cache.stubs(:export)
+
+      CopycopterClient.export
+
+      @cache.should have_received(:export)
+    end
+
+    it "returns no yaml with no blurb keys" do
+      @cache.export.should == nil
+    end
+
+    context "with single-level blurb keys" do
+      let(:save_blurbs) do
+        client['key']       = 'test value'
+        client['other_key'] = 'other test value'
+      end
+
+      it "returns blurbs as yaml" do
+        exported = YAML.load(@cache.export)
+        exported['key'].should == 'test value'
+        exported['other_key'].should == 'other test value'
+      end
+    end
+
+    context "with multi-level blurb keys" do
+      let(:save_blurbs) do
+        client['en.test.key']       = 'en test value'
+        client['en.test.other_key'] = 'en other test value'
+        client['fr.test.key']       = 'fr test value'
+      end
+
+      it "returns blurbs as yaml" do
+        exported = YAML.load(@cache.export)
+        exported['en']['test']['key'].should == 'en test value'
+        exported['en']['test']['other_key'].should == 'en other test value'
+        exported['fr']['test']['key'].should == 'fr test value'
+      end
+    end
+
+    context "with conflicting blurb keys" do
+      let(:save_blurbs) do
+        client['en.test']     = 'test value'
+        client['en.test.key'] = 'other test value'
+      end
+
+      it "retains the new key" do
+        exported = YAML.load(@cache.export)
+        exported['en']['test']['key'].should == 'other test value'
+      end
+    end
+  end
 end
 
