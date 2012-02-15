@@ -48,7 +48,7 @@ module CopycopterClient
     def export
       keys = {}
       lock do
-        @blurbs.each do |blurb_key, value|
+        @blurbs.sort.each do |(blurb_key, value)|
           current = keys
           yaml_keys = blurb_key.split('.')
 

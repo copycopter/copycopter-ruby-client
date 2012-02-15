@@ -1,5 +1,5 @@
 PATH
-  remote: /Users/joshuaclayton/dev/thoughtbot/copycopter_client
+  remote: /Users/gabe/thoughtbot/copycopter_client
   specs:
     copycopter_client (1.1.2)
       i18n (>= 0.5.0)
