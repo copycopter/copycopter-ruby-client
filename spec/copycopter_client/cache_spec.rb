@@ -237,10 +237,9 @@ describe CopycopterClient::Cache do
       end
 
       it "returns blurbs as yaml" do
-        @cache.export.should ==
-          "---"                         + "\n" +
-          "key: test value"             + "\n" +
-          "other_key: other test value" + "\n"
+        exported = YAML.load(@cache.export)
+        exported['key'].should == 'test value'
+        exported['other_key'].should == 'other test value'
       end
     end
 
@@ -252,29 +251,22 @@ describe CopycopterClient::Cache do
       end
 
       it "returns blurbs as yaml" do
-        @cache.export.should ==
-          "---"                                + "\n" +
-          "en:"                                + "\n" +
-          "  test:"                            + "\n" +
-          "    key: en test value"             + "\n" +
-          "    other_key: en other test value" + "\n" +
-          "fr:"                                + "\n" +
-          "  test:"                            + "\n" +
-          "    key: fr test value"             + "\n"
+        exported = YAML.load(@cache.export)
+        exported['en']['test']['key'].should == 'en test value'
+        exported['en']['test']['other_key'].should == 'en other test value'
+        exported['fr']['test']['key'].should == 'fr test value'
       end
     end
 
     context "with conflicting blurb keys" do
       let(:save_blurbs) do
-        client['en.test.key'] = 'test value'
-        client['en.test']     = 'other test value'
+        client['en.test']     = 'test value'
+        client['en.test.key'] = 'other test value'
       end
 
       it "retains the new key" do
-        @cache.export.should ==
-          "---"                      + "\n" +
-          "en:"                      + "\n" +
-          "  test: other test value" + "\n"
+        exported = YAML.load(@cache.export)
+        exported['en']['test']['key'].should == 'other test value'
       end
     end
   end
