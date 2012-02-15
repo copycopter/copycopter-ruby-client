@@ -54,7 +54,8 @@ module CopycopterClient
 
           0.upto(yaml_keys.size - 2) do |i|
             key = yaml_keys[i]
-            current[key] ||= {}
+            # Overwrite en.key with en.sub.key
+            current[key] = {} unless current[key].class == Hash
             current = current[key]
           end
 
