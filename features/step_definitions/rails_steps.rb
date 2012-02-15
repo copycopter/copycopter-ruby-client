@@ -21,6 +21,7 @@ When "I generate a rails application" do
       gem "sinatra"
       gem "json"
     GEMS
+    run_simple("bundle install --local")
 
     When %{I remove lines containing "rjs" from "config/environments/development.rb"}
   end
