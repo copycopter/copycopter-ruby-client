@@ -1,4 +1,4 @@
-Copycopter Client
+Copycopter Client [![Build Status](https://secure.travis-ci.org/thoughtbot/copycopter_client.png)](https://secure.travis-ci.org/thoughtbot/copycopter_client)
 =================
 
 This is the client gem for integrating apps with [Copycopter](http://copycopter.com).
