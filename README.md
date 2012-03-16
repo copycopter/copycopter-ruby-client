@@ -1,77 +1,71 @@
-Copycopter Client [![Build Status](https://secure.travis-ci.org/thoughtbot/copycopter_client.png)](https://secure.travis-ci.org/thoughtbot/copycopter_client)
+Copycopter Client
 =================
 
-This is the client gem for integrating apps with [Copycopter](http://copycopter.com).
+This is the Ruby on Rails client for
+[Copycopter](https://github.com/copycopter/copycopter-server).
 
-The client integrates with the I18n gem so that you can access copy and translations from a Copycopter project.
+It uses I18n to access copy and translations from a Copycopter project.
 
 Installation
 ------------
 
-Just install the gem:
+In your `Gemfile`:
 
-    gem install copycopter_client
+    gem 'copycopter_client'
 
-### Rails 3
+Run:
 
-Add the following line to your `Gemfile`:
+    bundle install
 
-    gem "copycopter_client"
-
-Then run `bundle install`.
-
-### Rails 2
-
-Add the following line to your `config/environment.rb`:
-
-    config.gem 'copycopter_client'
-
-Then run `rake gems:install`. We also recommend vendoring the gem by running `rake gems:unpack:dependencies GEM=copycopter_client`.
-
-### Configuration
-
-Add the following to your application:
+In your `config/initializers/copycopter.rb`:
 
     CopycopterClient.configure do |config|
-      config.api_key = "YOUR API KEY HERE"
+      config.api_key = 'YOUR API KEY HERE'
+      config.host = 'your-copycopter-server.herokuapp.com'
     end
 
-In a Rails application, this should be saved as `config/initializers/copycopter.rb`. You can find the API key on the project page on the Copycopter website. See the CopycopterClient::Configuration class for a full list of configuration options.
+The API key is on the project page. See `CopycopterClient::Configuration` for
+all configuration options.
 
 Usage
 -----
 
-You can access blurbs from Copycopter by using `I18n.translate`. This is also aliased as `translate` or just `t` inside Rails controllers and views.
+Access blurbs by using `I18n.translate`. It is aliased as `translate` and `t`
+inside Rails controllers and views.
 
-    # In a controller
+    # controller
     def index
-      flash[:success] = t("users.create.success", :default => "User created")
+      flash[:success] = t('users.create.success', :default => 'User created')
     end
 
-    # In a view
-    <%= t(".welcome", :default => "Why hello there") %>
+    # view
+    <%= t '.welcome', :default => 'Why hello there' %>
 
-    # Global scope (for example, in a Rake task)
-    I18n.translate("system.tasks_complete", :default => "Tasks complete")
+    # model, rake task, etc.
+    I18n.translate 'system.tasks_complete', :default => 'Tasks complete'
 
     # Interpolation
-    I18n.translate("mailer.welcome", :default => "Welcome, %{name}!", :name => @user.name)
+    I18n.translate 'mailer.welcome', :default => 'Welcome, %{name}!',
+      :name => @user.name
 
-Note that using a preceding dot (such as ".welcome") will only work when calling t or translate from a view. The full key must be used from controllers and other places.
+Using a prefixed dot (ex: '.welcome') only works in views. Use the full key in
+controllers and other places.
 
-See the [I18n documentation](http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile) documentation for more examples.
+[I18n docs](http://rdoc.info/github/svenfuchs/i18n/master/file/README.textile).
 
 Deploys
 -------
 
-Blurbs start out as draft copy, and won't be displayed in production environments until they're published. If you want to publish all draft copy when deploying to production, you can use the `copycopter:deploy` rake task:
+Blurbs start out as draft copy and aren't displayed in production until
+published. To publish all draft copy when deploying, use the rake task:
 
     rake copycopter:deploy
 
 Exporting
 ---------
 
-Blurbs are cached in-memory while your Rails application is running. If you want to export all cached blurbs to a yml file for offline access, you can use the `copycopter:export` rake task:
+Blurbs are cached in-memory while your Rails application is running. To export
+all cached blurbs to a yml file for offline access, use the rake task:
 
     rake copycopter:export
 
@@ -80,18 +74,20 @@ The exported yaml will be located at `config/locales/copycopter.yml`.
 Contributing
 ------------
 
-Please see CONTRIBUTING.md for details.
+See the [style guide](https://github.com/copycopter/style-guide).
 
 Credits
 -------
 
 ![thoughtbot](http://thoughtbot.com/images/tm/logo.png)
 
-Copycopter Client is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
+Copycopter Client was created by [thoughtbot, inc](http://thoughtbot.com)
 
-The names and logos for thoughtbot are trademarks of thoughtbot, inc.
+It is maintained by the fine folks at [Crowdtap](http://crowdtap.com) and
+[Iora Health](http://iorahealth.com).
 
 License
 -------
 
-Copycopter Client is Copyright © 2010-2011 thoughtbot. It is free software, and may be redistributed under the terms specified in the MIT-LICENSE file.
+Copycopter Client is free software, and may be redistributed under the terms
+specified in the MIT-LICENSE file.
