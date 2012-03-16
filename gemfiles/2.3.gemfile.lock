@@ -1,5 +1,5 @@
 PATH
-  remote: /Users/gabe/thoughtbot/copycopter_client
+  remote: /Users/croaky/dev/copycopter-ruby-client
   specs:
     copycopter_client (1.1.2)
       i18n (>= 0.5.0)
@@ -94,7 +94,7 @@ DEPENDENCIES
   copycopter_client!
   cucumber (~> 0.10.0)
   i18n
-  rails (~> 2.3)
+  rails (= 2.3.14)
   rake (= 0.9.2)
   rspec (~> 2.3)
   sham_rack

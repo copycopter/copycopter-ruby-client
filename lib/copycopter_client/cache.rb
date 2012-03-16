@@ -13,13 +13,13 @@ module CopycopterClient
     # @param options [Hash]
     # @option options [Logger] :logger where errors should be logged
     def initialize(client, options)
-      @client     = client
-      @blurbs     = {}
-      @queued     = {}
-      @mutex      = Mutex.new
-      @logger     = options[:logger]
-      @started    = false
+      @blurbs = {}
+      @client = client
       @downloaded = false
+      @logger = options[:logger]
+      @mutex = Mutex.new
+      @queued = {}
+      @started = false
     end
 
     # Returns content for the given blurb.
@@ -54,44 +54,56 @@ module CopycopterClient
 
           0.upto(yaml_keys.size - 2) do |i|
             key = yaml_keys[i]
+
             # Overwrite en.key with en.sub.key
-            current[key] = {} unless current[key].class == Hash
+            unless current[key].class == Hash
+              current[key] = {}
+            end
+
             current = current[key]
           end
 
           current[yaml_keys.last] = value
         end
       end
-      keys.to_yaml unless keys.size < 1
+
+      unless keys.size < 1
+        keys.to_yaml
+      end
     end
 
     # Waits until the first download has finished.
     def wait_for_download
       if pending?
-        logger.info("Waiting for first download")
-        logger.flush if logger.respond_to?(:flush)
+        logger.info 'Waiting for first download'
+
+        if logger.respond_to? :flush
+          logger.flush
+        end
+
         while pending?
-          sleep(0.1)
+          sleep 0.1
         end
       end
     end
 
     def flush
       with_queued_changes do |queued|
-        client.upload(queued)
+        client.upload queued
       end
     rescue ConnectionError => error
-      logger.error(error.message)
+      logger.error error.message
     end
 
     def download
       @started = true
+
       client.download do |downloaded_blurbs|
-        downloaded_blurbs.reject! { |key, value| value == "" }
+        downloaded_blurbs.reject! { |key, value| value == '' }
         lock { @blurbs = downloaded_blurbs }
       end
     rescue ConnectionError => error
-      logger.error(error.message)
+      logger.error error.message
     ensure
       @downloaded = true
     end
@@ -108,17 +120,21 @@ module CopycopterClient
 
     def with_queued_changes
       changes_to_push = nil
+
       lock do
         unless @queued.empty?
           changes_to_push = @queued
           @queued = {}
         end
       end
-      yield(changes_to_push) if changes_to_push
+
+      if changes_to_push
+        yield changes_to_push
+      end
     end
 
     def lock(&block)
-      @mutex.synchronize(&block)
+      @mutex.synchronize &block
     end
 
     def pending?

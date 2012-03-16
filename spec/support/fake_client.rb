@@ -39,11 +39,15 @@ class FakeClient
   private
 
   def wait_for_delay
-    sleep(delay) if delay
+    if delay
+      sleep delay
+    end
   end
 
   def raise_error_if_present
-    raise error if error
+    if error
+      raise error
+    end
   end
 end
 

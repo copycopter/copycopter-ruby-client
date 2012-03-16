@@ -18,7 +18,7 @@ describe CopycopterClient do
     build_client(config)
   end
 
-  describe "opening a connection" do
+  describe 'opening a connection' do
     let(:config) { CopycopterClient::Configuration.new }
     let(:http) { Net::HTTP.new(config.host, config.port) }
 
@@ -26,37 +26,36 @@ describe CopycopterClient do
       Net::HTTP.stubs(:new => http)
     end
 
-    it "should timeout when connecting" do
+    it 'should timeout when connecting' do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_open_timeout => 4)
       client.download { |ignore| }
       http.open_timeout.should == 4
     end
 
-    it "should timeout when reading" do
+    it 'should timeout when reading' do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_read_timeout => 4)
       client.download { |ignore| }
       http.read_timeout.should == 4
     end
 
-    it "uses verified ssl when secure" do
+    it 'uses verified ssl when secure' do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => true)
       client.download { |ignore| }
       http.use_ssl?.should == true
       http.verify_mode.should == OpenSSL::SSL::VERIFY_PEER
-      http.ca_file.should == CopycopterClient::Configuration::CA_FILE
     end
 
-    it "doesn't use ssl when insecure" do
+    it 'does not use ssl when insecure' do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => false)
       client.download { |ignore| }
       http.use_ssl?.should == false
     end
 
-    it "wraps HTTP errors with ConnectionError" do
+    it 'wraps HTTP errors with ConnectionError' do
       errors = [
         Timeout::Error.new,
         Errno::EINVAL.new,
@@ -81,39 +80,39 @@ describe CopycopterClient do
       end
     end
 
-    it "handles 500 errors from downloads with ConnectionError" do
+    it 'handles 500 errors from downloads with ConnectionError' do
       client = build_client(:api_key => 'raise_error')
       expect { client.download { |ignore| } }.
         to raise_error(CopycopterClient::ConnectionError)
     end
 
-    it "handles 500 errors from uploads with ConnectionError" do
+    it 'handles 500 errors from uploads with ConnectionError' do
       client = build_client(:api_key => 'raise_error')
       expect { client.upload({}) }.to raise_error(CopycopterClient::ConnectionError)
     end
 
-    it "handles 404 errors from downloads with ConnectionError" do
+    it 'handles 404 errors from downloads with ConnectionError' do
       client = build_client(:api_key => 'bogus')
       expect { client.download { |ignore| } }.
         to raise_error(CopycopterClient::InvalidApiKey)
     end
 
-    it "handles 404 errors from uploads with ConnectionError" do
+    it 'handles 404 errors from uploads with ConnectionError' do
       client = build_client(:api_key => 'bogus')
       expect { client.upload({}) }.to raise_error(CopycopterClient::InvalidApiKey)
     end
   end
 
-  it "downloads published blurbs for an existing project" do
+  it 'downloads published blurbs for an existing project' do
     project = add_project
     project.update({
       'draft' => {
-        'key.one'   => "unexpected one",
-        'key.three' => "unexpected three"
+        'key.one'   => 'unexpected one',
+        'key.three' => 'unexpected three'
       },
       'published' => {
-        'key.one' => "expected one",
-        'key.two' => "expected two"
+        'key.one' => 'expected one',
+        'key.two' => 'expected two'
       }
     })
     client = build_client(:api_key => project.api_key, :public => true)
@@ -127,23 +126,23 @@ describe CopycopterClient do
     }
   end
 
-  it "logs that it performed a download" do
+  it 'logs that it performed a download' do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
     client.download { |ignore| }
-    logger.should have_entry(:info, "Downloaded translations")
+    logger.should have_entry(:info, 'Downloaded translations')
   end
 
-  it "downloads draft blurbs for an existing project" do
+  it 'downloads draft blurbs for an existing project' do
     project = add_project
     project.update({
       'draft' => {
-        'key.one' => "expected one",
-        'key.two' => "expected two"
+        'key.one' => 'expected one',
+        'key.two' => 'expected two'
       },
       'published' => {
-        'key.one'   => "unexpected one",
-        'key.three' => "unexpected three"
+        'key.one'   => 'unexpected one',
+        'key.three' => 'unexpected three'
       }
     })
     client = build_client(:api_key => project.api_key, :public => false)

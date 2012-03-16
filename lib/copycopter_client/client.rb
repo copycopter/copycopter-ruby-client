@@ -28,7 +28,7 @@ module CopycopterClient
     def initialize(options)
       [:api_key, :host, :port, :public, :http_read_timeout,
         :http_open_timeout, :secure, :logger, :ca_file].each do |option|
-        instance_variable_set("@#{option}", options[option])
+        instance_variable_set "@#{option}", options[option]
       end
     end
 
@@ -47,12 +47,14 @@ module CopycopterClient
         request = Net::HTTP::Get.new(uri(download_resource))
         request['If-None-Match'] = @etag
         response = http.request(request)
-        if check(response)
-          log("Downloaded translations")
+
+        if check response
+          log 'Downloaded translations'
           yield JSON.parse(response.body)
         else
-          log("No new translations")
+          log 'No new translations'
         end
+
         @etag = response['ETag']
       end
     end
@@ -62,9 +64,9 @@ module CopycopterClient
     # @raise [ConnectionError] if the connection fails
     def upload(data)
       connect do |http|
-        response = http.post(uri("draft_blurbs"), data.to_json, 'Content-Type' => 'application/json')
-        check(response)
-        log("Uploaded missing translations")
+        response = http.post(uri('draft_blurbs'), data.to_json, 'Content-Type' => 'application/json')
+        check response
+        log 'Uploaded missing translations'
       end
     end
 
@@ -72,9 +74,9 @@ module CopycopterClient
     # @raise [ConnectionError] if the connection fails
     def deploy
       connect do |http|
-        response = http.post(uri("deploys"), "")
-        check(response)
-        log("Deployed")
+        response = http.post(uri('deploys'), '')
+        check response
+        log 'Deployed'
       end
     end
 
@@ -93,9 +95,9 @@ module CopycopterClient
 
     def download_resource
       if public?
-        "published_blurbs"
+        'published_blurbs'
       else
-        "draft_blurbs"
+        'draft_blurbs'
       end
     end
 
@@ -103,11 +105,12 @@ module CopycopterClient
       http = Net::HTTP.new(host, port)
       http.open_timeout = http_open_timeout
       http.read_timeout = http_read_timeout
-      http.use_ssl      = secure
-      http.verify_mode  = OpenSSL::SSL::VERIFY_PEER
-      http.ca_file      = ca_file
+      http.use_ssl = secure
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      http.ca_file = ca_file
+
       begin
-        yield(http)
+        yield http
       rescue *HTTP_ERRORS => exception
         raise ConnectionError, "#{exception.class.name}: #{exception.message}"
       end
@@ -127,7 +130,7 @@ module CopycopterClient
     end
 
     def log(message)
-      logger.info(message)
+      logger.info message
     end
   end
 end

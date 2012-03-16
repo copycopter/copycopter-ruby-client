@@ -18,9 +18,6 @@ module CopycopterClient
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
         :framework, :middleware, :ca_file].freeze
 
-    # Default root certificate used to verify ssl sessions.
-    CA_FILE = File.expand_path('../../../AddTrustExternalCARoot.crt', __FILE__).freeze
-
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
 
@@ -87,25 +84,24 @@ module CopycopterClient
     # @return [Cache] instance used internally to synchronize changes.
     attr_accessor :cache
 
-    # @return [Client] instance used to communicate with the Copycopter server.
+    # @return [Client] instance used to communicate with a Copycopter Server.
     attr_accessor :client
 
     alias_method :secure?, :secure
 
     # Instantiated from {CopycopterClient.configure}. Sets defaults.
     def initialize
-      self.secure                   = true
-      self.host                     = 'copycopter.com'
-      self.http_open_timeout        = 2
-      self.http_read_timeout        = 5
+      self.client_name = 'Copycopter Client'
+      self.client_url = 'https://rubygems.org/gems/copycopter_client'
+      self.client_version = VERSION
       self.development_environments = %w(development staging)
-      self.test_environments        = %w(test cucumber)
-      self.client_name              = 'Copycopter Client'
-      self.client_version           = VERSION
-      self.client_url               = 'http://copycopter.com'
-      self.polling_delay            = 300
-      self.logger                   = Logger.new($stdout)
-      self.ca_file                  = CA_FILE
+      self.host = 'copycopter.com'
+      self.http_open_timeout = 2
+      self.http_read_timeout = 5
+      self.logger = Logger.new($stdout)
+      self.polling_delay = 300
+      self.secure = false
+      self.test_environments = %w(test cucumber)
       @applied = false
     end
 
@@ -121,8 +117,9 @@ module CopycopterClient
     # @return [Hash] configuration attributes
     def to_hash
       base_options = { :public => public? }
+
       OPTIONS.inject(base_options) do |hash, option|
-        hash.merge(option.to_sym => send(option))
+        hash.merge option.to_sym => send(option)
       end
     end
 
@@ -131,7 +128,7 @@ module CopycopterClient
     # @param [Hash] hash A set of configuration options that will take precedence over the defaults
     # @return [Hash] the merged configuration hash
     def merge(hash)
-      to_hash.merge(hash)
+      to_hash.merge hash
     end
 
     # Determines if the published or draft content will be used
@@ -144,13 +141,13 @@ module CopycopterClient
     # Determines if the content will be editable
     # @return [Boolean] Returns +true+ if in a development environment, +false+ otherwise.
     def development?
-      development_environments.include?(environment_name)
+      development_environments.include? environment_name
     end
 
     # Determines if the content will fetched from the server
     # @return [Boolean] Returns +true+ if in a test environment, +false+ otherwise.
     def test?
-      test_environments.include?(environment_name)
+      test_environments.include? environment_name
     end
 
     # Determines if the configuration has been applied (internal)
@@ -168,15 +165,22 @@ module CopycopterClient
     # When {#test?} returns +false+, the poller will be started.
     def apply
       self.client ||= Client.new(to_hash)
-      self.cache  ||= Cache.new(client, to_hash)
-      poller        = Poller.new(cache, to_hash)
+      self.cache ||= Cache.new(client, to_hash)
+      poller = Poller.new(cache, to_hash)
       process_guard = ProcessGuard.new(cache, poller, to_hash)
-      I18n.backend  = I18nBackend.new(cache)
-      middleware.use(RequestSync, :cache => cache) if middleware && development?
+      I18n.backend = I18nBackend.new(cache)
+
+      if middleware && development?
+        middleware.use RequestSync, :cache => cache
+      end
+
       @applied = true
-      logger.info("Client #{VERSION} ready")
-      logger.info("Environment Info: #{environment_info}")
-      process_guard.start unless test?
+      logger.info "Client #{VERSION} ready"
+      logger.info "Environment Info: #{environment_info}"
+
+      unless test?
+        process_guard.start
+      end
     end
 
     def port

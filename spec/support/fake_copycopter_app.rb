@@ -12,7 +12,8 @@ class FakeCopycopterApp < Sinatra::Base
       else
         Thin::Logging.silent = true
       end
-      Rack::Handler::Thin.run(self, :Port => port)
+
+      Rack::Handler::Thin.run self, :Port => port
     end
   end
 
@@ -21,7 +22,7 @@ class FakeCopycopterApp < Sinatra::Base
   end
 
   def self.add_project(api_key)
-    Project.create(api_key)
+    Project.create api_key
   end
 
   def self.reset
@@ -29,37 +30,37 @@ class FakeCopycopterApp < Sinatra::Base
   end
 
   def self.project(api_key)
-    Project.find(api_key)
+    Project.find api_key
   end
 
   def with_project(api_key)
     if api_key == 'raise_error'
-      halt 500, { :error => "Blah ha" }.to_json
+      halt 500, { :error => 'Blah ha' }.to_json
     elsif project = Project.find(api_key)
-      yield(project)
+      yield project
     else
-      halt 404, { :error => "No such project" }.to_json
+      halt 404, { :error => 'No such project' }.to_json
     end
   end
 
-  get "/api/v2/projects/:api_key/published_blurbs" do |api_key|
+  get '/api/v2/projects/:api_key/published_blurbs' do |api_key|
     with_project(api_key) do |project|
       etag project.etag
       project.published.to_json
     end
   end
 
-  get "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
+  get '/api/v2/projects/:api_key/draft_blurbs' do |api_key|
     with_project(api_key) do |project|
       etag project.etag
       project.draft.to_json
     end
   end
 
-  post "/api/v2/projects/:api_key/draft_blurbs" do |api_key|
+  post '/api/v2/projects/:api_key/draft_blurbs' do |api_key|
     with_project(api_key) do |project|
       with_json_data do |data|
-        project.update('draft' => data)
+        project.update 'draft' => data
         201
       end
     end
@@ -67,13 +68,13 @@ class FakeCopycopterApp < Sinatra::Base
 
   def with_json_data
     if request.content_type == 'application/json'
-      yield(JSON.parse(request.body.read))
+      yield JSON.parse(request.body.read)
     else
       406
     end
   end
 
-  post "/api/v2/projects/:api_key/deploys" do |api_key|
+  post '/api/v2/projects/:api_key/deploys' do |api_key|
     with_project(api_key) do |project|
       project.deploy
       201
@@ -84,33 +85,41 @@ class FakeCopycopterApp < Sinatra::Base
     attr_reader :draft, :published, :api_key
 
     def initialize(attrs)
-      @api_key   = attrs['api_key']
-      @draft     = attrs['draft']     || {}
+      @api_key = attrs['api_key']
+      @draft = attrs['draft']  || {}
+      @etag = attrs['etag'] || 1
       @published = attrs['published'] || {}
-      @etag      = attrs['etag']      || 1
     end
 
     def to_hash
-      { 'api_key'   => @api_key,
-        'etag'      => @etag,
-        'draft'     => @draft,
-        'published' => @published }
+      {
+        'api_key' => @api_key,
+        'etag' => @etag,
+        'draft' => @draft,
+        'published' => @published
+      }
     end
 
     def update(attrs)
-      @draft.    update(attrs['draft'])     if attrs['draft']
-      @published.update(attrs['published']) if attrs['published']
+      if attrs['draft']
+        @draft.update attrs['draft']
+      end
+
+      if attrs['published']
+        @published.update attrs['published']
+      end
+
       @etag += 1
-      self.class.save(self)
+      self.class.save self
     end
 
     def reload
-      self.class.find(api_key)
+      self.class.find api_key
     end
 
     def deploy
-      @published.update(@draft)
-      self.class.save(self)
+      @published.update @draft
+      self.class.save self
     end
 
     def etag
@@ -119,14 +128,14 @@ class FakeCopycopterApp < Sinatra::Base
 
     def self.create(api_key)
       project = Project.new('api_key' => api_key)
-      save(project)
+      save project
       project
     end
 
     def self.find(api_key)
       open_project_data do |data|
         if project_hash = data[api_key]
-          Project.new(project_hash.dup)
+          Project.new project_hash.dup
         else
           nil
         end
@@ -147,7 +156,8 @@ class FakeCopycopterApp < Sinatra::Base
 
     def self.open_project_data
       project_file = File.expand_path('/../../../tmp/projects.json', __FILE__)
-      if File.exist?(project_file)
+
+      if File.exist? project_file
         data = JSON.parse(IO.read(project_file))
       else
         data = {}
@@ -155,10 +165,11 @@ class FakeCopycopterApp < Sinatra::Base
 
       result = yield(data)
 
-      File.open(project_file, "w") { |file| file.write(data.to_json) }
+      File.open(project_file, 'w') do |file|
+        file.write data.to_json
+      end
 
       result
     end
   end
 end
-
