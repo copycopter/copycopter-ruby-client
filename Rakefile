@@ -6,7 +6,7 @@ require 'yard'
 
 desc 'Default: run the specs and features.'
 task :default => :spec do
-  system("rake -s appraisal cucumber;")
+  system "rake -s appraisal cucumber;"
 end
 
 desc 'Test the copycopter_client plugin.'
@@ -17,8 +17,10 @@ end
 
 desc "Run cucumber features"
 Cucumber::Rake::Task.new do |t|
-  t.cucumber_opts = ['--tags', '~@wip',
-                     '--format', (ENV['CUCUMBER_FORMAT'] || 'progress')]
+  t.cucumber_opts = [
+    '--tags', '~@wip',
+    '--format', (ENV['CUCUMBER_FORMAT'] || 'progress')
+  ]
 end
 
 YARD::Rake::YardocTask.new do |t|
