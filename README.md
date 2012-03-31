@@ -1,6 +1,8 @@
 Copycopter Client
 =================
 
+[![Build Status](https://secure.travis-ci.org/copycopter/copycopter-ruby-client.png?branch=master)](http://travis-ci.org/copycopter/copycopter-ruby-client)
+
 This is the Ruby on Rails client for
 [Copycopter](https://github.com/copycopter/copycopter-server).
 
