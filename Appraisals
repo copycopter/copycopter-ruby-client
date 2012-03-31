@@ -8,6 +8,7 @@ appraise '3.1' do
   gem 'uglifier'
   gem 'sass-rails'
   gem 'coffee-rails'
+  gem 'turn'
 end
 
 appraise '3.2' do

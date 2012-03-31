@@ -38,6 +38,7 @@ GEM
     activesupport (3.1.0)
       multi_json (~> 1.0)
     addressable (2.2.7)
+    ansi (1.4.2)
     appraisal (0.4.1)
       bundler
       rake
@@ -157,6 +158,8 @@ GEM
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
+    turn (0.9.4)
+      ansi
     tzinfo (0.3.32)
     uglifier (1.2.4)
       execjs (>= 0.3.0)
@@ -186,6 +189,7 @@ DEPENDENCIES
   sinatra
   sqlite3-ruby
   thin
+  turn
   uglifier
   webmock
   yard

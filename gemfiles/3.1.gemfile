@@ -7,5 +7,6 @@ gem "jquery-rails"
 gem "uglifier"
 gem "sass-rails"
 gem "coffee-rails"
+gem "turn"
 
 gemspec :path=>"../"
