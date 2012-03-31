@@ -1,7 +1,7 @@
 PATH
-  remote: /Users/croaky/dev/copycopter-ruby-client
+  remote: /Users/robertps/prob/copycopter-ruby-client
   specs:
-    copycopter_client (1.1.2)
+    copycopter_client (2.0.1)
       i18n (>= 0.5.0)
       json
 
