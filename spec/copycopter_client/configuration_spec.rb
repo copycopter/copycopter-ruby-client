@@ -5,7 +5,7 @@ describe CopycopterClient::Configuration do
     match do |config|
       config.should respond_to(option)
 
-      if instance_variables.include?('@default')
+      if instance_variables.include?(:'@default')
         config.send(option).should == @default
       end
 
@@ -32,8 +32,8 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:environment_name).overridable.default(nil) }
   it { should have_config_option(:client_version).overridable.default(CopycopterClient::VERSION) }
   it { should have_config_option(:client_name).overridable.default('Copycopter Client') }
-  it { should have_config_option(:client_url).overridable.default('http://copycopter.com') }
-  it { should have_config_option(:secure).overridable.default(true) }
+  it { should have_config_option(:client_url).overridable.default('https://rubygems.org/gems/copycopter_client') }
+  it { should have_config_option(:secure).overridable.default(false) }
   it { should have_config_option(:host).overridable.default('copycopter.com') }
   it { should have_config_option(:http_open_timeout).overridable.default(2) }
   it { should have_config_option(:http_read_timeout).overridable.default(5) }
