@@ -5,8 +5,16 @@ require 'rspec/core/rake_task'
 require 'yard'
 
 desc 'Default: run the specs and features.'
-task :default => :spec do
-  system "rake -s appraisal cucumber;"
+task :default => :all
+
+desc 'Test the copycopter_client gem under all supported Rails versions.'
+task :all do |t|
+  if ENV['BUNDLE_GEMFILE']
+    exec('rake spec cucumber')
+  else
+    Rake::Task["appraisal:install"].execute
+    exec('rake appraisal spec cucumber')
+  end
 end
 
 desc 'Test the copycopter_client plugin.'
