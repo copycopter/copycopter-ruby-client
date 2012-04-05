@@ -50,7 +50,7 @@ module CopycopterClient
 
         if check response
           log 'Downloaded translations'
-          yield JSON.parse(response.body)
+          yield JSON.parse(response.body.force_encoding('UTF-8'))
         else
           log 'No new translations'
         end
