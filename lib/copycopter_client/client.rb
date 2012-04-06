@@ -1,5 +1,6 @@
 require 'net/http'
 require 'net/https'
+require 'copycopter_client/blurb'
 require 'copycopter_client/errors'
 
 module CopycopterClient
@@ -78,6 +79,20 @@ module CopycopterClient
         check response
         log 'Deployed'
       end
+    end
+
+    def lookup(blurb_key)
+      blurb = Blurb.new
+      connect do |http|
+        request = Net::HTTP::Get.new uri("blurbs/#{blurb_key}")
+        response = http.request request
+        if check response
+          parsed = JSON.parse response.body
+          blurb.id = parsed['id']
+          blurb.key = parsed['key']
+        end
+      end
+      blurb
     end
 
     private
