@@ -72,5 +72,7 @@ end
 
 if defined? Rails
   require 'copycopter_client/rails'
+elsif defined?(Padrino) && defined?(Rake)
+  load 'tasks/copycopter_client_tasks.rake'
 end
 
