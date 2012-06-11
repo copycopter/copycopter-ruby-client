@@ -11,7 +11,8 @@ namespace :copycopter do
 
     if yml = CopycopterClient.export
       PATH = "config/locales/copycopter.yml"
-      File.new("#{Rails.root}/#{PATH}", 'w').write(yml)
+      
+      File.new("#{Bundler.root}/#{PATH}", 'w').write(yml)
       puts "Successfully exported blurbs to #{PATH}."
     else
       puts "No blurbs have been cached."
