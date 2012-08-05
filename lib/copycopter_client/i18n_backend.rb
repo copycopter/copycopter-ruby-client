@@ -34,7 +34,7 @@ module CopycopterClient
     # Returns locales availabile for this Copycopter project.
     # @return [Array<String>] available locales
     def available_locales
-      cached_locales = cache.keys.map { |key| key.split('.').first }
+      cached_locales = cache.keys.map { |key| key.split('.').first.to_sym }
       (cached_locales + super).uniq.map { |locale| locale.to_sym }
     end
 
