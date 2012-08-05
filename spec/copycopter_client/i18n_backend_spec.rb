@@ -50,6 +50,14 @@ describe CopycopterClient::I18nBackend do
     subject.available_locales.should =~ [:en, :es, :fr]
   end
 
+  it "handles symbol locales from i18n gem" do
+    YAML.stubs(:load_file => { :en => { 'key' => 'value' } })
+    I18n.stubs(:load_path => ["test.yml"])
+
+    cache['en.key'] = ''
+
+    subject.available_locales.should =~ [:en]
+  end
   it "queues missing keys with default" do
     default = 'default value'
 
