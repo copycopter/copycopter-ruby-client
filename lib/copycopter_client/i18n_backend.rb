@@ -34,6 +34,7 @@ module CopycopterClient
     # Returns locales availabile for this Copycopter project.
     # @return [Array<String>] available locales
     def available_locales
+      super
       cached_locales = cache.keys.map { |key| key.split('.').first }
       (cached_locales + super).uniq.map { |locale| locale.to_sym }
     end
@@ -48,7 +49,7 @@ module CopycopterClient
     # @param [Hash] options unused part of the I18n API
     def store_translations(locale, data, options = {})
       super
-      store_item(locale, data)
+      store_item(locale, data) if CopycopterClient.configuration.active_locales.include?(locale.to_sym)
     end
 
     private

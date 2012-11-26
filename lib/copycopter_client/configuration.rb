@@ -12,7 +12,7 @@ module CopycopterClient
   class Configuration
 
     # These options will be present in the Hash returned by {#to_hash}.
-    OPTIONS = [:api_key, :development_environments, :environment_name, :host,
+    OPTIONS = [:api_key, :development_environments, :environment_name, :active_locales, :host,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
@@ -56,6 +56,9 @@ module CopycopterClient
 
     # @return [String] The name of the environment the application is running in
     attr_accessor :environment_name
+
+    # @return [Array<String>] A list of locales that should be sent to the server
+    attr_accessor :active_locales
 
     # @return [String] The name of the client library being used to send notifications (defaults to +Copycopter Client+)
     attr_accessor :client_name
@@ -102,6 +105,7 @@ module CopycopterClient
       self.polling_delay = 300
       self.secure = false
       self.test_environments = %w(test cucumber)
+      self.active_locales = %w(:en)
       @applied = false
     end
 
