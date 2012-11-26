@@ -1,10 +1,8 @@
 Copycopter Client
 =================
 
-[![Build Status](https://secure.travis-ci.org/copycopter/copycopter-ruby-client.png?branch=master)](http://travis-ci.org/copycopter/copycopter-ruby-client)
-
 This is the Ruby on Rails client for
-[Copycopter](https://github.com/copycopter/copycopter-server).
+[Copycopter](https://github.com/copycopter/copycopter-server) with the addition to just send locales that are set as active to the copycopter server.
 
 It uses I18n to access copy and translations from a Copycopter project.
 
@@ -24,6 +22,7 @@ In your `config/initializers/copycopter.rb`:
     CopycopterClient.configure do |config|
       config.api_key = 'YOUR API KEY HERE'
       config.host = 'your-copycopter-server.herokuapp.com'
+      config.active_locales = [:en,:de]
     end
 
 The API key is on the project page. See `CopycopterClient::Configuration` for
