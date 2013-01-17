@@ -1,15 +1,15 @@
-require 'copycopter_client/version'
-require 'copycopter_client/configuration'
+require 'copy_tuner_client/version'
+require 'copy_tuner_client/configuration'
 
-# Top-level interface to the Copycopter client.
+# Top-level interface to the CopyTuner client.
 #
 # Most applications should only need to use the {.configure}
 # method, which will setup all the pieces and begin synchronization when
 # appropriate.
-module CopycopterClient
+module CopyTunerClient
   class << self
     # @return [Configuration] current client configuration
-    # Must act like a hash and return sensible values for all Copycopter
+    # Must act like a hash and return sensible values for all CopyTuner
     # configuration options. Usually set when {.configure} is called.
     attr_accessor :configuration
 
@@ -19,13 +19,13 @@ module CopycopterClient
   end
 
   # Issues a new deploy, marking all draft blurbs as published.
-  # This is called when the copycopter:deploy rake task is invoked.
+  # This is called when the copy_tuner:deploy rake task is invoked.
   def self.deploy
     client.deploy
   end
 
   # Issues a new export, returning yaml representation of blurb cache.
-  # This is called when the copycopter:export rake task is invoked.
+  # This is called when the copy_tuner:export rake task is invoked.
   def self.export
     cache.export
   end
@@ -41,19 +41,19 @@ module CopycopterClient
   end
 
   def self.cache
-    CopycopterClient.configuration.cache
+    CopyTunerClient.configuration.cache
   end
 
   def self.client
-    CopycopterClient.configuration.client
+    CopyTunerClient.configuration.client
   end
 
   # Call this method to modify defaults in your initializers.
   #
   # @example
-  #   CopycopterClient.configure do |config|
+  #   CopyTunerClient.configure do |config|
   #     config.api_key = '1234567890abcdef'
-  #     config.host = 'your-copycopter-server.herokuapp.com'
+  #     config.host = 'your-copy-tuner-server.herokuapp.com'
   #     config.secure = true
   #   end
   #
@@ -71,6 +71,5 @@ module CopycopterClient
 end
 
 if defined? Rails
-  require 'copycopter_client/rails'
+  require 'copy_tuner_client/rails'
 end
-

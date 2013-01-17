@@ -1,7 +1,7 @@
 require 'thread'
-require 'copycopter_client/cache'
+require 'copy_tuner_client/cache'
 
-module CopycopterClient
+module CopyTunerClient
   # Starts a background thread that continually resynchronizes with the remote
   # server using the given {Cache} after a set delay.
   class Poller

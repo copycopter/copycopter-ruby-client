@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CopycopterClient::Configuration do
+describe CopyTunerClient::Configuration do
   RSpec::Matchers.define :have_config_option do |option|
     match do |config|
       config.should respond_to(option)
@@ -30,11 +30,11 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:proxy_user).overridable.default(nil) }
   it { should have_config_option(:proxy_pass).overridable.default(nil) }
   it { should have_config_option(:environment_name).overridable.default(nil) }
-  it { should have_config_option(:client_version).overridable.default(CopycopterClient::VERSION) }
-  it { should have_config_option(:client_name).overridable.default('Copycopter Client') }
-  it { should have_config_option(:client_url).overridable.default('https://rubygems.org/gems/copycopter_client') }
+  it { should have_config_option(:client_version).overridable.default(CopyTunerClient::VERSION) }
+  it { should have_config_option(:client_name).overridable.default('CopyTuner Client') }
+  it { should have_config_option(:client_url).overridable.default('https://rubygems.org/gems/copy_tuner_client') }
   it { should have_config_option(:secure).overridable.default(false) }
-  it { should have_config_option(:host).overridable.default('copycopter.com') }
+  it { should have_config_option(:host).overridable.default('copy-tuner.com') }
   it { should have_config_option(:http_open_timeout).overridable.default(2) }
   it { should have_config_option(:http_read_timeout).overridable.default(5) }
   it { should have_config_option(:port).overridable }
@@ -47,21 +47,21 @@ describe CopycopterClient::Configuration do
   it { should have_config_option(:cache).overridable }
 
   it 'should provide default values for secure connections' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.secure = true
     config.port.should == 443
     config.protocol.should == 'https'
   end
 
   it 'should provide default values for insecure connections' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.secure = false
     config.port.should == 80
     config.protocol.should == 'http'
   end
 
   it 'should not cache inferred ports' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.secure = false
     config.port
     config.secure = true
@@ -69,7 +69,7 @@ describe CopycopterClient::Configuration do
   end
 
   it 'should act like a hash' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     hash = config.to_hash
 
     [:api_key, :environment_name, :host, :http_open_timeout,
@@ -83,30 +83,30 @@ describe CopycopterClient::Configuration do
   end
 
   it 'should be mergable' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     hash = config.to_hash
     config.merge(:key => 'value').should == hash.merge(:key => 'value')
   end
 
   it 'should use development and staging as development environments by default' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.development_environments.should =~ %w(development staging)
   end
 
   it 'should use test and cucumber as test environments by default' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.test_environments.should =~ %w(test cucumber)
   end
 
   it 'should be test in a test environment' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.test_environments = %w(test)
     config.environment_name = 'test'
     config.should be_test
   end
 
   it 'should be public in a public environment' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.development_environments = %w(development)
     config.environment_name = 'production'
     config.should be_public
@@ -114,7 +114,7 @@ describe CopycopterClient::Configuration do
   end
 
   it 'should be development in a development environment' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.development_environments = %w(staging)
     config.environment_name = 'staging'
     config.should be_development
@@ -122,48 +122,48 @@ describe CopycopterClient::Configuration do
   end
 
   it 'should be public without an environment name' do
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     config.should be_public
   end
 
   it 'should yield and save a configuration when configuring' do
     yielded_configuration = nil
 
-    CopycopterClient.configure(false) do |config|
+    CopyTunerClient.configure(false) do |config|
       yielded_configuration = config
     end
 
-    yielded_configuration.should be_kind_of(CopycopterClient::Configuration)
-    CopycopterClient.configuration.should == yielded_configuration
+    yielded_configuration.should be_kind_of(CopyTunerClient::Configuration)
+    CopyTunerClient.configuration.should == yielded_configuration
   end
 
   it 'does not apply the configuration when asked not to' do
     logger = FakeLogger.new
-    CopycopterClient.configure(false) { |config| config.logger = logger }
-    CopycopterClient.configuration.should_not be_applied
+    CopyTunerClient.configure(false) { |config| config.logger = logger }
+    CopyTunerClient.configuration.should_not be_applied
     logger.entries[:info].should be_empty
   end
 
   it 'should not remove existing config options when configuring twice' do
     first_config = nil
 
-    CopycopterClient.configure(false) do |config|
+    CopyTunerClient.configure(false) do |config|
       first_config = config
     end
 
-    CopycopterClient.configure(false) do |config|
+    CopyTunerClient.configure(false) do |config|
       config.should == first_config
     end
   end
 
   it 'starts out unapplied' do
-    CopycopterClient::Configuration.new.should_not be_applied
+    CopyTunerClient::Configuration.new.should_not be_applied
   end
 
   it 'logs to $stdout by default' do
     logger = FakeLogger.new
     Logger.stubs :new => logger
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
     Logger.should have_received(:new).with($stdout)
     config.logger.original_logger.should == logger
   end
@@ -182,18 +182,18 @@ describe CopycopterClient::Configuration do
 
   it 'prefixes log entries' do
     logger = FakeLogger.new
-    config = CopycopterClient::Configuration.new
+    config = CopyTunerClient::Configuration.new
 
     config.logger = logger
 
     prefixed_logger = config.logger
-    prefixed_logger.should be_a(CopycopterClient::PrefixedLogger)
+    prefixed_logger.should be_a(CopyTunerClient::PrefixedLogger)
     prefixed_logger.original_logger.should == logger
   end
 end
 
 share_examples_for 'applied configuration' do
-  subject { CopycopterClient::Configuration.new }
+  subject { CopyTunerClient::Configuration.new }
   let(:backend) { stub('i18n-backend') }
   let(:cache) { stub('cache') }
   let(:client) { stub('client') }
@@ -202,11 +202,11 @@ share_examples_for 'applied configuration' do
   let(:process_guard) { stub('process_guard', :start => nil) }
 
   before do
-    CopycopterClient::I18nBackend.stubs :new => backend
-    CopycopterClient::Client.stubs :new => client
-    CopycopterClient::Cache.stubs :new => cache
-    CopycopterClient::Poller.stubs :new => poller
-    CopycopterClient::ProcessGuard.stubs :new => process_guard
+    CopyTunerClient::I18nBackend.stubs :new => backend
+    CopyTunerClient::Client.stubs :new => client
+    CopyTunerClient::Cache.stubs :new => cache
+    CopyTunerClient::Poller.stubs :new => poller
+    CopyTunerClient::ProcessGuard.stubs :new => process_guard
     subject.logger = logger
     apply
   end
@@ -214,21 +214,21 @@ share_examples_for 'applied configuration' do
   it { should be_applied }
 
   it 'builds and assigns an I18n backend' do
-    CopycopterClient::I18nBackend.should have_received(:new).with(cache)
+    CopyTunerClient::I18nBackend.should have_received(:new).with(cache)
     I18n.backend.should == backend
   end
 
   it 'builds and assigns a poller' do
-    CopycopterClient::Poller.should have_received(:new).with(cache, subject.to_hash)
+    CopyTunerClient::Poller.should have_received(:new).with(cache, subject.to_hash)
   end
 
   it 'builds a process guard' do
-    CopycopterClient::ProcessGuard.should have_received(:new).
+    CopyTunerClient::ProcessGuard.should have_received(:new).
       with(cache, poller, subject.to_hash)
   end
 
   it 'logs that it is ready' do
-    logger.should have_entry(:info, "Client #{CopycopterClient::VERSION} ready")
+    logger.should have_entry(:info, "Client #{CopyTunerClient::VERSION} ready")
   end
 
   it 'logs environment info' do
@@ -236,7 +236,7 @@ share_examples_for 'applied configuration' do
   end
 end
 
-describe CopycopterClient::Configuration, 'applied when testing' do
+describe CopyTunerClient::Configuration, 'applied when testing' do
   it_should_behave_like 'applied configuration' do
     it 'does not start the process guard' do
       process_guard.should have_received(:start).never
@@ -249,7 +249,7 @@ describe CopycopterClient::Configuration, 'applied when testing' do
   end
 end
 
-describe CopycopterClient::Configuration, 'applied when not testing' do
+describe CopyTunerClient::Configuration, 'applied when not testing' do
   it_should_behave_like 'applied configuration' do
     it 'starts the process guard' do
       process_guard.should have_received(:start)
@@ -262,10 +262,10 @@ describe CopycopterClient::Configuration, 'applied when not testing' do
   end
 end
 
-describe CopycopterClient::Configuration, 'applied when developing with middleware' do
+describe CopyTunerClient::Configuration, 'applied when developing with middleware' do
   it_should_behave_like 'applied configuration' do
     it 'adds the sync middleware' do
-      middleware.should include(CopycopterClient::RequestSync)
+      middleware.should include(CopyTunerClient::RequestSync)
     end
   end
 
@@ -278,7 +278,7 @@ describe CopycopterClient::Configuration, 'applied when developing with middlewa
   end
 end
 
-describe CopycopterClient::Configuration, 'applied when developing without middleware' do
+describe CopyTunerClient::Configuration, 'applied when developing without middleware' do
   it_should_behave_like 'applied configuration'
 
   def apply
@@ -288,7 +288,7 @@ describe CopycopterClient::Configuration, 'applied when developing without middl
   end
 end
 
-describe CopycopterClient::Configuration, 'applied with middleware when not developing' do
+describe CopyTunerClient::Configuration, 'applied with middleware when not developing' do
   it_should_behave_like 'applied configuration'
 
   let(:middleware) { MiddlewareStack.new }
@@ -300,7 +300,6 @@ describe CopycopterClient::Configuration, 'applied with middleware when not deve
   end
 
   it 'does not add the sync middleware' do
-    middleware.should_not include(CopycopterClient::RequestSync)
+    middleware.should_not include(CopyTunerClient::RequestSync)
   end
 end
-

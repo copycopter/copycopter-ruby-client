@@ -1,6 +1,6 @@
-module CopycopterClient
+module CopyTunerClient
   # Client version
-  VERSION = '2.0.1'
+  VERSION = '0.0.1'
 
   # API version being used to communicate with the server
   API_VERSION = '2.0'.freeze

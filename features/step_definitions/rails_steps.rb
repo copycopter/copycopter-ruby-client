@@ -27,24 +27,24 @@ When "I generate a rails application" do
   end
 end
 
-When /^I configure the copycopter client with api key "([^"]*)"$/ do |api_key|
-  write_file("config/initializers/copycopter.rb", <<-RUBY)
-    CopycopterClient.configure do |config|
+When /^I configure the copy_tuner client with api key "([^"]*)"$/ do |api_key|
+  write_file("config/initializers/copy_tuner.rb", <<-RUBY)
+    CopyTunerClient.configure do |config|
       config.api_key = "#{api_key}"
       config.polling_delay = 1
       config.host = 'localhost'
       config.secure = false
-      config.port = #{FakeCopycopterApp.port}
+      config.port = #{FakeCopyTunerApp.port}
     end
   RUBY
 
   if Rails::VERSION::MAJOR == 3
     append_to_file("Gemfile", <<-GEMS)
-      gem "copycopter_client", :path => "../../.."
+      gem "copy_tuner_client", :path => "../../.."
     GEMS
   else
-    in_current_dir { FileUtils.rm_f("vendor/plugins/copycopter") }
-    run_simple("ln -s #{PROJECT_ROOT} vendor/plugins/copycopter")
+    in_current_dir { FileUtils.rm_f("vendor/plugins/copy_tuner") }
+    run_simple("ln -s #{PROJECT_ROOT} vendor/plugins/copy_tuner")
   end
 end
 
@@ -70,26 +70,26 @@ When /^I visit (\/.*)$/ do |path|
   @last_response = RailsServer.get(path)
 end
 
-When /^I configure the copycopter client to use published data$/ do
+When /^I configure the copy_tuner client to use published data$/ do
   in_current_dir do
-    config_path = "config/initializers/copycopter.rb"
+    config_path = "config/initializers/copy_tuner.rb"
     contents = IO.read(config_path)
     contents.sub!("end", "  config.development_environments = []\nend")
     File.open(config_path, "w") { |file| file.write(contents) }
   end
 end
 
-When /^I configure the copycopter client to have a polling delay of (\d+) seconds$/ do |polling_delay|
+When /^I configure the copy_tuner client to have a polling delay of (\d+) seconds$/ do |polling_delay|
   in_current_dir do
-    config_path = "config/initializers/copycopter.rb"
+    config_path = "config/initializers/copy_tuner.rb"
     contents = IO.read(config_path)
     contents.sub!(/config.polling_delay = .+/, "config.polling_delay = #{polling_delay}")
     File.open(config_path, "w") { |file| file.write(contents) }
   end
 end
 
-Then /^the copycopter client version and environment should have been logged$/ do
-  client_version = CopycopterClient::VERSION
+Then /^the copy_tuner client version and environment should have been logged$/ do
+  client_version = CopyTunerClient::VERSION
   environment_info = "[Ruby: #{RUBY_VERSION}]"
   environment_info << " [Rails: #{Rails::VERSION::STRING}]"
   environment_info << " [Env: development]"
@@ -100,7 +100,7 @@ Then /^the copycopter client version and environment should have been logged$/ d
 end
 
 Then /^the log should contain "([^"]*)"$/ do |line|
-  prefix = "** [Copycopter] "
+  prefix = "** [CopyTuner] "
   pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
   log_path = "log/development.log"
   in_current_dir do

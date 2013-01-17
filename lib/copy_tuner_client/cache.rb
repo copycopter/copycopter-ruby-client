@@ -1,7 +1,7 @@
 require 'thread'
-require 'copycopter_client/client'
+require 'copy_tuner_client/client'
 
-module CopycopterClient
+module CopyTunerClient
   # Manages synchronization of copy between {I18nBackend} and {Client}. Acts
   # like a Hash. Applications using the client will not need to interact with
   # this class directly.

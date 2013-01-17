@@ -1,13 +1,13 @@
 require 'logger'
-require 'copycopter_client/i18n_backend'
-require 'copycopter_client/client'
-require 'copycopter_client/cache'
-require 'copycopter_client/process_guard'
-require 'copycopter_client/poller'
-require 'copycopter_client/prefixed_logger'
-require 'copycopter_client/request_sync'
+require 'copy_tuner_client/i18n_backend'
+require 'copy_tuner_client/client'
+require 'copy_tuner_client/cache'
+require 'copy_tuner_client/process_guard'
+require 'copy_tuner_client/poller'
+require 'copy_tuner_client/prefixed_logger'
+require 'copy_tuner_client/request_sync'
 
-module CopycopterClient
+module CopyTunerClient
   # Used to set up and modify settings for the client.
   class Configuration
 
@@ -21,10 +21,10 @@ module CopycopterClient
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
 
-    # @return [String] The host to connect to (defaults to +copycopter.com+).
+    # @return [String] The host to connect to (defaults to +copy-tuner.com+).
     attr_accessor :host
 
-    # @return [Fixnum] The port on which your Copycopter server runs (defaults to +443+ for secure connections, +80+ for insecure connections).
+    # @return [Fixnum] The port on which your CopyTuner server runs (defaults to +443+ for secure connections, +80+ for insecure connections).
     attr_accessor :port
 
     # @return [Boolean] +true+ for https connections, +false+ for http connections.
@@ -57,7 +57,7 @@ module CopycopterClient
     # @return [String] The name of the environment the application is running in
     attr_accessor :environment_name
 
-    # @return [String] The name of the client library being used to send notifications (defaults to +Copycopter Client+)
+    # @return [String] The name of the client library being used to send notifications (defaults to +CopyTuner Client+)
     attr_accessor :client_name
 
     # @return [String, NilClass] The framework notifications are being sent from, if any (such as +Rails 2.3.9+)
@@ -78,24 +78,24 @@ module CopycopterClient
     # @return the middleware stack, if any, which should respond to +use+
     attr_accessor :middleware
 
-    # @return [String] the path to a root certificate file used to verify ssl sessions. Default's to the root certificate file for copycopter.com.
+    # @return [String] the path to a root certificate file used to verify ssl sessions. Default's to the root certificate file for copy-tuner.com.
     attr_accessor :ca_file
 
     # @return [Cache] instance used internally to synchronize changes.
     attr_accessor :cache
 
-    # @return [Client] instance used to communicate with a Copycopter Server.
+    # @return [Client] instance used to communicate with a CopyTuner Server.
     attr_accessor :client
 
     alias_method :secure?, :secure
 
-    # Instantiated from {CopycopterClient.configure}. Sets defaults.
+    # Instantiated from {CopyTunerClient.configure}. Sets defaults.
     def initialize
-      self.client_name = 'Copycopter Client'
-      self.client_url = 'https://rubygems.org/gems/copycopter_client'
+      self.client_name = 'CopyTuner Client'
+      self.client_url = 'https://rubygems.org/gems/copy_tuner_client'
       self.client_version = VERSION
       self.development_environments = %w(development staging)
-      self.host = 'copycopter.com'
+      self.host = 'copy-tuner.com'
       self.http_open_timeout = 2
       self.http_read_timeout = 5
       self.logger = Logger.new($stdout)
@@ -158,7 +158,7 @@ module CopycopterClient
 
     # Applies the configuration (internal).
     #
-    # Called automatically when {CopycopterClient.configure} is called in the application.
+    # Called automatically when {CopyTunerClient.configure} is called in the application.
     #
     # This creates the {I18nBackend} and puts them together.
     #
@@ -187,7 +187,7 @@ module CopycopterClient
       @port || default_port
     end
 
-    # The protocol that should be used when generating URLs to Copycopter.
+    # The protocol that should be used when generating URLs to CopyTuner.
     # @return [String] +https+ if {#secure?} returns +true+, +http+ otherwise.
     def protocol
       if secure?
@@ -204,11 +204,11 @@ module CopycopterClient
       parts.compact.map { |part| "[#{part}]" }.join(" ")
     end
 
-    # Wraps the given logger in a PrefixedLogger. This way, CopycopterClient
+    # Wraps the given logger in a PrefixedLogger. This way, CopyTunerClient
     # log messages are recognizable.
     # @param original_logger [Logger] the upstream logger to use, which must respond to the standard +Logger+ severity methods.
     def logger=(original_logger)
-      @logger = PrefixedLogger.new("** [Copycopter]", original_logger)
+      @logger = PrefixedLogger.new("** [CopyTuner]", original_logger)
     end
 
     private

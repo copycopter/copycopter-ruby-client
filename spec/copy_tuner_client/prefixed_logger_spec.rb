@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe CopycopterClient::PrefixedLogger do
+describe CopyTunerClient::PrefixedLogger do
   let(:output_logger) { FakeLogger.new }
   let(:prefix) { "** NOTICE:" }
   let(:thread_info) { "[P:#{Process.pid}] [T:#{Thread.current.object_id}]" }
-  subject { CopycopterClient::PrefixedLogger.new(prefix, output_logger) }
+  subject { CopyTunerClient::PrefixedLogger.new(prefix, output_logger) }
 
   it "provides the prefix" do
     subject.prefix.should == prefix

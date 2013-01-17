@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe CopycopterClient do
+describe CopyTunerClient do
   def build_client(config = {})
     config[:logger] ||= FakeLogger.new
-    default_config = CopycopterClient::Configuration.new.to_hash
-    CopycopterClient::Client.new(default_config.update(config))
+    default_config = CopyTunerClient::Configuration.new.to_hash
+    CopyTunerClient::Client.new(default_config.update(config))
   end
 
   def add_project
     api_key = 'xyz123'
-    FakeCopycopterApp.add_project(api_key)
+    FakeCopyTunerApp.add_project(api_key)
   end
 
   def build_client_with_project(config = {})
@@ -19,7 +19,7 @@ describe CopycopterClient do
   end
 
   describe 'opening a connection' do
-    let(:config) { CopycopterClient::Configuration.new }
+    let(:config) { CopyTunerClient::Configuration.new }
     let(:http) { Net::HTTP.new(config.host, config.port) }
 
     before do
@@ -73,7 +73,7 @@ describe CopycopterClient do
         http.stubs(:request).raises(original_error)
         client = build_client_with_project
         expect { client.download { |ignore| } }.
-          to raise_error(CopycopterClient::ConnectionError) { |error|
+          to raise_error(CopyTunerClient::ConnectionError) { |error|
             error.message.
               should == "#{original_error.class.name}: #{original_error.message}"
           }
@@ -83,23 +83,23 @@ describe CopycopterClient do
     it 'handles 500 errors from downloads with ConnectionError' do
       client = build_client(:api_key => 'raise_error')
       expect { client.download { |ignore| } }.
-        to raise_error(CopycopterClient::ConnectionError)
+        to raise_error(CopyTunerClient::ConnectionError)
     end
 
     it 'handles 500 errors from uploads with ConnectionError' do
       client = build_client(:api_key => 'raise_error')
-      expect { client.upload({}) }.to raise_error(CopycopterClient::ConnectionError)
+      expect { client.upload({}) }.to raise_error(CopyTunerClient::ConnectionError)
     end
 
     it 'handles 404 errors from downloads with ConnectionError' do
       client = build_client(:api_key => 'bogus')
       expect { client.download { |ignore| } }.
-        to raise_error(CopycopterClient::InvalidApiKey)
+        to raise_error(CopyTunerClient::InvalidApiKey)
     end
 
     it 'handles 404 errors from uploads with ConnectionError' do
       client = build_client(:api_key => 'bogus')
-      expect { client.upload({}) }.to raise_error(CopycopterClient::InvalidApiKey)
+      expect { client.upload({}) }.to raise_error(CopyTunerClient::InvalidApiKey)
     end
   end
 
@@ -196,12 +196,12 @@ describe CopycopterClient do
 
   it "deploys from the top-level constant" do
     client = build_client
-    CopycopterClient.configure do |config|
+    CopyTunerClient.configure do |config|
       config.client = client
     end
     client.stubs(:deploy)
 
-    CopycopterClient.deploy
+    CopyTunerClient.deploy
 
     client.should have_received(:deploy)
   end
@@ -231,7 +231,6 @@ describe CopycopterClient do
   end
 
   it "handles deploy errors" do
-    expect { build_client.deploy }.to raise_error(CopycopterClient::InvalidApiKey)
+    expect { build_client.deploy }.to raise_error(CopyTunerClient::InvalidApiKey)
   end
 end
-

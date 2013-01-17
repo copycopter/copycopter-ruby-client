@@ -9,10 +9,10 @@ task :default => :spec do
   system "rake -s appraisal cucumber;"
 end
 
-desc 'Test the copycopter_client plugin.'
+desc 'Test the copy_tuner_client plugin.'
 RSpec::Core::RakeTask.new do |t|
   t.rspec_opts = ['--color', "--format progress"]
-  t.pattern = 'spec/copycopter_client/**/*_spec.rb'
+  t.pattern = 'spec/copy_tuner_client/**/*_spec.rb'
 end
 
 desc "Run cucumber features"

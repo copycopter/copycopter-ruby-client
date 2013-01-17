@@ -1,5 +1,5 @@
-module CopycopterClient
-  # Rack middleware that synchronizes with Copycopter during each request.
+module CopyTunerClient
+  # Rack middleware that synchronizes with CopyTuner during each request.
   #
   # This is injected into the Rails middleware stack in development environments.
   class RequestSync

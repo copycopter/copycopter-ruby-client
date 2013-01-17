@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe CopycopterClient::RequestSync do
+describe CopyTunerClient::RequestSync do
 
   let(:cache) { {} }
   let(:response) { 'response' }
   let(:env) { 'env' }
   let(:app) { stub('app', :call => response) }
   before { cache.stubs(:flush => nil, :download => nil) }
-  subject { CopycopterClient::RequestSync.new(app, :cache => cache) }
+  subject { CopyTunerClient::RequestSync.new(app, :cache => cache) }
 
   it "invokes the upstream app" do
     result = subject.call(env)
@@ -26,7 +26,7 @@ describe CopycopterClient::RequestSync do
   end
 end
 
-describe CopycopterClient::RequestSync, 'serving assets' do
+describe CopyTunerClient::RequestSync, 'serving assets' do
   let(:env) do
     { "PATH_INFO" => '/assets/choper.png' }
   end
@@ -34,7 +34,7 @@ describe CopycopterClient::RequestSync, 'serving assets' do
   let(:response) { 'response' }
   let(:app) { stub('app', :call => response) }
   before { cache.stubs(:flush => nil, :download => nil) }
-  subject { CopycopterClient::RequestSync.new(app, :cache => cache) }
+  subject { CopyTunerClient::RequestSync.new(app, :cache => cache) }
 
   it "does not flush defaults" do
     subject.call(env)

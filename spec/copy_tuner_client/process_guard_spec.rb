@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CopycopterClient::ProcessGuard do
+describe CopyTunerClient::ProcessGuard do
   include DefinesConstants
 
   before do
@@ -17,7 +17,7 @@ describe CopycopterClient::ProcessGuard do
   def build_process_guard(options = {})
     options[:logger] ||= FakeLogger.new
     options[:cache]  ||= cache
-    CopycopterClient::ProcessGuard.new(options[:cache], poller, options)
+    CopyTunerClient::ProcessGuard.new(options[:cache], poller, options)
   end
 
   it "starts polling from a worker process" do

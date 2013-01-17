@@ -1,7 +1,7 @@
 require 'i18n'
 
-module CopycopterClient
-  # I18n implementation designed to synchronize with Copycopter.
+module CopyTunerClient
+  # I18n implementation designed to synchronize with CopyTuner.
   #
   # Expects an object that acts like a Hash, responding to +[]+, +[]=+, and +keys+.
   #
@@ -31,7 +31,7 @@ module CopycopterClient
       end
     end
 
-    # Returns locales availabile for this Copycopter project.
+    # Returns locales availabile for this CopyTuner project.
     # @return [Array<String>] available locales
     def available_locales
       cached_locales = cache.keys.map { |key| key.split('.').first }
@@ -41,7 +41,7 @@ module CopycopterClient
     # Stores the given translations.
     #
     # Updates will be visible in the current process immediately, and will
-    # propagate to Copycopter during the next flush.
+    # propagate to CopyTuner during the next flush.
     #
     # @param [String] locale the locale (ie "en") to store translations for
     # @param [Hash] data nested key-value pairs to be added as blurbs

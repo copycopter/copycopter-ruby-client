@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'json'
 require 'thin'
 
-class FakeCopycopterApp < Sinatra::Base
+class FakeCopyTunerApp < Sinatra::Base
   disable :show_exceptions
 
   def self.start
@@ -18,7 +18,7 @@ class FakeCopycopterApp < Sinatra::Base
   end
 
   def self.port
-    (ENV['COPYCOPTER_PORT'] || 3002).to_i
+    (ENV['COPY_TUNER_PORT'] || 3002).to_i
   end
 
   def self.add_project(api_key)

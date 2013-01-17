@@ -1,4 +1,4 @@
-module CopycopterClient
+module CopyTunerClient
   class PrefixedLogger
     attr_reader :prefix, :original_logger
 

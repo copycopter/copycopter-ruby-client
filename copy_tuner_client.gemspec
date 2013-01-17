@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
-require 'copycopter_client/version'
+require 'copy_tuner_client/version'
 
 Gem::Specification.new do |s|
   s.add_dependency 'i18n', '>= 0.5.0'
@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
   s.email  = 'support@thoughtbot.com'
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.files = `git ls-files`.split("\n")
-  s.homepage = 'http://github.com/copycopter/copycopter-ruby-client'
-  s.name  = 'copycopter_client'
+  s.homepage = 'https://github.com/SonicGarden/copy-tuner-ruby-client'
+  s.name  = 'copy_tuner_client'
   s.platform = Gem::Platform::RUBY
   s.require_paths = ['lib']
-  s.summary = 'Client for the Copycopter copy management service'
+  s.summary = 'Client for the CopyTuner copy management service'
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.version = CopycopterClient::VERSION
+  s.version = CopyTunerClient::VERSION
 end

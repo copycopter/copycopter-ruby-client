@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe CopycopterClient::Cache do
+describe CopyTunerClient::Cache do
   let(:client) { FakeClient.new }
 
   def build_cache(config = {})
     config[:logger] ||= FakeLogger.new
-    default_config = CopycopterClient::Configuration.new.to_hash
-    CopycopterClient::Cache.new(client, default_config.update(config))
+    default_config = CopyTunerClient::Configuration.new.to_hash
+    CopyTunerClient::Cache.new(client, default_config.update(config))
   end
 
   it "provides access to downloaded data" do
@@ -59,7 +59,7 @@ describe CopycopterClient::Cache do
   it "handles connection errors when flushing" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:upload).raises(CopycopterClient::ConnectionError.new(failure))
+    client.stubs(:upload).raises(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
     cache['upload.key'] = 'upload'
 
@@ -71,7 +71,7 @@ describe CopycopterClient::Cache do
   it "handles connection errors when downloading" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:download).raises(CopycopterClient::ConnectionError.new(failure))
+    client.stubs(:download).raises(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
 
     cache.download
@@ -196,12 +196,12 @@ describe CopycopterClient::Cache do
 
   it "flushes from the top level" do
     cache = build_cache
-    CopycopterClient.configure do |config|
+    CopyTunerClient.configure do |config|
       config.cache = cache
     end
     cache.stubs(:flush)
 
-    CopycopterClient.flush
+    CopyTunerClient.flush
 
     cache.should have_received(:flush)
   end
@@ -216,12 +216,12 @@ describe CopycopterClient::Cache do
     let(:save_blurbs) {}
 
     it "can be invoked from the top-level constant" do
-      CopycopterClient.configure do |config|
+      CopyTunerClient.configure do |config|
         config.cache = @cache
       end
       @cache.stubs(:export)
 
-      CopycopterClient.export
+      CopyTunerClient.export
 
       @cache.should have_received(:export)
     end
@@ -271,4 +271,3 @@ describe CopycopterClient::Cache do
     end
   end
 end
-

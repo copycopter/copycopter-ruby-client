@@ -1,15 +1,15 @@
 require 'net/http'
 require 'net/https'
-require 'copycopter_client/errors'
+require 'copy_tuner_client/errors'
 
-module CopycopterClient
-  # Communicates with the Copycopter server. This class is used to actually
+module CopyTunerClient
+  # Communicates with the CopyTuner server. This class is used to actually
   # download and upload blurbs, as well as issuing deploys.
   #
   # A client is usually instantiated when {Configuration#apply} is called, and
   # the application will not need to interact with it directly.
   class Client
-    # These errors will be rescued when connecting Copycopter.
+    # These errors will be rescued when connecting CopyTuner.
     HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
                    Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
                    Net::ProtocolError, SocketError, OpenSSL::SSL::SSLError,

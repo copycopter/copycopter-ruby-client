@@ -1,4 +1,4 @@
-module CopycopterClient
+module CopyTunerClient
   # Starts the poller from a worker process, or register hooks for a spawner
   # process (such as in Unicorn or Passenger). Also registers hooks for exiting
   # processes and completing background jobs. Applications using the client
@@ -60,10 +60,10 @@ module CopycopterClient
       @logger.info("Registered Unicorn fork hook")
       poller = @poller
       Unicorn::HttpServer.class_eval do
-        alias_method :worker_loop_without_copycopter, :worker_loop
+        alias_method :worker_loop_without_copy_tuner, :worker_loop
         define_method :worker_loop do |worker|
           poller.start
-          worker_loop_without_copycopter(worker)
+          worker_loop_without_copy_tuner(worker)
         end
       end
     end
@@ -79,9 +79,9 @@ module CopycopterClient
         @logger.info("Registered Resque after_perform hook")
         cache = @cache
         Resque::Job.class_eval do
-          alias_method :perform_without_copycopter, :perform
+          alias_method :perform_without_copy_tuner, :perform
           define_method :perform do
-            job_was_performed = perform_without_copycopter
+            job_was_performed = perform_without_copy_tuner
             cache.flush
             job_was_performed
           end

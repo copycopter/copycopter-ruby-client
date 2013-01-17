@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe CopycopterClient::Poller do
+describe CopyTunerClient::Poller do
   POLLING_DELAY = 0.5
 
   let(:client) { FakeClient.new }
-  let(:cache) { CopycopterClient::Cache.new(client, :logger => FakeLogger.new) }
+  let(:cache) { CopyTunerClient::Cache.new(client, :logger => FakeLogger.new) }
 
   def build_poller(config = {})
     config[:logger] ||= FakeLogger.new
     config[:polling_delay] = POLLING_DELAY
-    default_config = CopycopterClient::Configuration.new.to_hash
-    poller = CopycopterClient::Poller.new(cache, default_config.update(config))
+    default_config = CopyTunerClient::Configuration.new.to_hash
+    poller = CopyTunerClient::Poller.new(cache, default_config.update(config))
     @pollers << poller
     poller
   end
@@ -61,7 +61,7 @@ describe CopycopterClient::Poller do
   it "stops polling with an invalid api key" do
     failure = "server is napping"
     logger = FakeLogger.new
-    cache.stubs(:download).raises(CopycopterClient::InvalidApiKey.new(failure))
+    cache.stubs(:download).raises(CopyTunerClient::InvalidApiKey.new(failure))
     poller = build_poller(:logger => logger)
 
     cache['upload.key'] = 'upload'
@@ -98,13 +98,11 @@ describe CopycopterClient::Poller do
 
   it "starts from the top-level constant" do
     poller = build_poller
-    CopycopterClient.poller = poller
+    CopyTunerClient.poller = poller
     poller.stubs(:start)
 
-    CopycopterClient.start_poller
+    CopyTunerClient.start_poller
 
     poller.should have_received(:start)
   end
 end
-
-

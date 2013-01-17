@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe CopycopterClient::I18nBackend do
+describe CopyTunerClient::I18nBackend do
   let(:cache) { {} }
 
   def build_backend
-    backend = CopycopterClient::I18nBackend.new(cache)
+    backend = CopyTunerClient::I18nBackend.new(cache)
     I18n.backend = backend
     backend
   end
@@ -141,7 +141,7 @@ describe CopycopterClient::I18nBackend do
     subject { build_backend }
 
     before do
-      CopycopterClient::I18nBackend.class_eval do
+      CopyTunerClient::I18nBackend.class_eval do
         include I18n::Backend::Fallbacks
       end
     end
