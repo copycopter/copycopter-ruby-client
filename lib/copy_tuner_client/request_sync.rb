@@ -9,7 +9,7 @@ module CopyTunerClient
     def initialize(app, options)
       @app  = app
       @cache = options[:cache]
-      @interval = options[:interval] || 1.minutes
+      @interval = options[:interval] || 60 # 1.minutes
       @last_synced = Time.now.utc
     end
 
