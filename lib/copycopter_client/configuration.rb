@@ -12,7 +12,7 @@ module CopycopterClient
   class Configuration
 
     # These options will be present in the Hash returned by {#to_hash}.
-    OPTIONS = [:api_key, :development_environments, :environment_name, :host,
+    OPTIONS = [:api_key, :development_environments, :environment_name, :host, :path,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
@@ -23,6 +23,9 @@ module CopycopterClient
 
     # @return [String] The host to connect to (defaults to +copycopter.com+).
     attr_accessor :host
+
+    # @return [String] A sub-URI/relative path for all requests (defaults to empty string).
+    attr_accessor :path
 
     # @return [Fixnum] The port on which your Copycopter server runs (defaults to +443+ for secure connections, +80+ for insecure connections).
     attr_accessor :port
@@ -96,6 +99,7 @@ module CopycopterClient
       self.client_version = VERSION
       self.development_environments = %w(development staging)
       self.host = 'copycopter.com'
+      self.path = ''
       self.http_open_timeout = 2
       self.http_read_timeout = 5
       self.logger = Logger.new($stdout)
