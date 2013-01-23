@@ -26,7 +26,7 @@ module CopycopterClient
     # @option options [Logger] :logger where to log transactions
     # @option options [String] :ca_file path to root certificate file for ssl verification
     def initialize(options)
-      [:api_key, :host, :port, :public, :http_read_timeout,
+      [:api_key, :host, :path, :port, :public, :http_read_timeout,
         :http_open_timeout, :secure, :logger, :ca_file].each do |option|
         instance_variable_set "@#{option}", options[option]
       end
@@ -82,7 +82,7 @@ module CopycopterClient
 
     private
 
-    attr_reader :host, :port, :api_key, :http_read_timeout,
+    attr_reader :host, :path, :port, :api_key, :http_read_timeout,
       :http_open_timeout, :secure, :logger, :ca_file
 
     def public?
@@ -90,7 +90,7 @@ module CopycopterClient
     end
 
     def uri(resource)
-      "/api/v2/projects/#{api_key}/#{resource}"
+      "#{path}/api/v2/projects/#{api_key}/#{resource}"
     end
 
     def download_resource
