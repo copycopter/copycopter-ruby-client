@@ -15,7 +15,7 @@ module CopyTunerClient
     OPTIONS = [:api_key, :development_environments, :environment_name, :host,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
-        :proxy_port, :proxy_user, :secure, :polling_delay, :logger,
+        :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval, :logger,
         :framework, :middleware, :ca_file].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
@@ -72,6 +72,9 @@ module CopyTunerClient
     # @return [Integer] The time, in seconds, in between each sync to the server. Defaults to +300+.
     attr_accessor :polling_delay
 
+    # @return [Integer] The time, in seconds, in between each sync to the server in development. Defaults to +60+.
+    attr_accessor :sync_interval
+
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
     attr_reader :logger
 
@@ -100,6 +103,7 @@ module CopyTunerClient
       self.http_read_timeout = 5
       self.logger = Logger.new($stdout)
       self.polling_delay = 300
+      self.sync_interval = 60
       self.secure = false
       self.test_environments = %w(test cucumber)
       @applied = false
@@ -171,7 +175,7 @@ module CopyTunerClient
       I18n.backend = I18nBackend.new(cache)
 
       if middleware && development?
-        middleware.use RequestSync, :cache => cache
+        middleware.use RequestSync, cache: cache, interval: to_hash[:sync_interval]
       end
 
       @applied = true

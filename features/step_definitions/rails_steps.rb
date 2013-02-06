@@ -34,6 +34,7 @@ When /^I configure the copy_tuner client with api key "([^"]*)"$/ do |api_key|
       config.polling_delay = 1
       config.host = 'localhost'
       config.secure = false
+      config.sync_interval = 0
       config.port = #{FakeCopyTunerApp.port}
     end
   RUBY
