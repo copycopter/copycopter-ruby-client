@@ -1,5 +1,5 @@
 appraise '2.3' do
-  gem 'rails', '2.3.14'
+  gem 'rails', '2.3.16'
 end
 
 appraise '3.0' do
