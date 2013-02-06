@@ -10,8 +10,10 @@ module CopyTunerClient
       @app  = app
       @cache = options[:cache]
       @interval = options[:interval] || 60 # 1.minutes
-      @last_synced = Time.now.utc
+      @last_synced = options[:last_synced]
     end
+
+    attr_accessor :last_synced
 
     # Invokes the upstream Rack application and flushes the cache after each
     # request.
@@ -29,6 +31,8 @@ module CopyTunerClient
     end
 
     def in_interval?
+      return false if @last_synced.nil?
+      return false if @interval <= 0
       @last_synced + @interval > Time.now.utc
     end
 
