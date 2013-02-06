@@ -131,6 +131,10 @@ Then /^the response should contain "([^"]+)"$/ do |text|
   @last_response.body.should include(text)
 end
 
+When /^show me the page$/ do
+  @last_response.body.should == nil
+end
+
 When /^I route the "([^"]+)" resource$/ do |resource|
   if Rails::VERSION::MAJOR == 3
     draw = "Testapp::Application.routes.draw do\n"

@@ -1,7 +1,7 @@
 PATH
   remote: /Users/mat_aki/gem/copy-tuner-ruby-client
   specs:
-    copy_tuner_client (0.0.1)
+    copy_tuner_client (0.0.2)
       i18n (>= 0.5.0)
       json
 
@@ -36,6 +36,7 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     addressable (2.2.6)
+    ansi (1.4.3)
     appraisal (0.4.0)
       bundler
       rake
@@ -120,6 +121,8 @@ GEM
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
+    turn (0.9.6)
+      ansi
     tzinfo (0.3.32)
     webmock (1.7.7)
       addressable (~> 2.2, > 2.2.5)
@@ -143,5 +146,6 @@ DEPENDENCIES
   sinatra
   sqlite3-ruby
   thin
+  turn
   webmock
   yard
