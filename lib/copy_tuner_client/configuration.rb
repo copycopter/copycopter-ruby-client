@@ -179,7 +179,7 @@ module CopyTunerClient
       I18n.backend = I18nBackend.new(cache)
 
       if middleware && development?
-        middleware.use RequestSync, cache: cache, interval: sync_interval
+        middleware.use RequestSync, :cache => cache, :interval => sync_interval
       end
 
       @applied = true
