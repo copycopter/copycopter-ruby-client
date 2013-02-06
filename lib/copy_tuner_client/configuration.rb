@@ -15,7 +15,7 @@ module CopyTunerClient
     OPTIONS = [:api_key, :development_environments, :environment_name, :host,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
-        :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval, :logger,
+        :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval, :sync_interval_staging, :logger,
         :framework, :middleware, :ca_file].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
@@ -75,6 +75,9 @@ module CopyTunerClient
     # @return [Integer] The time, in seconds, in between each sync to the server in development. Defaults to +60+.
     attr_accessor :sync_interval
 
+    # @return [Integer] The time, in seconds, in between each sync to the server in development. Defaults to +60+.
+    attr_accessor :sync_interval_staging
+
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
     attr_reader :logger
 
@@ -104,6 +107,7 @@ module CopyTunerClient
       self.logger = Logger.new($stdout)
       self.polling_delay = 300
       self.sync_interval = 60
+      self.sync_interval_staging = 0
       self.secure = false
       self.test_environments = %w(test cucumber)
       @applied = false
@@ -175,7 +179,7 @@ module CopyTunerClient
       I18n.backend = I18nBackend.new(cache)
 
       if middleware && development?
-        middleware.use RequestSync, cache: cache, interval: to_hash[:sync_interval]
+        middleware.use RequestSync, cache: cache, interval: sync_interval
       end
 
       @applied = true
@@ -213,6 +217,15 @@ module CopyTunerClient
     # @param original_logger [Logger] the upstream logger to use, which must respond to the standard +Logger+ severity methods.
     def logger=(original_logger)
       @logger = PrefixedLogger.new("** [CopyTuner]", original_logger)
+    end
+
+    # Sync interval for Rack Middleware
+    def sync_interval
+      if environment_name == "staging"
+        @sync_interval_staging
+      else
+        @sync_interval
+      end
     end
 
     private
