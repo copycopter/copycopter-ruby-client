@@ -16,7 +16,7 @@ module CopyTunerClient
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval, :sync_interval_staging, :logger,
-        :framework, :middleware, :ca_file].freeze
+        :framework, :middleware, :disable_middleware, :ca_file].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -83,6 +83,9 @@ module CopyTunerClient
 
     # @return the middleware stack, if any, which should respond to +use+
     attr_accessor :middleware
+
+    # @return [Boolean] disable middleware setting
+    attr_accessor :disable_middleware
 
     # @return [String] the path to a root certificate file used to verify ssl sessions. Default's to the root certificate file for copy-tuner.com.
     attr_accessor :ca_file
@@ -178,7 +181,8 @@ module CopyTunerClient
       process_guard = ProcessGuard.new(cache, poller, to_hash)
       I18n.backend = I18nBackend.new(cache)
 
-      if middleware && development?
+      if middleware && development? && !disable_middleware
+        logger.info "Using copytuner sync middleware"
         middleware.use RequestSync, :cache => cache, :interval => sync_interval
       end
 
