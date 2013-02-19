@@ -70,6 +70,6 @@ module CopyTunerClient
   end
 end
 
-if defined? Rails
+if defined? ::Rails
   require 'copy_tuner_client/rails'
 end

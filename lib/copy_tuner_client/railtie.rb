@@ -1,7 +1,7 @@
 module CopyTunerClient
   # Connects to integration points for Rails 3 applications
   class Railtie < ::Rails::Railtie
-    initializer :initialize_copy_tuner_rails, :after => :before_initialize do
+    initializer :initialize_copy_tuner_rails, :before => :load_config_initializers do
       CopyTunerClient::Rails.initialize
     end
 

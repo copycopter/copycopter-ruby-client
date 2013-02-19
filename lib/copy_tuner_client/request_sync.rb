@@ -27,7 +27,7 @@ module CopyTunerClient
     # request.
     def call(env)
       if /^\/copytuner/ =~ ::Rack::Request.new(env).path_info
-        dup._call(env, last_synced: @last_synced)
+        dup._call(env)
       else
         @cache.download unless asset_request?(env) or in_interval?
         response = @app.call(env)
@@ -39,7 +39,7 @@ module CopyTunerClient
 
     protected
 
-    def _call(env, vals = {})
+    def _call(env)
       @req = ::Rack::Request.new(env)
 
       case @req.path_info

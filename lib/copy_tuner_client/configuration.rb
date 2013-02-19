@@ -184,6 +184,8 @@ module CopyTunerClient
       if middleware && development? && !disable_middleware
         logger.info "Using copytuner sync middleware"
         middleware.use RequestSync, :cache => cache, :interval => sync_interval
+      else
+        logger.info "[[[Warn]]] Not useing copytuner sync middleware" unless middleware
       end
 
       @applied = true
