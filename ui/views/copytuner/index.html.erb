@@ -19,6 +19,10 @@
 
 <div class="row">
   <div class="span12">
+    <a href="/copytuner/sync" class="btn btn-primary">
+      翻訳データを同期する
+    </a>
+
     <% unless @cache.queued.empty? %>
       <h3>送信前翻訳キー</h3>
       <ul>
@@ -27,8 +31,5 @@
         <% end %>
       </ul>
     <% end %>
-    <a href="/copytuner/sync" class="btn btn-primary">
-      翻訳データを同期する
-    </a>
   </div>
 </div>
