@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 2.3'
   s.add_development_dependency 'sham_rack'
   s.add_development_dependency 'sinatra'
-  s.add_development_dependency 'sqlite3-ruby'
+  s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'thin'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'yard'
