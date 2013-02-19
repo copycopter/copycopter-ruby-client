@@ -88,9 +88,13 @@ module CopyTunerClient
     end
 
     def flush
-      with_queued_changes do |queued|
+      res = with_queued_changes do |queued|
         client.upload queued
       end
+
+      @last_uploaded_at = Time.now.utc
+
+      res
     rescue ConnectionError => error
       logger.error error.message
     end
@@ -98,10 +102,14 @@ module CopyTunerClient
     def download
       @started = true
 
-      client.download do |downloaded_blurbs|
+      res = client.download do |downloaded_blurbs|
         downloaded_blurbs.reject! { |key, value| value == '' }
         lock { @blurbs = downloaded_blurbs }
       end
+
+      @last_downloaded_at = Time.now.utc
+
+      res
     rescue ConnectionError => error
       logger.error error.message
     ensure
@@ -113,6 +121,8 @@ module CopyTunerClient
       download
       flush
     end
+
+    attr_reader :last_downloaded_at, :last_uploaded_at, :queued
 
     private
 
