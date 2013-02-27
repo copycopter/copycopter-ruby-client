@@ -18,6 +18,7 @@ module CopyTunerClient
       @app = app
       @cache = options[:cache]
       @interval = options[:interval]
+      @ignore_regex = options[:ignore_regex]
       @last_synced = options[:last_synced]
     end
 
@@ -29,9 +30,9 @@ module CopyTunerClient
       if /^\/copytuner/ =~ ::Rack::Request.new(env).path_info
         dup._call(env)
       else
-        @cache.download unless asset_request?(env) or in_interval?
+        @cache.download unless cancel_sync?(env)
         response = @app.call(env)
-        @cache.flush    unless asset_request?(env) or in_interval?
+        @cache.flush    unless cancel_sync?(env)
         update_last_synced unless in_interval?
         response
       end
@@ -109,6 +110,14 @@ module CopyTunerClient
     # access to helper functions and local variables
     def render_without_layout(view, binding)
       ERB.new(File.read(File.join(VIEW_PATH, 'copytuner', view.to_s + '.html.erb')), nil, nil, 'frobnitz').result(binding)
+    end
+
+    def cancel_sync?(env)
+      asset_request?(env) or ignore_regex_request?(env) or in_interval?
+    end
+
+    def ignore_regex_request?(env)
+      env['PATH_INFO'] =~ @ignore_regex
     end
 
     def asset_request?(env)

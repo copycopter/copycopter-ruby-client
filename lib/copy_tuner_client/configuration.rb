@@ -15,7 +15,8 @@ module CopyTunerClient
     OPTIONS = [:api_key, :development_environments, :environment_name, :host,
         :http_open_timeout, :http_read_timeout, :client_name, :client_url,
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
-        :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval, :sync_interval_staging, :logger,
+        :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval,
+        :sync_interval_staging, :sync_ignore_path_regex, :logger,
         :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
@@ -77,6 +78,9 @@ module CopyTunerClient
 
     # @return [Integer] The time, in seconds, in between each sync to the server in development. Defaults to +60+.
     attr_accessor :sync_interval_staging
+
+    # @return [Regex] Format ignore hook middleware sync
+    attr_accessor :sync_ignore_path_regex
 
     # @return [Logger] Where to log messages. Must respond to same interface as Logger.
     attr_reader :logger
@@ -186,7 +190,7 @@ module CopyTunerClient
 
       if middleware && development? && !disable_middleware
         logger.info "Using copytuner sync middleware"
-        middleware.use RequestSync, :cache => cache, :interval => sync_interval
+        middleware.use RequestSync, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
       else
         logger.info "[[[Warn]]] Not useing copytuner sync middleware" unless middleware
       end
