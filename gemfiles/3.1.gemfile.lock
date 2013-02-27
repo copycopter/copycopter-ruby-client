@@ -1,7 +1,7 @@
 PATH
   remote: /Users/mat_aki/gem/copy-tuner-ruby-client
   specs:
-    copy_tuner_client (0.0.5)
+    copy_tuner_client (0.0.7)
       i18n (>= 0.5.0)
       json
 
