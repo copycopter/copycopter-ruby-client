@@ -103,6 +103,9 @@ module CopyTunerClient
     # @return [Client] instance used to communicate with a CopyTuner Server.
     attr_accessor :client
 
+    # @return [Boolean] To enable inline-translation-mode, set true.
+    attr_accessor :inline_translation
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.

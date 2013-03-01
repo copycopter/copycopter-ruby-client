@@ -1,4 +1,5 @@
 require 'i18n'
+require 'copy_tuner_client/configuration'
 
 module CopyTunerClient
   # I18n implementation designed to synchronize with CopyTuner.
@@ -24,6 +25,9 @@ module CopyTunerClient
     # @return [Object] the translated key (usually a String)
     def translate(locale, key, options = {})
       content = super(locale, key, options.merge(:fallback => true))
+      if CopyTunerClient.configuration.inline_translation
+        content = "<u title='#{key}'>#{content}</u>"
+      end
       if content.respond_to?(:html_safe)
         content.html_safe
       else
