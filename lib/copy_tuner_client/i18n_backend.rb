@@ -26,7 +26,7 @@ module CopyTunerClient
     def translate(locale, key, options = {})
       content = super(locale, key, options.merge(:fallback => true))
       if CopyTunerClient.configuration.inline_translation
-        content = key.to_s
+        content = (content.is_a?(Array) ? content : key.to_s)
       end
       if content.respond_to?(:html_safe)
         content.html_safe
