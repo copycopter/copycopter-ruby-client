@@ -251,7 +251,7 @@ module CopyTunerClient
 
     # @return [String] current project url by api_key
     def project_url
-      URI::Generic.build(scheme: self.protocol, host: self.host, port: self.port.to_i, path: "/projects/#{self.api_key}").to_s
+      URI::Generic.build(:scheme => self.protocol, :host => self.host, :port => self.port.to_i, :path => "/projects/#{self.api_key}").to_s
     end
 
     private
