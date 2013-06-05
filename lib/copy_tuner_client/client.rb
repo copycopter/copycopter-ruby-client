@@ -1,5 +1,6 @@
 require 'net/http'
 require 'net/https'
+require 'json'
 require 'copy_tuner_client/errors'
 
 module CopyTunerClient
