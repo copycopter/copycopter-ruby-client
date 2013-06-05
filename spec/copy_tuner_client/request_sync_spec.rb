@@ -54,7 +54,7 @@ describe CopyTunerClient::RequestSync do
   before { cache.stubs(:flush => nil, :download => nil) }
 
   context 'in interval request' do
-    subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, last_synced: Time.now) }
+    subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, :last_synced => Time.now) }
     it "does not flush defaults" do
       subject.call(env)
       cache.should_not have_received(:flush)
@@ -66,7 +66,7 @@ describe CopyTunerClient::RequestSync do
   end
 
   context 'over interval request' do
-    subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, last_synced: Time.now - 60) }
+    subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, :last_synced => Time.now - 60) }
     it "flushes defaults" do
       subject.call(env)
       cache.should have_received(:flush)
