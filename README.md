@@ -24,6 +24,7 @@ In your `config/initializers/copycopter.rb`:
     CopycopterClient.configure do |config|
       config.api_key = 'YOUR API KEY HERE'
       config.host = 'your-copycopter-server.herokuapp.com'
+      config.environment_name = Rails.env
     end
 
 The API key is on the project page. See `CopycopterClient::Configuration` for
