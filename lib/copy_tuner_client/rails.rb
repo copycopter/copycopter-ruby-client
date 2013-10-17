@@ -15,7 +15,7 @@ module CopyTunerClient
 end
 
 if defined?(::Rails::Railtie)
-  require 'copy_tuner_client/railtie'
+  require 'copy_tuner_client/engine'
 else
   CopyTunerClient::Rails.initialize
 end

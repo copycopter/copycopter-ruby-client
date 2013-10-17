@@ -3,7 +3,7 @@ require 'copy_tuner_client/copyray'
 
 module CopyTunerClient
   # Connects to integration points for Rails 3 applications
-  class Railtie < ::Rails::Railtie
+  class Engine < ::Rails::Engine
     initializer :initialize_copy_tuner_rails, :before => :load_config_initializers do |app|
       CopyTunerClient::Rails.initialize
       app.middleware.use CopyTunerClient::CopyrayMiddleware
