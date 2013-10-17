@@ -3,7 +3,7 @@ module CopyTunerClient
   class Railtie < ::Rails::Railtie
     initializer :initialize_copy_tuner_rails, :before => :load_config_initializers do |app|
       CopyTunerClient::Rails.initialize
-      app.middleware_use CopyTunerClient::XrayMiddleware
+      app.middleware_use CopyTunerClient::CopyrayMiddleware
 
       ActiveSupport.on_load(:action_view) do
         ActionView::Helpers::TranslationHelper.class_eval do
