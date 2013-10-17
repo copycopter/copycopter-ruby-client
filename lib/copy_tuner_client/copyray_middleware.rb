@@ -10,9 +10,9 @@ module CopyTunerClient
       status, headers, response = @app.call(env)
       if should_inject_xray?(status, headers, response)
         body = response.body
-        if Rails.application.config.assets.debug
+        # if Rails.application.config.assets.debug
           append_js!(body, 'jquery', :copyray)
-        end
+        # end
         headers['Content-Length'] = body.bytesize.to_s
       end
       [status, headers, (body ? [body] : response)]

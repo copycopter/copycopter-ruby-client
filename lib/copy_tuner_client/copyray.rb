@@ -15,14 +15,10 @@ module CopyTunerClient
     #     ...
     #   </div>
     #   <!-- XRAY END 123 -->
-    def self.augment_template(source, path)
+    def self.augment_template(source)
       id = next_id
       # skim doesn't allow html comments, so use skim's comment syntax if it's skim
-      if path =~ /\.(skim)(\.|$)/
-        augmented = "/!XRAY START #{id} #{path}\n#{source}\n/!XRAY END #{id}"
-      else
-        augmented = "<!--XRAY START #{id} #{path}-->\n#{source}\n<!--XRAY END #{id}-->"
-      end
+      augmented = "<!--XRAY START #{id} -->\n#{source}\n<!--XRAY END #{id}-->"
       ActiveSupport::SafeBuffer === source ? ActiveSupport::SafeBuffer.new(augmented) : augmented
     end
 
