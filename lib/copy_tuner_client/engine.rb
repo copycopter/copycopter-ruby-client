@@ -12,6 +12,8 @@ module CopyTunerClient
             source = translate_without_copyray_comment(key, options)
             if options[:rescue_format] == :html
               CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
+            else
+              source
             end
           end
           alias_method_chain :translate, :copyray_comment
