@@ -6,7 +6,6 @@ module CopyTunerClient
   class Engine < ::Rails::Engine
     initializer :initialize_copy_tuner_rails, :before => :load_config_initializers do |app|
       CopyTunerClient::Rails.initialize
-      app.middleware.use CopyTunerClient::CopyrayMiddleware
 
       ActiveSupport.on_load(:action_view) do
         ActionView::Helpers::TranslationHelper.class_eval do
