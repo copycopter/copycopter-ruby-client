@@ -1,4 +1,3 @@
-require 'copy_tuner_client/copyray_middleware'
 require 'copy_tuner_client/copyray'
 
 module CopyTunerClient

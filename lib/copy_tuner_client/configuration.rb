@@ -6,6 +6,7 @@ require 'copy_tuner_client/process_guard'
 require 'copy_tuner_client/poller'
 require 'copy_tuner_client/prefixed_logger'
 require 'copy_tuner_client/request_sync'
+require 'copy_tuner_client/copyray_middleware'
 
 module CopyTunerClient
   # Used to set up and modify settings for the client.
