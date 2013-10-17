@@ -8,15 +8,16 @@ module CopyTunerClient
       CopyTunerClient::Rails.initialize
       app.middleware.use CopyTunerClient::CopyrayMiddleware
 
-      # ActiveSupport.on_load(:action_view) do
+      ActiveSupport.on_load(:action_view) do
         ActionView::Helpers::TranslationHelper.class_eval do
           def translate_with_copyray_comment(key, options = {})
             source = translate_without_copyray_comment(key, options)
-            CopyTunerClient::Copyray.augment_template(source)
+            CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
           end
           alias_method_chain :translate, :copyray_comment
+          alias t translate
         end
-      # end
+      end
     end
 
     rake_tasks do

@@ -9,7 +9,7 @@ module CopyTunerClient
     def call(env)
       status, headers, response = @app.call(env)
       if should_inject_xray?(status, headers, response)
-        body = response.body
+        body = response.body.sub(/<body[^>]*>/) { "#{$~}\n#{css_tag}" }
         # if Rails.application.config.assets.debug
           append_js!(body, 'jquery', :copyray)
         # end
@@ -20,6 +20,10 @@ module CopyTunerClient
 
     private
 
+    def helpers
+      ActionController::Base.helpers
+    end
+
     # Appends the given `script_name` after the `after_script_name`.
     def append_js!(html, after_script_name, script_name)
       # Matches:
@@ -27,9 +31,13 @@ module CopyTunerClient
       #   <script src="/assets/jquery-min.js"></script>
       #   <script src="/assets/jquery.min.1.9.1.js"></script>
       html.sub!(/<script[^>]+\/#{after_script_name}([-.]{1}[\d\.]+)?([-.]{1}min)?\.js[^>]+><\/script>/) do
-        h = ActionController::Base.helpers
-        "#{$~}\n" + h.javascript_include_tag(script_name)
+        "#{$~}\n" + helpers.javascript_include_tag(script_name)
       end
+    end
+
+    def css_tag
+      h = ActionController::Base.helpers
+      helpers.stylesheet_link_tag :copyray
     end
 
     def should_inject_xray?(status, headers, response)
