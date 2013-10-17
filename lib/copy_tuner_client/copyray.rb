@@ -18,7 +18,7 @@ module CopyTunerClient
     def self.augment_template(source, key)
       id = next_id
       # skim doesn't allow html comments, so use skim's comment syntax if it's skim
-      augmented = "<!--XRAY START #{id} #{key}-->\n#{source}\n<!--XRAY END #{id}-->"
+      augmented = "<!--XRAY START #{id} #{key}-->\n<span>#{source}</span>\n<!--XRAY END #{id}-->"
       ActiveSupport::SafeBuffer === source ? ActiveSupport::SafeBuffer.new(augmented) : augmented
     end
 

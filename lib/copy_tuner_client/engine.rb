@@ -12,7 +12,9 @@ module CopyTunerClient
         ActionView::Helpers::TranslationHelper.class_eval do
           def translate_with_copyray_comment(key, options = {})
             source = translate_without_copyray_comment(key, options)
-            CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
+            if options[:rescue_format] == :html
+              CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
+            end
           end
           alias_method_chain :translate, :copyray_comment
           alias t translate
