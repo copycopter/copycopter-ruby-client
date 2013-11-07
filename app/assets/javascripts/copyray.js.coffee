@@ -47,7 +47,7 @@ Xray.findTemplates = -> util.bm 'findTemplates', ->
   # Find the <!-- XRAY END ... --> comment for each. Everything between the
   # start and end comment becomes the contents of an Xray.TemplateSpecimen.
   for comment in comments
-    [_, id, path] = comment.data.match(/^XRAY START (\d+) (.*)$/)
+    [_, id, path, url] = comment.data.match(/^XRAY START (\d+) (\S*) (\S*)/)
     $templateContents = new jQuery
     el = comment.nextSibling
     until !el or (el.nodeType == 8 and el.data == "XRAY END #{id}")
@@ -61,10 +61,11 @@ Xray.findTemplates = -> util.bm 'findTemplates', ->
     Xray.TemplateSpecimen.add $templateContents,
       name: path.split('/').slice(-1)[0]
       path: path
+      url: url
 
 # Open the given filesystem path by calling out to Xray's server.
-Xray.open = (path) ->
-  $.ajax(url: "/_xray/open?path=#{path}")
+Xray.open = (url) ->
+  window.open(url, null, 'width=700, height=500')
 
 # Show the Xray overlay
 Xray.show = (type = null) ->
@@ -100,6 +101,7 @@ class Xray.Specimen
     @$contents = $(contents)
     @name = info.name
     @path = info.path
+    @url = info.url
 
   remove: ->
     idx = @constructor.all.indexOf(this)
@@ -119,7 +121,7 @@ class Xray.Specimen
         top      : @$contents.css('top')
         left     : @$contents.css('left')
 
-    @$box.click => Xray.open @path
+    @$box.click => Xray.open @url + '/blurbs/' + @path + '/edit'
     @$box.append @makeLabel
 
   makeLabel: =>
