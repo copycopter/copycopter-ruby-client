@@ -22,8 +22,8 @@ module CopyTunerClient
       end
     end
 
-    initializer :initialize_copy_tuner_rails, :before => :load_config_initializers do |app|
-      ::Rails.application.config.assets.precompile += ["copyray.js", "copyray.css"]
+    initializer "copy_tuner.assets.precompile", group: :assets do |app|
+      app.config.assets.precompile += ["copyray.js", "copyray.css"]
     end
 
     rake_tasks do
