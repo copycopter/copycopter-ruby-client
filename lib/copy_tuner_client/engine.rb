@@ -22,7 +22,7 @@ module CopyTunerClient
       end
     end
 
-    initializer "copy_tuner.assets.precompile", group: :assets do |app|
+    initializer "copy_tuner.assets.precompile" do |app|
       app.config.assets.precompile += ["copyray.js", "copyray.css"]
     end
 
