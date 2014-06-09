@@ -38,8 +38,9 @@ module CopyTunerClient
     # Returns locales availabile for this CopyTuner project.
     # @return [Array<String>] available locales
     def available_locales
+      return @available_locales if defined?(@available_locales)
       cached_locales = cache.keys.map { |key| key.split('.').first }
-      (cached_locales + super).uniq.map { |locale| locale.to_sym }
+      @available_locales = (cached_locales + super).uniq.map { |locale| locale.to_sym }
     end
 
     # Stores the given translations.
