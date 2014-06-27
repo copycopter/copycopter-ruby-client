@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'copy_tuner_client/copyray'
 
 begin
@@ -11,8 +10,13 @@ if defined?(SimpleForm)
     protected
     def label_translation_with_copyray_comment
       source = label_translation_without_copyray_comment
-      # どこのキーかは特定しにくい
-      CopyTunerClient::Copyray.augment_template(source, attribute_name)
+
+      attributes_scope = "#{object.class.i18n_scope}.attributes"
+      defaults = object.class.lookup_ancestors.map do |klass|
+        "#{attributes_scope}.#{klass.model_name.i18n_key}.#{reflection_or_attribute_name}"
+      end
+
+      CopyTunerClient::Copyray.augment_template(source, defaults.shift)
     end
     alias_method_chain :label_translation, :copyray_comment
   end
