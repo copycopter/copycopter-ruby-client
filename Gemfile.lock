@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    copy_tuner_client (0.1.1.beta6)
+    copy_tuner_client (0.1.1.beta7)
       i18n (>= 0.5.0)
       json
 
