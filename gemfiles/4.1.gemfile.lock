@@ -36,9 +36,10 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     ansi (1.4.3)
-    appraisal (0.5.2)
+    appraisal (1.0.0)
       bundler
       rake
+      thor (>= 0.14.0)
     arel (5.0.1.20140414130214)
     aruba (0.3.7)
       childprocess (>= 0.1.9)
@@ -149,7 +150,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  appraisal (~> 0.4)
+  appraisal (~> 1.0)
   aruba (~> 0.3.2)
   bourne
   copy_tuner_client!
