@@ -38,11 +38,11 @@ describe CopyTunerClient::RequestSync, 'serving assets' do
 
   it "does not flush defaults" do
     subject.call(env)
-    cache.should_not have_received(:flush)
+    cache.should have_received(:flush).never
   end
   it "does not download new copy" do
     subject.call(env)
-    cache.should_not have_received(:download)
+    cache.should have_received(:download).never
   end
 end
 
@@ -57,11 +57,11 @@ describe CopyTunerClient::RequestSync do
     subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, :last_synced => Time.now) }
     it "does not flush defaults" do
       subject.call(env)
-      cache.should_not have_received(:flush)
+      cache.should have_received(:flush).never
     end
     it "does not download new copy" do
       subject.call(env)
-      cache.should_not have_received(:download)
+      cache.should have_received(:download).never
     end
   end
 
