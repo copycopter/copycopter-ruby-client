@@ -1,15 +1,24 @@
-appraise '2.3' do
-  gem 'rails', '2.3.16'
+appraise '3.2' do
+  gem 'rails', '3.2.19'
+  # gem 'jquery-rails'
+  # gem 'uglifier'
+  # gem 'sass-rails'
+  # gem 'coffee-rails'
 end
 
-appraise '3.0' do
-  gem 'rails', '3.0.20'
+appraise '4.0' do
+  gem 'rails', '4.0.8'
+  # gem 'jquery-rails'
+  # gem 'uglifier'
+  # gem 'sass-rails'
+  # gem 'coffee-rails'
 end
 
-appraise '3.1' do
-  gem 'rails', '3.1.10'
-  gem 'jquery-rails'
-  gem 'uglifier'
-  gem 'sass-rails'
-  gem 'coffee-rails'
+
+appraise '4.1' do
+  gem 'rails', '4.1.4'
+  # gem 'jquery-rails'
+  # gem 'uglifier'
+  # gem 'sass-rails'
+  # gem 'coffee-rails'
 end
