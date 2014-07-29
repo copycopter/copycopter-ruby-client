@@ -13,6 +13,7 @@ Copyray.init = do ->
 
   # Register keyboard shortcuts
   $(document).keydown (e) ->
+    # cmd + shift + k
     if (is_mac and e.metaKey or !is_mac and e.ctrlKey) and e.shiftKey and e.keyCode is 75
       if Copyray.isShowing then Copyray.hide() else Copyray.show()
     if Copyray.isShowing and e.keyCode is 27 # esc
@@ -22,13 +23,13 @@ Copyray.init = do ->
     # Instantiate the overlay singleton.
     new Copyray.Overlay
     # Go ahead and do a pass on the DOM to find templates.
-    Copyray.findTemplates()
+    Copyray.findBlurbs()
     # Ready to rock.
     console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
 # Returns all currently created Copyray.Specimen objects.
 Copyray.specimens = ->
-  Copyray.ViewSpecimen.all.concat Copyray.TemplateSpecimen.all
+  Copyray.BlurbSpecimen.all
 
 # Looks up the stored constructor info
 Copyray.constructorInfo = (constructor) ->
@@ -37,27 +38,26 @@ Copyray.constructorInfo = (constructor) ->
       return JSON.parse(info) if func == constructor
   null
 
-# Scans the document for templates, creating Copyray.TemplateSpecimens for them.
-Copyray.findTemplates = -> util.bm 'findTemplates', ->
+# Scans the document for blurbs, creating Copyray.BlurbSpecimen for them.
+Copyray.findBlurbs = -> util.bm 'findBlurbs', ->
   # Find all <!-- COPYRAY START ... --> comments
   comments = $('*:not(iframe,script)').contents().filter ->
     this.nodeType == 8 and this.data[0..12] == "COPYRAY START"
 
   # Find the <!-- COPYRAY END ... --> comment for each. Everything between the
-  # start and end comment becomes the contents of an Copyray.TemplateSpecimen.
   for comment in comments
     [_, id, path, url] = comment.data.match(/^COPYRAY START (\d+) (\S*) (\S*)/)
-    $templateContents = new jQuery
+    $blurbContents = new jQuery
     el = comment.nextSibling
     until !el or (el.nodeType == 8 and el.data == "COPYRAY END #{id}")
       if el.nodeType == 1 and el.tagName != 'SCRIPT'
-        $templateContents.push el
+        $blurbContents.push el
       el = el.nextSibling
     # Remove COPYRAY template comments from the DOM.
     el.parentNode.removeChild(el) if el?.nodeType == 8
     comment.parentNode.removeChild(comment)
     # Add the template specimen
-    Copyray.TemplateSpecimen.add $templateContents,
+    Copyray.BlurbSpecimen.add $blurbContents,
       name: path.split('/').slice(-1)[0]
       path: path
       url: url
@@ -78,7 +78,7 @@ Copyray.toggleSettings = ->
   Copyray.Overlay.instance().settings.toggle()
 
 # Wraps a DOM element that Copyray is tracking. This is subclassed by
-# Copyray.TemplateSpecimen and Copyray.ViewSpecimen.
+# Copyray.Blurbsspecimen
 class Copyray.Specimen
   @add: (el, info = {}) ->
     @all.push new this(el, info)
@@ -126,18 +126,9 @@ class Copyray.Specimen
   makeLabel: =>
     $("<div class='copyray-specimen-handle #{@constructor.name}'>").append(@name)
 
-
-# Wraps elements that constitute a Javascript "view" object, e.g.
-# Backbone.View.
-class Copyray.ViewSpecimen extends Copyray.Specimen
+# copy-tuner blurbs
+class Copyray.BlurbSpecimen extends Copyray.Specimen
   @all = []
-
-
-# Wraps elements that were rendered by a template, e.g. a Rails partial or
-# a client-side rendered JS template.
-class Copyray.TemplateSpecimen extends Copyray.Specimen
-  @all = []
-
 
 # Singleton class for the Copyray "overlay" invoked by the keyboard shortcut
 class Copyray.Overlay
@@ -146,32 +137,18 @@ class Copyray.Overlay
 
   constructor: ->
     Copyray.Overlay.singletonInstance = this
-    @bar = new Copyray.Bar('#copyray-bar')
-    @settings = new Copyray.Settings('#copyray-settings')
-    @shownBoxes = []
     @$overlay = $('<div id="copyray-overlay">')
+    @shownBoxes = []
     @$overlay.click => @hide()
 
   show: (type = null) ->
     @reset()
     Copyray.isShowing = true
     util.bm 'show', =>
-      @bar.$el.find('#copyray-bar-togglers .copyray-bar-btn').removeClass('active')
       unless @$overlay.is(':visible')
         $('body').append @$overlay
-        @bar.show()
-      switch type
-        when 'templates'
-          Copyray.findTemplates()
-          specimens = Copyray.TemplateSpecimen.all
-          @bar.$el.find('.copyray-bar-templates-toggler').addClass('active')
-        when 'views'
-          specimens = Copyray.ViewSpecimen.all
-          @bar.$el.find('.copyray-bar-views-toggler').addClass('active')
-        else
-          Copyray.findTemplates()
-          specimens = Copyray.specimens()
-          @bar.$el.find('.copyray-bar-all-toggler').addClass('active')
+        Copyray.findBlurbs()
+        specimens = Copyray.specimens()
       for element in specimens
         continue unless element.isVisible()
         element.makeBox()
@@ -190,59 +167,6 @@ class Copyray.Overlay
     Copyray.isShowing = false
     @$overlay.detach()
     @reset()
-    @bar.hide()
-
-
-# The Copyray bar shows controller, action, and view information, and has
-# toggle buttons for showing the different types of specimens in the overlay.
-class Copyray.Bar
-  constructor: (el) ->
-    @$el = $(el)
-    @$el.css(zIndex: MAX_ZINDEX)
-    @$el.find('#copyray-bar-controller-path .copyray-bar-btn').click ->
-      Copyray.open($(this).attr('data-path'))
-    @$el.find('.copyray-bar-all-toggler').click       -> Copyray.show()
-    @$el.find('.copyray-bar-templates-toggler').click -> Copyray.show('templates')
-    @$el.find('.copyray-bar-views-toggler').click     -> Copyray.show('views')
-    @$el.find('.copyray-bar-settings-btn').click      -> Copyray.toggleSettings()
-
-  show: ->
-    @$el.show()
-    @originalPadding = parseInt $('html').css('padding-bottom')
-    if @originalPadding < 40
-      $('html').css paddingBottom: 40
-
-  hide: ->
-    @$el.hide()
-    $('html').css paddingBottom: @originalPadding
-
-
-class Copyray.Settings
-  constructor: (el) ->
-    @$el = $(el)
-    @$el.find('form').submit @save
-
-  toggle: =>
-    @$el.toggle()
-
-  save: (e) =>
-    e.preventDefault()
-    editor = @$el.find('#copyray-editor-input').val()
-    $.ajax
-      url: '/_copyray/config'
-      type: 'POST'
-      data: {editor: editor}
-      success: => @displayUpdateMsg(true)
-      error: => @displayUpdateMsg(false)
-
-  displayUpdateMsg: (success) =>
-    if success
-      $msg = $("<span class='copyray-settings-success copyray-settings-update-msg'>Success!</span>")
-    else
-      $msg = $("<span class='copyray-settings-error copyray-settings-update-msg'>Uh oh, something went wrong!</span>")
-    @$el.append($msg)
-    $msg.delay(2000).fadeOut(500, => $msg.remove(); @toggle())
-
 
 # Utility methods.
 util =
