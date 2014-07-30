@@ -10,15 +10,15 @@ module CopyTunerClient
     #   </div>
     #
     # Becomes:
-    #   <!-- XRAY START 123 /path/to/file.html -->
+    #   <!-- COPYRAY START 123 /path/to/file.html -->
     #   <div class=".my-element">
     #     ...
     #   </div>
-    #   <!-- XRAY END 123 -->
+    #   <!-- COPYRAY END 123 -->
     def self.augment_template(source, key)
       id = next_id
       # skim doesn't allow html comments, so use skim's comment syntax if it's skim
-      augmented = "<!--XRAY START #{id} #{key} #{CopyTunerClient.configuration.project_url} -->\n<span>#{source}</span>\n<!--XRAY END #{id}-->"
+      augmented = "<!--COPYRAY START #{id} #{key} #{CopyTunerClient.configuration.project_url} -->\n<span>#{source}</span>\n<!--COPYRAY END #{id}-->"
       ActiveSupport::SafeBuffer === source ? ActiveSupport::SafeBuffer.new(augmented) : augmented
     end
 

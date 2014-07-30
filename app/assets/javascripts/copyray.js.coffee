@@ -1,86 +1,85 @@
-window.Xray = {}
+window.Copyray = {}
 return unless $ = window.jQuery
 
-# Max CSS z-index. The overlay and xray bar use this.
+# Max CSS z-index. The overlay and copyray bar use this.
 MAX_ZINDEX = 2147483647
 
-# Initialize Xray. Called immediately, but some setup is deferred until DOM ready.
-Xray.init = do ->
-  return if Xray.initialized
-  Xray.initialized = true
+# Initialize Copyray. Called immediately, but some setup is deferred until DOM ready.
+Copyray.init = do ->
+  return if Copyray.initialized
+  Copyray.initialized = true
 
   is_mac = navigator.platform.toUpperCase().indexOf('MAC') isnt -1
 
   # Register keyboard shortcuts
   $(document).keydown (e) ->
-    # cmd+shift+x on Mac, ctrl+shift+x on other platforms
-    if (is_mac and e.metaKey or !is_mac and e.ctrlKey) and e.shiftKey and e.keyCode is 88
-      if Xray.isShowing then Xray.hide() else Xray.show()
-    if Xray.isShowing and e.keyCode is 27 # esc
-      Xray.hide()
+    # cmd + shift + k
+    if (is_mac and e.metaKey or !is_mac and e.ctrlKey) and e.shiftKey and e.keyCode is 75
+      if Copyray.isShowing then Copyray.hide() else Copyray.show()
+    if Copyray.isShowing and e.keyCode is 27 # esc
+      Copyray.hide()
 
   $ ->
     # Instantiate the overlay singleton.
-    new Xray.Overlay
+    new Copyray.Overlay
     # Go ahead and do a pass on the DOM to find templates.
-    Xray.findTemplates()
+    Copyray.findBlurbs()
     # Ready to rock.
-    console?.log "Ready to Xray. Press #{if is_mac then 'cmd+shift+x' else 'ctrl+shift+x'} to scan your UI."
+    console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
-# Returns all currently created Xray.Specimen objects.
-Xray.specimens = ->
-  Xray.ViewSpecimen.all.concat Xray.TemplateSpecimen.all
+# Returns all currently created Copyray.Specimen objects.
+Copyray.specimens = ->
+  Copyray.BlurbSpecimen.all
 
 # Looks up the stored constructor info
-Xray.constructorInfo = (constructor) ->
-  if window.XrayPaths
-    for own info, func of window.XrayPaths
+Copyray.constructorInfo = (constructor) ->
+  if window.CopyrayPaths
+    for own info, func of window.CopyrayPaths
       return JSON.parse(info) if func == constructor
   null
 
-# Scans the document for templates, creating Xray.TemplateSpecimens for them.
-Xray.findTemplates = -> util.bm 'findTemplates', ->
-  # Find all <!-- XRAY START ... --> comments
+# Scans the document for blurbs, creating Copyray.BlurbSpecimen for them.
+Copyray.findBlurbs = -> util.bm 'findBlurbs', ->
+  # Find all <!-- COPYRAY START ... --> comments
   comments = $('*:not(iframe,script)').contents().filter ->
-    this.nodeType == 8 and this.data[0..9] == "XRAY START"
+    this.nodeType == 8 and this.data[0..12] == "COPYRAY START"
 
-  # Find the <!-- XRAY END ... --> comment for each. Everything between the
-  # start and end comment becomes the contents of an Xray.TemplateSpecimen.
+  # Find the <!-- COPYRAY END ... --> comment for each. Everything between the
   for comment in comments
-    [_, id, path, url] = comment.data.match(/^XRAY START (\d+) (\S*) (\S*)/)
-    $templateContents = new jQuery
+    [_, id, path, url] = comment.data.match(/^COPYRAY START (\d+) (\S*) (\S*)/)
+    $blurbContents = new jQuery
     el = comment.nextSibling
-    until !el or (el.nodeType == 8 and el.data == "XRAY END #{id}")
+    until !el or (el.nodeType == 8 and el.data == "COPYRAY END #{id}")
       if el.nodeType == 1 and el.tagName != 'SCRIPT'
-        $templateContents.push el
+        $blurbContents.push el
       el = el.nextSibling
-    # Remove XRAY template comments from the DOM.
+    # Remove COPYRAY template comments from the DOM.
     el.parentNode.removeChild(el) if el?.nodeType == 8
     comment.parentNode.removeChild(comment)
     # Add the template specimen
-    Xray.TemplateSpecimen.add $templateContents,
+    Copyray.BlurbSpecimen.add $blurbContents,
       name: path.split('/').slice(-1)[0]
       path: path
       url: url
 
-# Open the given filesystem path by calling out to Xray's server.
-Xray.open = (url) ->
+# Open the given filesystem path by calling out to Copyray's server.
+Copyray.open = (url) ->
   window.open(url, null, 'width=700, height=500')
 
-# Show the Xray overlay
-Xray.show = (type = null) ->
-  Xray.Overlay.instance().show(type)
+# Show the Copyray overlay
+Copyray.show = (type = null) ->
+  Copyray.Overlay.instance().show(type)
 
-# Hide the Xray overlay
-Xray.hide = ->
-  Xray.Overlay.instance().hide()
+# Hide the Copyray overlay
+Copyray.hide = ->
+  Copyray.Overlay.instance().hide()
 
-Xray.toggleSettings = ->
-  Xray.Overlay.instance().settings.toggle()
+Copyray.toggleSettings = ->
+  Copyray.Overlay.instance().settings.toggle()
 
-# Wraps a DOM element that Xray is tracking. This is subclassed by
-# Xray.TemplateSpecimen and Xray.ViewSpecimen.
-class Xray.Specimen
+# Wraps a DOM element that Copyray is tracking. This is subclassed by
+# Copyray.Blurbsspecimen
+class Copyray.Specimen
   @add: (el, info = {}) ->
     @all.push new this(el, info)
 
@@ -112,7 +111,7 @@ class Xray.Specimen
 
   makeBox: ->
     @bounds = util.computeBoundingBox(@$contents)
-    @$box = $("<div class='xray-specimen #{@constructor.name}'>").css(@bounds)
+    @$box = $("<div class='copyray-specimen #{@constructor.name}'>").css(@bounds)
 
     # If the element is fixed, override the computed position with the fixed one.
     if @$contents.css('position') == 'fixed'
@@ -121,58 +120,35 @@ class Xray.Specimen
         top      : @$contents.css('top')
         left     : @$contents.css('left')
 
-    @$box.click => Xray.open @url + '/blurbs/' + @path + '/edit'
+    @$box.click => Copyray.open @url + '/blurbs/' + @path + '/edit'
     @$box.append @makeLabel
 
   makeLabel: =>
-    $("<div class='xray-specimen-handle #{@constructor.name}'>").append(@name)
+    $("<div class='copyray-specimen-handle #{@constructor.name}'>").append(@name)
 
-
-# Wraps elements that constitute a Javascript "view" object, e.g.
-# Backbone.View.
-class Xray.ViewSpecimen extends Xray.Specimen
+# copy-tuner blurbs
+class Copyray.BlurbSpecimen extends Copyray.Specimen
   @all = []
 
-
-# Wraps elements that were rendered by a template, e.g. a Rails partial or
-# a client-side rendered JS template.
-class Xray.TemplateSpecimen extends Xray.Specimen
-  @all = []
-
-
-# Singleton class for the Xray "overlay" invoked by the keyboard shortcut
-class Xray.Overlay
+# Singleton class for the Copyray "overlay" invoked by the keyboard shortcut
+class Copyray.Overlay
   @instance: ->
     @singletonInstance ||= new this
 
   constructor: ->
-    Xray.Overlay.singletonInstance = this
-    @bar = new Xray.Bar('#xray-bar')
-    @settings = new Xray.Settings('#xray-settings')
+    Copyray.Overlay.singletonInstance = this
+    @$overlay = $('<div id="copyray-overlay">')
     @shownBoxes = []
-    @$overlay = $('<div id="xray-overlay">')
     @$overlay.click => @hide()
 
   show: (type = null) ->
     @reset()
-    Xray.isShowing = true
+    Copyray.isShowing = true
     util.bm 'show', =>
-      @bar.$el.find('#xray-bar-togglers .xray-bar-btn').removeClass('active')
       unless @$overlay.is(':visible')
         $('body').append @$overlay
-        @bar.show()
-      switch type
-        when 'templates'
-          Xray.findTemplates()
-          specimens = Xray.TemplateSpecimen.all
-          @bar.$el.find('.xray-bar-templates-toggler').addClass('active')
-        when 'views'
-          specimens = Xray.ViewSpecimen.all
-          @bar.$el.find('.xray-bar-views-toggler').addClass('active')
-        else
-          Xray.findTemplates()
-          specimens = Xray.specimens()
-          @bar.$el.find('.xray-bar-all-toggler').addClass('active')
+        Copyray.findBlurbs()
+        specimens = Copyray.specimens()
       for element in specimens
         continue unless element.isVisible()
         element.makeBox()
@@ -188,62 +164,9 @@ class Xray.Overlay
     @shownBoxes = []
 
   hide: ->
-    Xray.isShowing = false
+    Copyray.isShowing = false
     @$overlay.detach()
     @reset()
-    @bar.hide()
-
-
-# The Xray bar shows controller, action, and view information, and has
-# toggle buttons for showing the different types of specimens in the overlay.
-class Xray.Bar
-  constructor: (el) ->
-    @$el = $(el)
-    @$el.css(zIndex: MAX_ZINDEX)
-    @$el.find('#xray-bar-controller-path .xray-bar-btn').click ->
-      Xray.open($(this).attr('data-path'))
-    @$el.find('.xray-bar-all-toggler').click       -> Xray.show()
-    @$el.find('.xray-bar-templates-toggler').click -> Xray.show('templates')
-    @$el.find('.xray-bar-views-toggler').click     -> Xray.show('views')
-    @$el.find('.xray-bar-settings-btn').click      -> Xray.toggleSettings()
-
-  show: ->
-    @$el.show()
-    @originalPadding = parseInt $('html').css('padding-bottom')
-    if @originalPadding < 40
-      $('html').css paddingBottom: 40
-
-  hide: ->
-    @$el.hide()
-    $('html').css paddingBottom: @originalPadding
-
-
-class Xray.Settings
-  constructor: (el) ->
-    @$el = $(el)
-    @$el.find('form').submit @save
-
-  toggle: =>
-    @$el.toggle()
-
-  save: (e) =>
-    e.preventDefault()
-    editor = @$el.find('#xray-editor-input').val()
-    $.ajax
-      url: '/_xray/config'
-      type: 'POST'
-      data: {editor: editor}
-      success: => @displayUpdateMsg(true)
-      error: => @displayUpdateMsg(false)
-
-  displayUpdateMsg: (success) =>
-    if success
-      $msg = $("<span class='xray-settings-success xray-settings-update-msg'>Success!</span>")
-    else
-      $msg = $("<span class='xray-settings-error xray-settings-update-msg'>Uh oh, something went wrong!</span>")
-    @$el.append($msg)
-    $msg.delay(2000).fadeOut(500, => $msg.remove(); @toggle())
-
 
 # Utility methods.
 util =
