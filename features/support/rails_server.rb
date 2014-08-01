@@ -37,7 +37,7 @@ class RailsServer
     require './config/environment'
     require 'thin'
 
-    if Rails::VERSION::MAJOR == 3
+    if Rails::VERSION::MAJOR == 3 or Rails::VERSION::MAJOR == 4
       rails = Rails.application
     else
       rails = ActionController::Dispatcher.new
