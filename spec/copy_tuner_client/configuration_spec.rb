@@ -192,7 +192,7 @@ describe CopyTunerClient::Configuration do
   end
 end
 
-share_examples_for 'applied configuration' do
+shared_examples_for 'applied configuration' do
   subject { CopyTunerClient::Configuration.new }
   let(:backend) { stub('i18n-backend') }
   let(:cache) { stub('cache', :download => "download") }
