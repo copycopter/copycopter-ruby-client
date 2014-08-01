@@ -23,7 +23,7 @@ When "I generate a rails application" do
     GEMS
     run_simple("bundle install --local")
 
-    When %{I remove lines containing "rjs" from "config/environments/development.rb"}
+    step(%{I remove lines containing "rjs" from "config/environments/development.rb"})
   end
 end
 

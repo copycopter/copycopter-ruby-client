@@ -42,10 +42,10 @@ GEM
       rake
       thor (>= 0.14.0)
     arel (3.0.3)
-    aruba (0.3.7)
-      childprocess (>= 0.1.9)
-      cucumber (>= 0.10.5)
-      rspec (>= 2.6.0)
+    aruba (0.6.0)
+      childprocess (>= 0.3.6)
+      cucumber (>= 1.1.1)
+      rspec-expectations (>= 2.7.0)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
     builder (3.0.4)
@@ -53,18 +53,18 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
-    cucumber (0.10.7)
+    cucumber (1.1.9)
       builder (>= 2.1.2)
       diff-lcs (>= 1.1.2)
-      gherkin (~> 2.4.0)
+      gherkin (~> 2.9.0)
       json (>= 1.4.6)
-      term-ansicolor (>= 1.0.5)
+      term-ansicolor (>= 1.0.6)
     daemons (1.1.9)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     eventmachine (1.0.3)
     ffi (1.9.3)
-    gherkin (2.4.21)
+    gherkin (2.9.3)
       json (>= 1.4.6)
     hike (1.2.3)
     i18n (0.6.9)
@@ -154,10 +154,10 @@ PLATFORMS
 
 DEPENDENCIES
   appraisal (~> 1.0)
-  aruba (~> 0.3.2)
+  aruba (~> 0.6.0)
   bourne
   copy_tuner_client!
-  cucumber (~> 0.10.0)
+  cucumber (~> 1.1.1)
   i18n
   rails (= 3.2.19)
   rake
