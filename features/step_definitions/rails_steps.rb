@@ -24,7 +24,8 @@ When "I generate a rails application" do
       gem "sinatra"
       gem "json"
     GEMS
-    run_simple("bundle install --local")
+    # bundle installには時間がかかるので、timeout値を2時間に設定
+    run_simple("bundle install", true, 7200)
 
     step(%{I remove lines containing "rjs" from "config/environments/development.rb"})
   end
