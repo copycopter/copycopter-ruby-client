@@ -69,7 +69,15 @@ class RailsServer
   def stop
     if @pid
       Process.kill('INT', @pid)
-      Process.wait(@pid)
+
+      begin
+        Timeout.timeout(20) do
+          Process.wait
+        end
+      rescue Timeout::Error
+        Process.kill(9, @pid)
+        Process.wait(@pid)
+      end
       @pid = nil
     end
   end
