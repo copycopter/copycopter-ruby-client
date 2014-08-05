@@ -53,7 +53,8 @@ class RailsServer
   end
 
   def initialize(port, debug)
-    @port = (port || 3001).to_i
+    # @port = (port || 3001).to_i
+    @port = find_available_port
     @debug = debug
   end
 
@@ -121,6 +122,16 @@ class RailsServer
   def app_host
     "http://#{HOST}:#{@port}"
   end
+
+  private
+
+  def find_available_port
+    server = TCPServer.new('127.0.0.1', 0)
+    server.addr[1]
+  ensure
+    server.close if server
+  end
+
 
   # From Capybara::Server
 

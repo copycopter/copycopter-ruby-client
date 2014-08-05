@@ -7,5 +7,6 @@ $LOAD_PATH << File.join(PROJECT_ROOT, 'lib')
 require "copy_tuner_client/version"
 
 Before do
+  @announce_stderr = true
   @aruba_timeout_seconds = 15
 end
