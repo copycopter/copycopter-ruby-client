@@ -141,6 +141,7 @@ When /^I successfully rake "([^"]*)"$/ do |task|
 end
 
 Then /^the response should contain "([^"]+)"$/ do |text|
+  p @last_response.body
   @last_response.body.should include(text)
 end
 
