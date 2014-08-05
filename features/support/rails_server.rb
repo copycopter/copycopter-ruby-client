@@ -63,23 +63,23 @@ class RailsServer
       puts command if @debug
       exec(command)
     end
+    puts "pid:#{@pid}" if @debug
     wait_until_responsive
   end
 
   def stop
     if @pid
-      Process.kill(9, @pid)
-      Process.wait(@pid)
-      # Process.kill('INT', @pid)
-      #
-      # begin
-      #   Timeout.timeout(20) do
-      #     Process.wait
-      #   end
-      # rescue Timeout::Error
-      #   Process.kill(9, @pid)
-      #   Process.wait(@pid)
-      # end
+      puts "killed-pid:#{@pid}" if @debug
+      Process.kill('INT', @pid)
+
+      begin
+        Timeout.timeout(10) do
+          Process.waitpid(@pid)
+        end
+      rescue Timeout::Error
+        Process.kill('KILL', @pid)
+        Process.waitpid(@pid)
+      end
       @pid = nil
     end
   end
