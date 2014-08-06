@@ -226,7 +226,7 @@ Feature: Using copy_tuner in a rails app
     """
     <%= @user.errors.full_messages.first %>
     """
-    When I successfully rake "db:migrate"
+    When I successfully rake "db:migrate RAILS_ENV=development"
     And I configure the copy_tuner client to use published data
     And I start the application
     And I visit /users/
@@ -239,7 +239,7 @@ Feature: Using copy_tuner in a rails app
   Scenario: ensure keys are synced with short lived processes
     When I configure the copy_tuner client to have a polling delay of 86400 seconds
     And I start the application
-    And I run a short lived process that sets the key "threaded.key" to "all your base"
+    And I run a short lived process that sets the key "threaded.key" to "all your base" in "development" environment
     Then the "abc123" project should have the following blurbs:
       | key             | draft content |
       | en.threaded.key | all your base |

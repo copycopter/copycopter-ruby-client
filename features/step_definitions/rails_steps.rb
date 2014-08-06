@@ -54,9 +54,7 @@ When /^I configure the copy_tuner client with api key "([^"]*)"$/ do |api_key|
 end
 
 When "I start the application" do
-  in_current_dir do
-    RailsServer.start(ENV['RAILS_PORT'], @announce_stderr)
-  end
+  step(%{I start the application in the "development" environment})
 end
 
 When /^I start the application in the "([^"]+)" environment$/ do |environment|
@@ -103,37 +101,34 @@ Then /^the copy_tuner client version and environment should have been logged$/ d
   environment_info = "[Ruby: #{RUBY_VERSION}]"
   environment_info << " [Rails: #{Rails::VERSION::STRING}]"
   environment_info << " [Env: development]"
-  # FIXME travis環境で動作しないので、後で調査
-  # steps %{
-  #   Then the log should contain "Client #{client_version} ready"
-  #   Then the log should contain "Environment Info: #{environment_info}"
-  # }
+  steps %{
+    Then the log should contain "Client #{client_version} ready"
+    Then the log should contain "Environment Info: #{environment_info}"
+  }
 end
 
 Then /^the log should contain "([^"]*)"$/ do |line|
-  # prefix = "** [CopyTuner] "
-  # pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
-  # log_path = "log/development.log"
-  # in_current_dir do
-  #   File.open(log_path) do |file|
-  #     unless file.readlines.any? { |file_line| file_line =~ pattern }
-  #       # FIXME travis環境で動作しないので、後で調査
-  #       # raise "In log file:\n#{IO.read(log_path)}\n\nMissing line:\n#{pattern}"
-  #     end
-  #   end
-  # end
+  prefix = "** [CopyTuner] "
+  pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
+  log_path = "log/development.log"
+  in_current_dir do
+    File.open(log_path) do |file|
+      unless file.readlines.any? { |file_line| file_line =~ pattern }
+        raise "In log file:\n#{IO.read(log_path)}\n\nMissing line:\n#{pattern}"
+      end
+    end
+  end
 end
 
 Then /^the log should not contain "([^"]*)"$/ do |line|
-  # log_path = "log/development.log"
-  # in_current_dir do
-  #   File.open(log_path) do |file|
-  #     if bad_line = file.readlines.detect { |file_line| file_line.include?(line) }
-  #       # FIXME travis環境で動作しないので、後で調査
-  #       # raise "In log file:\n#{log_path}\n\nGot unexpected line:\n#{bad_line}"
-  #     end
-  #   end
-  # end
+  log_path = "log/development.log"
+  in_current_dir do
+    File.open(log_path) do |file|
+      if bad_line = file.readlines.detect { |file_line| file_line.include?(line) }
+        raise "In log file:\n#{log_path}\n\nGot unexpected line:\n#{bad_line}"
+      end
+    end
+  end
 end
 
 When /^I successfully rake "([^"]*)"$/ do |task|
@@ -161,13 +156,13 @@ When /^I route the "([^"]+)" resource$/ do |resource|
   overwrite_file("config/routes.rb", routes)
 end
 
-When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)"$/ do |key, value|
+When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)" in "([^"]*)" environment$/ do |key, value, environment|
   if Rails::VERSION::MAJOR == 3
-    run_simple %[script/rails runner 'I18n.translate("#{key}", :default => "#{value}")']
+    run_simple %[script/rails runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
   elsif Rails::VERSION::MAJOR == 4
-    run_simple %[bin/rails runner 'I18n.translate("#{key}", :default => "#{value}")']
+    run_simple %[bin/rails runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
   else
-    run_simple %[script/runner 'I18n.translate("#{key}", :default => "#{value}")']
+    run_simple %[script/runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
   end
 end
 
