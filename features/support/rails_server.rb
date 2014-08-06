@@ -53,7 +53,6 @@ class RailsServer
   end
 
   def initialize(port, debug)
-    # @port = (port || 3001).to_i
     @port = find_available_port
     @debug = debug
   end

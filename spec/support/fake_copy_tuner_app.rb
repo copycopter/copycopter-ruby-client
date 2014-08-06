@@ -13,8 +13,6 @@ class FakeCopyTunerApp < Sinatra::Base
         Thin::Logging.silent = true
       end
 
-      Thin::Logging.debug = true
-      Thin::Logging.silent = false
       Rack::Handler::Thin.run self, :Port => port
     end
   end
