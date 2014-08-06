@@ -13,6 +13,8 @@ class FakeCopyTunerApp < Sinatra::Base
         Thin::Logging.silent = true
       end
 
+      Thin::Logging.debug = true
+      Thin::Logging.silent = false
       Rack::Handler::Thin.run self, :Port => port
     end
   end
@@ -155,7 +157,7 @@ class FakeCopyTunerApp < Sinatra::Base
     end
 
     def self.open_project_data
-      project_file = File.expand_path('/../../../tmp/projects.json', __FILE__)
+      project_file = File.expand_path('../../../tmp/projects.json', __FILE__)
 
       if File.exist? project_file
         data = JSON.parse(IO.read(project_file))
