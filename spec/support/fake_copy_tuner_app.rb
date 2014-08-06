@@ -157,9 +157,13 @@ class FakeCopyTunerApp < Sinatra::Base
     def self.open_project_data
       project_file = File.expand_path('../../../tmp/projects.json', __FILE__)
 
-      if File.exist? project_file
-        data = JSON.parse(IO.read(project_file))
-      else
+      begin
+        if File.exist? project_file
+          data = JSON.parse(IO.read(project_file))
+        else
+          data = {}
+        end
+      rescue
         data = {}
       end
 
