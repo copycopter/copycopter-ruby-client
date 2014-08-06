@@ -96,6 +96,7 @@ Feature: Using copy_tuner in a rails app
     When I start the application
     And I visit /users/
     Then the response should contain "not found"
+    And I wait for changes to be synchronized
     And the "abc123" project should have the following blurbs:
       | key                | draft content |
       | en.users.index.404 | not found     |
