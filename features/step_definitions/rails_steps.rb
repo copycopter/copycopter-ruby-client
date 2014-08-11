@@ -6,6 +6,9 @@ When "I generate a rails application" do
     else
       options = '--skip-bundle'
     end
+  elsif Rails::VERSION::MAJOR == 4
+    subcommand = 'new'
+    options = '--skip-bundle'
   else
     subcommand = ''
     options = ''
@@ -14,16 +17,17 @@ When "I generate a rails application" do
   run_simple("rails _#{Rails::VERSION::STRING}_ #{subcommand} testapp #{options}")
   cd("testapp")
 
-  if Rails::VERSION::MAJOR == 3
+  if Rails::VERSION::MAJOR == 3 or Rails::VERSION::MAJOR == 4
     append_to_file("Gemfile", <<-GEMS)
       gem "thin"
       gem "sham_rack"
       gem "sinatra"
       gem "json"
     GEMS
-    run_simple("bundle install --local")
+    # bundle installには時間がかかるので、timeout値を2時間に設定
+    run_simple("bundle install", true, 7200)
 
-    When %{I remove lines containing "rjs" from "config/environments/development.rb"}
+    step(%{I remove lines containing "rjs" from "config/environments/development.rb"})
   end
 end
 
@@ -39,7 +43,7 @@ When /^I configure the copy_tuner client with api key "([^"]*)"$/ do |api_key|
     end
   RUBY
 
-  if Rails::VERSION::MAJOR == 3
+  if Rails::VERSION::MAJOR == 3 or Rails::VERSION::MAJOR == 4
     append_to_file("Gemfile", <<-GEMS)
       gem "copy_tuner_client", :path => "../../.."
     GEMS
@@ -50,9 +54,7 @@ When /^I configure the copy_tuner client with api key "([^"]*)"$/ do |api_key|
 end
 
 When "I start the application" do
-  in_current_dir do
-    RailsServer.start(ENV['RAILS_PORT'], @announce_stderr)
-  end
+  step(%{I start the application in the "development" environment})
 end
 
 When /^I start the application in the "([^"]+)" environment$/ do |environment|
@@ -60,6 +62,11 @@ When /^I start the application in the "([^"]+)" environment$/ do |environment|
     old_environment = ENV['RAILS_ENV']
     begin
       ENV['RAILS_ENV'] = environment
+      if environment == 'production' and Rails::VERSION::MAJOR == 4
+        if Rails::VERSION::MINOR != 0
+          ENV["SECRET_KEY_BASE"] = '4f7d3eb907e873d8a9cbfc6997fd07a88bd2b8d23518717378254ed4a0c6ada5f83061714019b2972a782d51299f5e1ca003ff4b6f4b2000f1be0b3d33522b68'
+        end
+      end
       RailsServer.start(ENV['RAILS_PORT'], @announce_stderr)
     ensure
       ENV['RAILS_ENV'] = old_environment
@@ -137,7 +144,7 @@ When /^show me the page$/ do
 end
 
 When /^I route the "([^"]+)" resource$/ do |resource|
-  if Rails::VERSION::MAJOR == 3
+  if Rails::VERSION::MAJOR == 3 or Rails::VERSION::MAJOR == 4
     draw = "Testapp::Application.routes.draw do\n"
   else
     draw = "ActionController::Routing::Routes.draw do |map|\nmap."
@@ -148,11 +155,13 @@ When /^I route the "([^"]+)" resource$/ do |resource|
   overwrite_file("config/routes.rb", routes)
 end
 
-When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)"$/ do |key, value|
+When /^I run a short lived process that sets the key "([^"]*)" to "([^"]*)" in "([^"]*)" environment$/ do |key, value, environment|
   if Rails::VERSION::MAJOR == 3
-    run_simple %[script/rails runner 'I18n.translate("#{key}", :default => "#{value}")']
+    run_simple %[script/rails runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
+  elsif Rails::VERSION::MAJOR == 4
+    run_simple %[bin/rails runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
   else
-    run_simple %[script/runner 'I18n.translate("#{key}", :default => "#{value}")']
+    run_simple %[script/runner -e #{environment} 'I18n.translate("#{key}", :default => "#{value}")']
   end
 end
 
