@@ -29,6 +29,7 @@ Feature: Using copy_tuner in a rails app
     Then the log should contain "Downloaded translations"
     When I visit /users/
     Then the response should contain "This is a test"
+    And I wait for changes to be synchronized
     And the log should not contain "DEPRECATION WARNING"
 
   Scenario: copy_tuner in the view
@@ -71,11 +72,14 @@ Feature: Using copy_tuner in a rails app
     <%= @text %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Old content"
+    And I wait for changes to be synchronized
     When the the following blurbs are updated in the "abc123" project:
       | key                            | draft content |
       | en.users.index.controller-test | New content   |
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "New content"
 
@@ -94,8 +98,10 @@ Feature: Using copy_tuner in a rails app
     <%= t(".404", :default => "not found") %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "not found"
+    And I wait for changes to be synchronized
     And the "abc123" project should have the following blurbs:
       | key                | draft content |
       | en.users.index.404 | not found     |
@@ -144,7 +150,9 @@ Feature: Using copy_tuner in a rails app
       | test.one | expected one  | unexpected one    |
       | test.two | expected two  | unexpected two    |
     When I successfully rake "copy_tuner:deploy"
+    And I wait for changes to be synchronized
     And the output should contain "Successfully marked all blurbs as published"
+    And I wait for changes to be synchronized
     Then the "abc123" project should have the following blurbs:
       | key      | draft content | published content |
       | test.one | expected one  | expected one      |
@@ -167,6 +175,7 @@ Feature: Using copy_tuner in a rails app
     """
     When I route the "users" resource
     And I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Hello, Joe"
     When I wait for changes to be synchronized
@@ -189,6 +198,7 @@ Feature: Using copy_tuner in a rails app
     <%= number_to_currency(2.5) %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "$2.50"
     When I wait for changes to be synchronized
@@ -226,9 +236,10 @@ Feature: Using copy_tuner in a rails app
     """
     <%= @user.errors.full_messages.first %>
     """
-    When I successfully rake "db:migrate"
+    When I successfully rake "db:migrate RAILS_ENV=development"
     And I configure the copy_tuner client to use published data
     And I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Name can't be blank"
     When I wait for changes to be synchronized
@@ -239,7 +250,9 @@ Feature: Using copy_tuner in a rails app
   Scenario: ensure keys are synced with short lived processes
     When I configure the copy_tuner client to have a polling delay of 86400 seconds
     And I start the application
-    And I run a short lived process that sets the key "threaded.key" to "all your base"
+    And I wait for changes to be synchronized
+    And I run a short lived process that sets the key "threaded.key" to "all your base" in "development" environment
+    And I wait for changes to be synchronized
     Then the "abc123" project should have the following blurbs:
       | key             | draft content |
       | en.threaded.key | all your base |
@@ -260,6 +273,7 @@ Feature: Using copy_tuner in a rails app
     <%= time_ago_in_words(2.hours.ago) %> ago
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "1 hour ago"
     And the response should contain "2 hours ago"
