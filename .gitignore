@@ -16,3 +16,5 @@ doc
 pkg
 *.gem
 .bundle
+Gemfile.lock
+*.gemfile.lock
