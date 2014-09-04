@@ -21,6 +21,16 @@ describe CopyTunerClient::Cache do
     cache.keys.should =~ %w(en.test.key en.test.other_key)
   end
 
+  it "exclude data if exclude_key_regexp is set" do
+    cache = build_cache(exclude_key_regexp: /^en\.test\.other_key$/)
+    cache['en.test.key']       = 'expected'
+    cache['en.test.other_key'] = 'expected'
+
+    cache.download
+
+    cache.queued.keys.should =~ %w(en.test.key)
+  end
+
   it "doesn't upload without changes" do
     cache = build_cache
     cache.flush
