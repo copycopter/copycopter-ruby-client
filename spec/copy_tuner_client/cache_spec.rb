@@ -18,7 +18,7 @@ describe CopyTunerClient::Cache do
     cache.download
 
     cache['en.test.key'].should == 'expected'
-    cache.keys.should =~ %w(en.test.key en.test.other_key)
+    cache.keys.should match_array(%w(en.test.key en.test.other_key))
   end
 
   it "exclude data if exclude_key_regexp is set" do
@@ -28,7 +28,7 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    cache.queued.keys.should =~ %w(en.test.key)
+    cache.queued.keys.should match_array(%w(en.test.key))
   end
 
   it "doesn't upload without changes" do

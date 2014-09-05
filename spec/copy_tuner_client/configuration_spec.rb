@@ -90,12 +90,12 @@ describe CopyTunerClient::Configuration do
 
   it 'should use development and staging as development environments by default' do
     config = CopyTunerClient::Configuration.new
-    config.development_environments.should =~ %w(development staging)
+    config.development_environments.should match_array(%w(development staging))
   end
 
   it 'should use test and cucumber as test environments by default' do
     config = CopyTunerClient::Configuration.new
-    config.test_environments.should =~ %w(test cucumber)
+    config.test_environments.should match_array(%w(test cucumber))
   end
 
   it 'should be test in a test environment' do

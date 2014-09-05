@@ -47,7 +47,7 @@ describe CopyTunerClient::I18nBackend do
     cache['en.key'] = ''
     cache['fr.key'] = ''
 
-    subject.available_locales.should =~ [:en, :es, :fr]
+    subject.available_locales.should match_array([:en, :es, :fr])
   end
 
   it "queues missing keys with default" do
