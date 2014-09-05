@@ -20,6 +20,7 @@ module CopyTunerClient
       @mutex = Mutex.new
       @queued = {}
       @started = false
+      @exclude_key_regexp = options[:exclude_key_regexp]
     end
 
     # Returns content for the given blurb.
@@ -34,6 +35,7 @@ module CopyTunerClient
     # @param key [String] the key of the blurb to update
     # @param value [String] the new contents of the blurb
     def []=(key, value)
+      return if key =~ @exclude_key_regexp
       lock { @queued[key] = value }
     end
 
