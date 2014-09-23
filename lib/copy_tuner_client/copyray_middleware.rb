@@ -49,8 +49,8 @@ module CopyTunerClient
 
     def should_inject_xray?(status, headers, response)
       status == 200 &&
-      !empty?(response) &&
       html_request?(headers, response) &&
+      !empty?(response) &&
       !file?(headers) &&
       !response.body.frozen?
     end
@@ -66,7 +66,9 @@ module CopyTunerClient
     end
 
     def html_request?(headers, response)
-      headers['Content-Type'] && headers['Content-Type'].include?('text/html') && response.body.include?("<html")
+      headers['Content-Type'] &&
+      headers['Content-Type'].include?('text/html') &&
+      response.body.include?("<html")
     end
   end
 end
