@@ -19,7 +19,7 @@ module CopyTunerClient
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval,
         :sync_interval_staging, :sync_ignore_path_regex, :logger,
-        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file].freeze
+        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -107,6 +107,9 @@ module CopyTunerClient
 
     # @return [Boolean] To enable inline-translation-mode, set true.
     attr_accessor :inline_translation
+
+    # @return [Regexp] Regular expression to exclude keys.
+    attr_accessor :exclude_key_regexp
 
     alias_method :secure?, :secure
 

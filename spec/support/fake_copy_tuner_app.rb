@@ -154,22 +154,25 @@ class FakeCopyTunerApp < Sinatra::Base
       end
     end
 
+    MUTEX = Mutex.new
     def self.open_project_data
-      project_file = File.expand_path('/../../../tmp/projects.json', __FILE__)
+      MUTEX.synchronize do
+        project_file = File.expand_path('../../../tmp/projects.json', __FILE__)
 
-      if File.exist? project_file
-        data = JSON.parse(IO.read(project_file))
-      else
-        data = {}
+        if File.exist? project_file
+          data = JSON.parse(IO.read(project_file))
+        else
+          data = {}
+        end
+
+        result = yield(data)
+
+        File.open(project_file, 'w') do |file|
+          file.write data.to_json
+        end
+
+        result
       end
-
-      result = yield(data)
-
-      File.open(project_file, 'w') do |file|
-        file.write data.to_json
-      end
-
-      result
     end
   end
 end

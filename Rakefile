@@ -5,9 +5,7 @@ require 'rspec/core/rake_task'
 require 'yard'
 
 desc 'Default: run the specs and features.'
-task :default => :spec do
-  system "rake -s appraisal cucumber;"
-end
+task :default => [:spec, :cucumber]
 
 desc 'Test the copy_tuner_client plugin.'
 RSpec::Core::RakeTask.new do |t|

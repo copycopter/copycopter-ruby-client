@@ -37,7 +37,7 @@ class RailsServer
     require './config/environment'
     require 'thin'
 
-    if Rails::VERSION::MAJOR == 3
+    if Rails::VERSION::MAJOR == 3 or Rails::VERSION::MAJOR == 4
       rails = Rails.application
     else
       rails = ActionController::Dispatcher.new
@@ -53,7 +53,7 @@ class RailsServer
   end
 
   def initialize(port, debug)
-    @port = (port || 3001).to_i
+    @port = find_available_port
     @debug = debug
   end
 
@@ -68,8 +68,24 @@ class RailsServer
 
   def stop
     if @pid
-      Process.kill('INT', @pid)
-      Process.wait(@pid)
+      if ENV['TRAVIS']
+        system("sudo kill -2 #{@pid}")
+      else
+        Process.kill('INT', @pid)
+      end
+
+      begin
+        Timeout.timeout(10) do
+          Process.waitpid(@pid)
+        end
+      rescue Timeout::Error
+        if ENV['TRAVIS']
+          system("sudo kill -9 #{@pid}")
+        else
+          Process.kill('KILL', @pid)
+        end
+        Process.waitpid(@pid)
+      end
       @pid = nil
     end
   end
@@ -105,6 +121,16 @@ class RailsServer
   def app_host
     "http://#{HOST}:#{@port}"
   end
+
+  private
+
+  def find_available_port
+    server = TCPServer.new('127.0.0.1', 0)
+    server.addr[1]
+  ensure
+    server.close if server
+  end
+
 
   # From Capybara::Server
 
