@@ -64,7 +64,7 @@ Copyray.findBlurbs = -> util.bm 'findBlurbs', ->
 
 # Open the given filesystem path by calling out to Copyray's server.
 Copyray.open = (url) ->
-  window.open(url, null, 'width=700, height=500')
+  window.open(url, null, 'width=700, height=600')
 
 # Show the Copyray overlay
 Copyray.show = (type = null) ->
