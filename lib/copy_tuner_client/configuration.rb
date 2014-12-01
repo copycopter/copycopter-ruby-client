@@ -118,7 +118,7 @@ module CopyTunerClient
       self.client_version = VERSION
       self.development_environments = %w(development staging)
       self.host = 'copy-tuner.com'
-      self.http_open_timeout = 2
+      self.http_open_timeout = 5
       self.http_read_timeout = 5
       self.logger = Logger.new($stdout)
       self.polling_delay = 300
