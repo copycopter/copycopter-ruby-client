@@ -7,7 +7,6 @@ require 'copy_tuner_client/poller'
 require 'copy_tuner_client/prefixed_logger'
 require 'copy_tuner_client/request_sync'
 require 'copy_tuner_client/copyray_middleware'
-require 'copy_tuner_client/simple_form_extention'
 
 module CopyTunerClient
   # Used to set up and modify settings for the client.
@@ -170,6 +169,10 @@ module CopyTunerClient
       development_environments.include? environment_name
     end
 
+    def enable_middleware?
+      middleware && development? && !disable_middleware
+    end
+
     # Determines if the content will fetched from the server
     # @return [Boolean] Returns +true+ if in a test environment, +false+ otherwise.
     def test?
@@ -196,7 +199,7 @@ module CopyTunerClient
       process_guard = ProcessGuard.new(cache, poller, to_hash)
       I18n.backend = I18nBackend.new(cache)
 
-      if middleware && development? && !disable_middleware
+      if enable_middleware?
         logger.info "Using copytuner sync middleware"
         middleware.use RequestSync, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
         middleware.use CopyTunerClient::CopyrayMiddleware

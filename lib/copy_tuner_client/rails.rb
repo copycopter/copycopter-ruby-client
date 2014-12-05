@@ -10,6 +10,7 @@ module CopyTunerClient
         config.framework        = "Rails: #{::Rails::VERSION::STRING}"
         config.middleware       = ::Rails.configuration.middleware
       end
+      require 'copy_tuner_client/simple_form_extention'
     end
   end
 end

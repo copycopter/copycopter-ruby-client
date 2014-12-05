@@ -16,8 +16,10 @@ module CopyTunerClient
               source
             end
           end
-          alias_method_chain :translate, :copyray_comment
-          alias :t :translate
+          if CopyTunerClient.configuration.enable_middleware?
+            alias_method_chain :translate, :copyray_comment
+            alias :t :translate
+          end
         end
       end
     end
