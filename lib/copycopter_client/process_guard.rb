@@ -30,7 +30,11 @@ module CopycopterClient
     end
 
     def spawner?
-      passenger_spawner? || unicorn_spawner?
+      puma_spawner? || passenger_spawner? || unicorn_spawner?
+    end
+
+    def puma_spawner?
+      $0.include?('puma')
     end
 
     def passenger_spawner?
@@ -42,10 +46,25 @@ module CopycopterClient
     end
 
     def register_spawn_hooks
-      if defined?(PhusionPassenger)
+      if defined?(Puma::Cluster)
+        register_puma_hook
+      elsif defined?(PhusionPassenger)
         register_passenger_hook
       elsif defined?(Unicorn::HttpServer)
         register_unicorn_hook
+      end
+    end
+
+    def register_puma_hook
+      @logger.info("Registered Puma fork hook")
+      poller = @poller
+
+      Puma::Cluster.class_eval do
+        alias_method :worker_without_copycopter, :worker
+        define_method :worker do |index, master|
+          poller.start
+          worker_without_copycopter(index, master)
+        end
       end
     end
 
