@@ -68,7 +68,17 @@ module CopyTunerClient
     def html_request?(headers, response)
       headers['Content-Type'] &&
       headers['Content-Type'].include?('text/html') &&
-      response.body.include?("<html")
+      response_body(response).include?("<html")
+    end
+
+    def response_body(response)
+      body = ''
+      if response.is_a?(Array)
+        response.each { |s| body << s }
+      else
+        body = response
+      end
+      body
     end
   end
 end
