@@ -30,6 +30,7 @@ module CopycopterClient
     end
 
     def spawner?
+      return false if ENV['COPYCOPTER_OFF']
       puma_spawner? || passenger_spawner? || unicorn_spawner?
     end
 
