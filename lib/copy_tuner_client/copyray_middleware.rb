@@ -8,12 +8,21 @@ module CopyTunerClient
 
     def call(env)
       status, headers, response = @app.call(env)
-      if should_inject_xray?(status, headers, response)
-        body = append_css!(response)
+      if html_headers?(status, headers) && body = response_body(response)
+        body = append_css!(body)
         body = append_js!(body)
-        headers['Content-Length'] = body.bytesize.to_s
+        content_length = body.bytesize.to_s
+        if ActionDispatch::Response === response
+          response.body = [body]
+          response.headers['Content-Length'] = content_length
+          response.to_a
+        else
+          headers['Content-Length'] = content_length
+          [status, headers, [body]]
+        end
+      else
+        [status, headers, response]
       end
-      [status, headers, (body ? [body] : response)]
     end
 
     private
@@ -22,8 +31,8 @@ module CopyTunerClient
       ActionController::Base.helpers
     end
 
-    def append_css!(response)
-      response.body.sub(/<body[^>]*>/) { "#{$~}\n#{css_tag}" }
+    def append_css!(html)
+      html.sub(/<body[^>]*>/) { "#{$~}\n#{css_tag}" }
     end
 
     def append_js!(html)
@@ -47,37 +56,20 @@ module CopyTunerClient
       helpers.stylesheet_link_tag :copyray
     end
 
-    def should_inject_xray?(status, headers, response)
-      status == 200 &&
-      html_request?(headers, response) &&
-      !empty?(response) &&
-      !file?(headers) &&
-      !response.body.frozen?
-    end
-
-    def empty?(response)
-      # response may be ["Not Found"], ["Move Permanently"], etc.
-      (response.is_a?(Array) && response.size <= 1) ||
-        !response.respond_to?(:body) || response.body.empty?
-    end
-
     def file?(headers)
       headers["Content-Transfer-Encoding"] == "binary"
     end
 
-    def html_request?(headers, response)
+    def html_headers?(status, headers)
+      status == 200 &&
       headers['Content-Type'] &&
       headers['Content-Type'].include?('text/html') &&
-      response_body(response).include?("<html")
+      !file?(headers)
     end
 
     def response_body(response)
       body = ''
-      if response.is_a?(Array)
-        response.each { |s| body << s }
-      else
-        body = response
-      end
+      response.each { |s| body << s.to_s }
       body
     end
   end
