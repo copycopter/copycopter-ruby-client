@@ -1,6 +1,6 @@
 module CopyTunerClient
   # Client version
-  VERSION = '0.1.1.beta16'
+  VERSION = '0.1.1.beta17'
 
   # API version being used to communicate with the server
   API_VERSION = '2.0'.freeze
