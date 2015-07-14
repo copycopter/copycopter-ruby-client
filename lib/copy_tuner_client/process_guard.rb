@@ -86,6 +86,16 @@ module CopyTunerClient
             job_was_performed
           end
         end
+      elsif defined?(Delayed::Worker)
+        @logger.info("Registered Delayed::Job start hook")
+        poller = @poller
+        Delayed::Worker.class_eval do
+          alias_method :start_without_copy_tuner, :start
+          define_method :start do
+            poller.start
+            start_without_copy_tuner
+          end
+        end
       end
     end
   end
