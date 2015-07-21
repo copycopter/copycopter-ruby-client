@@ -107,7 +107,7 @@ class Copyray.Specimen
     @constructor.all.splice(idx, 1) unless idx == -1
 
   isVisible: ->
-    @$contents.length and @$contents.is(':visible')
+    @$contents.length
 
   makeBox: ->
     @bounds = util.computeBoundingBox(@$contents)
