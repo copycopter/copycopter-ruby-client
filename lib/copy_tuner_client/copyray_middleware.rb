@@ -45,7 +45,8 @@ module CopyTunerClient
                else
                  # Matches:
                  #   <script src="/application-xxxxxxx.js"></script>
-                 /<script[^>]+\/application-[\w]+\.js[^>]+><\/script>/
+                 #   <script src="/application.js"></script>
+                 /<script[^>]+\/application.*\.js[^>]+><\/script>/
                end
       html.sub(regexp) do
         "#{$~}\n" + helpers.javascript_include_tag(:copyray)
