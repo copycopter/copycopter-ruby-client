@@ -24,6 +24,8 @@ Copyray.init = do ->
     new Copyray.Overlay
     # Go ahead and do a pass on the DOM to find templates.
     Copyray.findBlurbs()
+
+    Copyray.addToggleButton()
     # Ready to rock.
     console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
@@ -76,6 +78,9 @@ Copyray.hide = ->
 
 Copyray.toggleSettings = ->
   Copyray.Overlay.instance().settings.toggle()
+
+Copyray.addToggleButton = ->
+  $('body').append("<a href='javascript:Copyray.show()' class='copyray-toggle-button'>Open CopyTuner</a>")
 
 # Wraps a DOM element that Copyray is tracking. This is subclassed by
 # Copyray.Blurbsspecimen
