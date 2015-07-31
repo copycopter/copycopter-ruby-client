@@ -110,6 +110,12 @@ module CopyTunerClient
     # @return [Regexp] Regular expression to exclude keys.
     attr_accessor :exclude_key_regexp
 
+    # @return [Regexp] Copyray js injection pattern for debug
+    attr_accessor :copyray_js_injection_regexp_for_debug
+
+    # @return [Regexp] Copyray js injection pattern for precompiled
+    attr_accessor :copyray_js_injection_regexp_for_precompiled
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -127,6 +133,17 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = false
       self.test_environments = %w(test cucumber)
+
+      # Matches:
+      #   <script src="/assets/jquery.js"></script>
+      #   <script src="/assets/jquery-min.js"></script>
+      #   <script src="/assets/jquery.min.1.9.1.js"></script>
+      self.copyray_js_injection_regexp_for_debug = /<script[^>]+\/jquery([-.]{1}[\d\.]+)?([-.]{1}min)?\.js[^>]+><\/script>/
+
+      # Matches:
+      #   <script src="/application-xxxxxxx.js"></script>
+      #   <script src="/application.js"></script>
+      self.copyray_js_injection_regexp_for_precompiled = /<script[^>]+\/application.*\.js[^>]+><\/script>/
       @applied = false
     end
 

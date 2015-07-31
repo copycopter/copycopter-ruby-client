@@ -37,16 +37,9 @@ module CopyTunerClient
 
     def append_js!(html)
       regexp = if ::Rails.application.config.assets.debug
-                 # Matches:
-                 #   <script src="/assets/jquery.js"></script>
-                 #   <script src="/assets/jquery-min.js"></script>
-                 #   <script src="/assets/jquery.min.1.9.1.js"></script>
-                 /<script[^>]+\/jquery([-.]{1}[\d\.]+)?([-.]{1}min)?\.js[^>]+><\/script>/
+                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_debug
                else
-                 # Matches:
-                 #   <script src="/application-xxxxxxx.js"></script>
-                 #   <script src="/application.js"></script>
-                 /<script[^>]+\/application.*\.js[^>]+><\/script>/
+                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_precompiled
                end
       html.sub(regexp) do
         "#{$~}\n" + helpers.javascript_include_tag(:copyray)
