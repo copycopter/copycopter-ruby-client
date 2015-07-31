@@ -42,7 +42,7 @@ module CopyTunerClient
     end
 
     def delayed_job_spawner?
-      $0.include?('bin/delayed_job')
+      $0.include?('delayed_job')
     end
 
     def register_spawn_hooks
