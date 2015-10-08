@@ -3,7 +3,7 @@ $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'copycopter_client/version'
 
 Gem::Specification.new do |s|
-  s.add_dependency 'i18n', '>= 0.5.0'
+  s.add_dependency 'i18n', '>= 0', '>= 0.5.0'
   s.add_dependency 'json'
   s.add_development_dependency 'appraisal', '~> 0.4'
   s.add_development_dependency 'aruba', '~> 0.3.2'
