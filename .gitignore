@@ -17,3 +17,4 @@ pkg
 *.gem
 .bundle
 *.gemfile.lock
+.idea/
