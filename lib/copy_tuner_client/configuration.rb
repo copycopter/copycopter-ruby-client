@@ -17,7 +17,7 @@ module CopyTunerClient
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval,
         :sync_interval_staging, :sync_ignore_path_regex, :logger,
-        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp].freeze
+        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp, :s3_host].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -109,6 +109,9 @@ module CopyTunerClient
     # @return [Regexp] Regular expression to exclude keys.
     attr_accessor :exclude_key_regexp
 
+    # @return [String] The S3 host to connect to (defaults to +copy-tuner-us.s3.amazonaws.com+).
+    attr_accessor :s3_host
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -126,6 +129,7 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = false
       self.test_environments = %w(test cucumber)
+      self.s3_host = 'copy-tuner-us.s3.amazonaws.com'
       @applied = false
     end
 
