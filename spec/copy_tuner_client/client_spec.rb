@@ -4,6 +4,7 @@ describe CopyTunerClient do
   def build_client(config = {})
     config[:logger] ||= FakeLogger.new
     default_config = CopyTunerClient::Configuration.new.to_hash
+    default_config[:s3_host] = 'copy-tuner.com'
     CopyTunerClient::Client.new(default_config.update(config))
   end
 
