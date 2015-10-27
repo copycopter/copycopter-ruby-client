@@ -5,7 +5,7 @@ require 'copy_tuner_client/version'
 Gem::Specification.new do |s|
   s.add_dependency 'i18n', '>= 0.5.0'
   s.add_dependency 'json'
-  s.add_development_dependency 'appraisal', '~> 1.0'
+  s.add_development_dependency 'appraisal', '~> 2.1'
   s.add_development_dependency 'aruba', '~> 0.6.0'
   s.add_development_dependency 'bourne'
   s.add_development_dependency 'cucumber', '~> 1.3.16'
