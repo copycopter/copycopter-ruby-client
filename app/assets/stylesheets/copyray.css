@@ -1,0 +1,98 @@
+@charset "UTF-8";
+
+/* selector for element and children */
+#copyray-overlay, #copyray-overlay *, #copyray-overlay a:hover, #copyray-overlay a:visited, #copyray-overlay a:active {
+  background:none;
+  border:none;
+  bottom:auto;
+  clear:none;
+  cursor:default;
+  float:none;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:medium;
+  font-style:normal;
+  font-weight:normal;
+  height:auto;
+  left:auto;
+  letter-spacing:normal;
+  line-height:normal;
+  max-height:none;
+  max-width:none;
+  min-height:0;
+  min-width:0;
+  overflow:visible;
+  position:static;
+  right:auto;
+  text-align:left;
+  text-decoration:none;
+  text-indent:0;
+  text-transform:none;
+  top:auto;
+  visibility:visible;
+  white-space:normal;
+  width:auto;
+  z-index:auto;
+}
+
+#copyray-overlay {
+  position: fixed; left: 0; top: 0; bottom: 0; right: 0;
+  background: rgba(0,0,0,0.7);
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.8) 100%);
+  z-index: 9000;
+}
+
+.copyray-specimen {
+  position: absolute;
+  background: rgba(255,255,255,0.15);
+  outline: 1px solid rgba(255,255,255,0.8);
+  outline-offset: -1px;
+  color: #666;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+  .copyray-specimen:hover {
+    cursor: pointer;
+    background: rgba(255,255,255,0.4);
+  }
+
+  .copyray-specimen.BlurbSpecimen {
+    outline: 1px solid rgba(255,50,50,0.8);
+    background: rgba(255,50,50,0.1);
+  }
+
+  .copyray-specimen.BlurbSpecimen:hover {
+    background: rgba(255,50,50,0.4);
+  }
+
+  .copyray-specimen-handle {
+    float:left;
+    background: #fff;
+    padding: 0 3px;
+    color: #333;
+    font-size: 10px;
+  }
+
+  .copyray-specimen-handle.BlurbSpecimen {
+    background: rgba(255,50,50,0.8);
+    color: #fff;
+  }
+
+a.copyray-toggle-button {
+  display: block;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  color: white;
+  background: black;
+  padding: 16px 20px;
+  border-radius: 0 10px 0 0;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  z-index: 10000;
+}
+
+a.copyray-toggle-button:hover {
+  opacity: 1;
+}

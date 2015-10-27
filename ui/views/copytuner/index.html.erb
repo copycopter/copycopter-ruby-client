@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="span12">
+    <dl>
+      <dt>最終ダウンロード時間</dt>
+      <dd>
+        <%= @cache.last_downloaded_at %>
+      </dd>
+      <dt>最終アップロード時間</dt>
+      <dd>
+        <%= @cache.last_uploaded_at %>
+      </dd>
+      <dt>次回同期時間</dt>
+      <dd>
+        <%= @next_sync_at %>
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <a href="/copytuner/sync" class="btn btn-primary">
+      翻訳データを同期する
+    </a>
+
+    <% unless @cache.queued.empty? %>
+      <h3>送信前翻訳キー</h3>
+      <ul>
+        <% @cache.queued.each do |key, value| %>
+          <li><%= key %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>
+
+<hr />
+
+<div class="row">
+  <div class="span12">
+    <a href="<%= CopyTunerClient.configuration.project_url %>" class="btn" target="_blank">
+      翻訳画面を開く
+    </a>
+  </div>
+</div>

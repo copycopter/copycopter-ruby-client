@@ -1,2 +1,1 @@
-require 'copycopter_client'
-
+require 'copy_tuner_client'

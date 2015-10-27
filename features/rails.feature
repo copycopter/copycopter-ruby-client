@@ -1,12 +1,12 @@
 @disable-bundler
-Feature: Using copycopter in a rails app
+Feature: Using copy_tuner in a rails app
 
   Background:
-    Given I have a copycopter project with an api key of "abc123"
+    Given I have a copy_tuner project with an api key of "abc123"
     When I generate a rails application
-    And I configure the copycopter client with api key "abc123"
+    And I configure the copy_tuner client with api key "abc123"
 
-  Scenario: copycopter in the controller
+  Scenario: copy_tuner in the controller
     Given the "abc123" project has the following blurbs:
       | key                            | draft content  |
       | en.users.index.controller-test | This is a test |
@@ -25,13 +25,14 @@ Feature: Using copycopter in a rails app
     """
     When I start the application
     And I wait for changes to be synchronized
-    Then the copycopter client version and environment should have been logged
+    Then the copy_tuner client version and environment should have been logged
     Then the log should contain "Downloaded translations"
     When I visit /users/
     Then the response should contain "This is a test"
+    And I wait for changes to be synchronized
     And the log should not contain "DEPRECATION WARNING"
 
-  Scenario: copycopter in the view
+  Scenario: copy_tuner in the view
     Given the "abc123" project has the following blurbs:
       | key                      | draft content  |
       | en.users.index.view-test | This is a test |
@@ -53,7 +54,7 @@ Feature: Using copycopter in a rails app
     And I visit /users/
     Then the response should contain "This is a test"
 
-  Scenario: copycopter detects updates to copy
+  Scenario: copy_tuner detects updates to copy
     Given the "abc123" project has the following blurbs:
       | key                            | draft content |
       | en.users.index.controller-test | Old content   |
@@ -71,11 +72,14 @@ Feature: Using copycopter in a rails app
     <%= @text %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Old content"
+    And I wait for changes to be synchronized
     When the the following blurbs are updated in the "abc123" project:
       | key                            | draft content |
       | en.users.index.controller-test | New content   |
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "New content"
 
@@ -94,14 +98,16 @@ Feature: Using copycopter in a rails app
     <%= t(".404", :default => "not found") %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "not found"
+    And I wait for changes to be synchronized
     And the "abc123" project should have the following blurbs:
       | key                | draft content |
       | en.users.index.404 | not found     |
     And the log should contain "Uploaded missing translations"
 
-  Scenario: copycopter in production
+  Scenario: copy_tuner in production
     Given the "abc123" project has the following blurbs:
       | key                             | published content | draft content |
       | en.users.index.controller-test  | This is a test    | Extra extra   |
@@ -133,7 +139,7 @@ Feature: Using copycopter in a rails app
       | en.users.index.unknown-test | Unknown       |
 
   Scenario: configure a bad api key
-    When I configure the copycopter client with api key "bogus"
+    When I configure the copy_tuner client with api key "bogus"
     And I start the application
     And I wait for changes to be synchronized
     Then the log should contain "Invalid API key: bogus"
@@ -143,8 +149,10 @@ Feature: Using copycopter in a rails app
       | key      | draft content | published content |
       | test.one | expected one  | unexpected one    |
       | test.two | expected two  | unexpected two    |
-    When I successfully rake "copycopter:deploy"
+    When I successfully rake "copy_tuner:deploy"
+    And I wait for changes to be synchronized
     And the output should contain "Successfully marked all blurbs as published"
+    And I wait for changes to be synchronized
     Then the "abc123" project should have the following blurbs:
       | key      | draft content | published content |
       | test.one | expected one  | expected one      |
@@ -167,6 +175,7 @@ Feature: Using copycopter in a rails app
     """
     When I route the "users" resource
     And I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Hello, Joe"
     When I wait for changes to be synchronized
@@ -189,6 +198,7 @@ Feature: Using copycopter in a rails app
     <%= number_to_currency(2.5) %>
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "$2.50"
     When I wait for changes to be synchronized
@@ -226,9 +236,10 @@ Feature: Using copycopter in a rails app
     """
     <%= @user.errors.full_messages.first %>
     """
-    When I successfully rake "db:migrate"
-    And I configure the copycopter client to use published data
+    When I successfully rake "db:migrate RAILS_ENV=development"
+    And I configure the copy_tuner client to use published data
     And I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "Name can't be blank"
     When I wait for changes to be synchronized
@@ -237,9 +248,11 @@ Feature: Using copycopter in a rails app
       | user.attributes.name.blank | can't be blank |
 
   Scenario: ensure keys are synced with short lived processes
-    When I configure the copycopter client to have a polling delay of 86400 seconds
+    When I configure the copy_tuner client to have a polling delay of 86400 seconds
     And I start the application
-    And I run a short lived process that sets the key "threaded.key" to "all your base"
+    And I wait for changes to be synchronized
+    And I run a short lived process that sets the key "threaded.key" to "all your base" in "development" environment
+    And I wait for changes to be synchronized
     Then the "abc123" project should have the following blurbs:
       | key             | draft content |
       | en.threaded.key | all your base |
@@ -260,6 +273,7 @@ Feature: Using copycopter in a rails app
     <%= time_ago_in_words(2.hours.ago) %> ago
     """
     When I start the application
+    And I wait for changes to be synchronized
     And I visit /users/
     Then the response should contain "1 hour ago"
     And the response should contain "2 hours ago"
@@ -268,4 +282,3 @@ Feature: Using copycopter in a rails app
       | key                                               | draft content        |
       | en.datetime.distance_in_words.about_x_hours.one   | about 1 hour         |
       | en.datetime.distance_in_words.about_x_hours.other | about %{count} hours |
-
