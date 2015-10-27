@@ -136,7 +136,7 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = false
       self.test_environments = %w(test cucumber)
-      self.s3_host = 'copy-tuner-us.s3.amazonaws.com'
+      self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
 
       # Matches:
       #   <script src="/assets/jquery.js"></script>
