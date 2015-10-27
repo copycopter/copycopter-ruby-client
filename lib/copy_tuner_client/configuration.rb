@@ -6,6 +6,7 @@ require 'copy_tuner_client/process_guard'
 require 'copy_tuner_client/poller'
 require 'copy_tuner_client/prefixed_logger'
 require 'copy_tuner_client/request_sync'
+require 'copy_tuner_client/copyray_middleware'
 
 module CopyTunerClient
   # Used to set up and modify settings for the client.
@@ -112,6 +113,12 @@ module CopyTunerClient
     # @return [String] The S3 host to connect to (defaults to +copy-tuner-us.s3.amazonaws.com+).
     attr_accessor :s3_host
 
+    # @return [Regexp] Copyray js injection pattern for debug
+    attr_accessor :copyray_js_injection_regexp_for_debug
+
+    # @return [Regexp] Copyray js injection pattern for precompiled
+    attr_accessor :copyray_js_injection_regexp_for_precompiled
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -130,6 +137,18 @@ module CopyTunerClient
       self.secure = false
       self.test_environments = %w(test cucumber)
       self.s3_host = 'copy-tuner-us.s3.amazonaws.com'
+
+      # Matches:
+      #   <script src="/assets/jquery.js"></script>
+      #   <script src="/assets/jquery-min.js"></script>
+      #   <script src="/assets/jquery.min.1.9.1.js"></script>
+      self.copyray_js_injection_regexp_for_debug = /<script[^>]+\/jquery([-.]{1}[\d\.]+)?([-.]{1}min)?\.js[^>]+><\/script>/
+
+      # Matches:
+      #   <script src="/application-xxxxxxx.js"></script>
+      #   <script src="/application.js"></script>
+      self.copyray_js_injection_regexp_for_precompiled = /<script[^>]+\/application.*\.js[^>]+><\/script>/
+
       @applied = false
     end
 
@@ -172,6 +191,10 @@ module CopyTunerClient
       development_environments.include? environment_name
     end
 
+    def enable_middleware?
+      middleware && development? && !disable_middleware
+    end
+
     # Determines if the content will fetched from the server
     # @return [Boolean] Returns +true+ if in a test environment, +false+ otherwise.
     def test?
@@ -198,9 +221,10 @@ module CopyTunerClient
       process_guard = ProcessGuard.new(cache, poller, to_hash)
       I18n.backend = I18nBackend.new(cache)
 
-      if middleware && development? && !disable_middleware
+      if enable_middleware?
         logger.info "Using copytuner sync middleware"
         middleware.use RequestSync, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
+        middleware.use CopyTunerClient::CopyrayMiddleware
       else
         logger.info "[[[Warn]]] Not useing copytuner sync middleware" unless middleware
       end

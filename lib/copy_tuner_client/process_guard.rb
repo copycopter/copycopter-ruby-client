@@ -30,15 +30,19 @@ module CopyTunerClient
     end
 
     def spawner?
-      passenger_spawner? || unicorn_spawner?
+      passenger_spawner? || unicorn_spawner? || delayed_job_spawner?
     end
 
     def passenger_spawner?
-      $0.include?("ApplicationSpawner")
+      $0.include?("ApplicationSpawner") || $0.include?("rack-preloader")
     end
 
     def unicorn_spawner?
       $0.include?("unicorn") && !caller.any? { |line| line.include?("worker_loop") }
+    end
+
+    def delayed_job_spawner?
+      $0.include?('delayed_job')
     end
 
     def register_spawn_hooks
@@ -46,6 +50,8 @@ module CopyTunerClient
         register_passenger_hook
       elsif defined?(Unicorn::HttpServer)
         register_unicorn_hook
+      elsif defined?(Delayed::Worker)
+        register_delayed_hook
       end
     end
 
@@ -64,6 +70,19 @@ module CopyTunerClient
         define_method :worker_loop do |worker|
           poller.start
           worker_loop_without_copy_tuner(worker)
+        end
+      end
+    end
+
+    def register_delayed_hook
+      @logger.info("Registered Delayed::Job start hook")
+      poller = @poller
+
+      Delayed::Worker.class_eval do
+        alias_method :start_without_copy_tuner, :start
+        define_method :start do
+          poller.start
+          start_without_copy_tuner
         end
       end
     end
