@@ -9,8 +9,8 @@ gemfile:
   - gemfiles/4.1.gemfile
   - gemfiles/4.2.gemfile
 
-before_install:
-  - gem install bundler
-
+language: ruby
+before_install: gem install bundler
+before_script: bundle update
 sudo: false
 cache: bundler
