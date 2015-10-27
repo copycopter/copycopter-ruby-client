@@ -35,7 +35,7 @@ describe CopyTunerClient::Configuration do
   it { should have_config_option(:client_url).overridable.default('https://rubygems.org/gems/copy_tuner_client') }
   it { should have_config_option(:secure).overridable.default(false) }
   it { should have_config_option(:host).overridable.default('copy-tuner.com') }
-  it { should have_config_option(:http_open_timeout).overridable.default(2) }
+  it { should have_config_option(:http_open_timeout).overridable.default(5) }
   it { should have_config_option(:http_read_timeout).overridable.default(5) }
   it { should have_config_option(:port).overridable }
   it { should have_config_option(:development_environments).overridable }
