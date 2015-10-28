@@ -230,7 +230,7 @@ module CopyTunerClient
       end
 
       @applied = true
-      logger.info "Client #{VERSION} ready"
+      logger.info "Client #{VERSION} ready (s3_download)"
       logger.info "Environment Info: #{environment_info}"
 
       unless test?
