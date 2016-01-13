@@ -146,12 +146,13 @@ describe CopyTunerClient::I18nBackend do
       end
     end
 
-    it "queues missing keys with default" do
+    it "queues missing keys with blank string" do
       default = 'default value'
-
       subject.translate('en', 'test.key', :default => default).should == default
 
-      cache['en.test.key'].should == default
+      # default と Fallbacks を併用した場合、キャッシュにデフォルト値は入らない仕様に変えた
+      # その仕様にしないと、うまく Fallbacks の処理が動かないため
+      cache['en.test.key'].should == ''
     end
   end
 end
