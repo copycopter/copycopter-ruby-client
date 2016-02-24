@@ -138,7 +138,8 @@ module CopyTunerClient
       #   <script src="/assets/jquery.js"></script>
       #   <script src="/assets/jquery-min.js"></script>
       #   <script src="/assets/jquery.min.1.9.1.js"></script>
-      self.copyray_js_injection_regexp_for_debug = /<script[^>]+\/jquery([-.]{1}[\d\.]+)?([-.]{1}min)?\.js[^>]+><\/script>/
+      #   <script src="/assets/jquery.self-xxxxxx.js"></script>
+      self.copyray_js_injection_regexp_for_debug = /<script[^>]+\/jquery([-.]{1}[\d\.]+)?([-.]{1}min)?(\.self\-[\da-f]++)?\.js[^>]+><\/script>/
 
       # Matches:
       #   <script src="/application-xxxxxxx.js"></script>
