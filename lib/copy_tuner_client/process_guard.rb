@@ -30,7 +30,7 @@ module CopyTunerClient
     end
 
     def spawner?
-      passenger_spawner? || unicorn_spawner? || delayed_job_spawner?
+      passenger_spawner? || unicorn_spawner? || delayed_job_spawner? || puma_spawner?
     end
 
     def passenger_spawner?
@@ -45,6 +45,10 @@ module CopyTunerClient
       $0.include?('delayed_job')
     end
 
+    def puma_spawner?
+      $0.include?('puma')
+    end
+
     def register_spawn_hooks
       if defined?(PhusionPassenger)
         register_passenger_hook
@@ -52,6 +56,8 @@ module CopyTunerClient
         register_unicorn_hook
       elsif defined?(Delayed::Worker)
         register_delayed_hook
+      elsif defined?(Puma::Cluster)
+        register_puma_hook
       end
     end
 
@@ -77,12 +83,23 @@ module CopyTunerClient
     def register_delayed_hook
       @logger.info("Registered Delayed::Job start hook")
       poller = @poller
-
       Delayed::Worker.class_eval do
         alias_method :start_without_copy_tuner, :start
         define_method :start do
           poller.start
           start_without_copy_tuner
+        end
+      end
+    end
+
+    def register_puma_hook
+      @logger.info("Registered Puma fork hook")
+      poller = @poller
+      Puma::Cluster.class_eval do
+        alias_method :worker_without_copy_tuner, :worker
+        define_method :worker do |index, master|
+          poller.start
+          worker_without_copy_tuner(index, master)
         end
       end
     end
