@@ -54,10 +54,10 @@ module CopyTunerClient
         register_passenger_hook
       elsif defined?(Unicorn::HttpServer)
         register_unicorn_hook
-      elsif defined?(Delayed::Worker)
-        register_delayed_hook
       elsif defined?(Puma::Cluster)
         register_puma_hook
+      elsif defined?(Delayed::Worker)
+        register_delayed_hook
       end
     end
 
