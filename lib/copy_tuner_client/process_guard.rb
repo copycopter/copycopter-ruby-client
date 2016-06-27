@@ -34,29 +34,29 @@ module CopyTunerClient
     end
 
     def passenger_spawner?
-      $0.include?("ApplicationSpawner") || $0.include?("rack-preloader")
+      defined?(PhusionPassenger) && ($0.include?("ApplicationSpawner") || $0.include?("rack-preloader"))
     end
 
     def unicorn_spawner?
-      $0.include?("unicorn") && !caller.any? { |line| line.include?("worker_loop") }
-    end
-
-    def delayed_job_spawner?
-      $0.include?('delayed_job')
+      defined?(Unicorn::HttpServer) && ($0.include?("unicorn") && !caller.any? { |line| line.include?("worker_loop") })
     end
 
     def puma_spawner?
-      $0.include?('puma')
+      defined?(Puma::Cluster) && $0.include?('puma')
+    end
+
+    def delayed_job_spawner?
+      defined?(Delayed::Worker) && $0.include?('delayed_job')
     end
 
     def register_spawn_hooks
-      if defined?(PhusionPassenger)
+      if passenger_spawner?
         register_passenger_hook
-      elsif defined?(Unicorn::HttpServer)
+      elsif unicorn_spawner?
         register_unicorn_hook
-      elsif defined?(Puma::Cluster)
+      elsif puma_spawner?
         register_puma_hook
-      elsif defined?(Delayed::Worker)
+      elsif delayed_job_spawner?
         register_delayed_hook
       end
     end
