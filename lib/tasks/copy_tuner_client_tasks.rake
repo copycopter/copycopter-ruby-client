@@ -10,9 +10,9 @@ namespace :copy_tuner do
     CopyTunerClient.cache.sync
 
     if yml = CopyTunerClient.export
-      PATH = "config/locales/copy_tuner.yml"
-      File.new("#{Rails.root}/#{PATH}", 'w').write(yml)
-      puts "Successfully exported blurbs to #{PATH}."
+      path = "config/locales/copy_tuner.yml"
+      File.new("#{Rails.root}/#{path}", 'w').write(yml)
+      puts "Successfully exported blurbs to #{path}."
     else
       puts "No blurbs have been cached."
     end
