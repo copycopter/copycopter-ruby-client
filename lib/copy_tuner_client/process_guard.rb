@@ -46,6 +46,10 @@ module CopyTunerClient
     end
 
     def delayed_job_spawner?
+      # delayed_job は二種類の起動の仕方がある。
+      # - bin/delayed_job start
+      # - bin/rake jobs:work
+      # 前者の呼び出しでのみジョブ処理用の子プロセスが作られるため、　poller を作るフックを仕込む必要がある。
       defined?(Delayed::Worker) && $0.include?('delayed_job')
     end
 
