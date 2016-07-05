@@ -131,7 +131,7 @@ module CopyTunerClient
       self.polling_delay = 300
       self.sync_interval = 60
       self.sync_interval_staging = 0
-      self.secure = false
+      self.secure = true
       self.test_environments = %w(test cucumber)
 
       # Matches:
