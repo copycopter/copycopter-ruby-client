@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'aruba', '~> 0.6.0'
   s.add_development_dependency 'bourne'
   s.add_development_dependency 'cucumber', '~> 1.3.16'
-  s.add_development_dependency 'rails', '~> 3.1.0'
+  s.add_development_dependency 'rails', '~> 4.2.6'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 2.3'
   s.add_development_dependency 'sham_rack'
@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'thin'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'yard'
-  s.add_development_dependency 'turn'
   s.authors = ['SonicGarden']
   s.email  = 'info@sonicgarden.jp'
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
