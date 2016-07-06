@@ -15,7 +15,7 @@ Dir.glob(File.join(PROJECT_ROOT, 'spec', 'support', '**', '*.rb')).each do |file
 end
 
 WebMock.disable_net_connect!
-ShamRack.mount FakeCopyTunerApp.new, 'copy-tuner.com', 80
+ShamRack.mount FakeCopyTunerApp.new, 'copy-tuner.com', 443
 
 RSpec.configure do |config|
   config.include ClientSpecHelpers
