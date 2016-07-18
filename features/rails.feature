@@ -136,7 +136,7 @@ Feature: Using copy_tuner in a rails app
     And I wait for changes to be synchronized
     And the "abc123" project should have the following blurbs:
       | key                         | draft content |
-      | en.users.index.unknown-test | Unknown       |
+      | en.users.index.unknown-test |               |
 
   Scenario: configure a bad api key
     When I configure the copy_tuner client with api key "bogus"

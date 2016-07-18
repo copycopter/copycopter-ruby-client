@@ -24,7 +24,7 @@ module CopyTunerClient
     #
     # @return [Object] the translated key (usually a String)
     def translate(locale, key, options = {})
-      content = super(locale, key, options.merge(:fallback => true))
+      content = super(locale, key, options)
       if CopyTunerClient.configuration.inline_translation
         content = (content.is_a?(Array) ? content : key.to_s)
       end
