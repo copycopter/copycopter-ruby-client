@@ -1,4 +1,5 @@
 require 'copy_tuner_client/copyray'
+require 'copy_tuner_client/translation_log'
 
 module CopyTunerClient
   # Connects to integration points for Rails 3 applications
@@ -19,6 +20,7 @@ module CopyTunerClient
           if CopyTunerClient.configuration.enable_middleware?
             alias_method_chain :translate, :copyray_comment
             alias :t :translate
+            CopyTunerClient::TranslationLog.install_hook
           end
         end
       end

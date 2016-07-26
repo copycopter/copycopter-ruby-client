@@ -26,6 +26,8 @@ Copyray.init = do ->
     Copyray.findBlurbs()
 
     Copyray.addToggleButton()
+
+    Copyray.createLogMenu()
     # Ready to rock.
     console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
@@ -71,10 +73,12 @@ Copyray.open = (url) ->
 # Show the Copyray overlay
 Copyray.show = (type = null) ->
   Copyray.Overlay.instance().show(type)
+  Copyray.showBar()
 
 # Hide the Copyray overlay
 Copyray.hide = ->
   Copyray.Overlay.instance().hide()
+  Copyray.hideBar()
 
 Copyray.toggleSettings = ->
   Copyray.Overlay.instance().settings.toggle()
@@ -213,3 +217,27 @@ util =
       width  : boxFrame.right - boxFrame.left
       height : boxFrame.bottom - boxFrame.top
     }
+
+Copyray.showBar = ->
+  $('#copy-tuner-bar').show()
+  $('.copyray-toggle-button').hide()
+
+Copyray.hideBar = ->
+  $('#copy-tuner-bar').hide()
+  $('.copyray-toggle-button').show()
+  $('#copy-tuner-bar-log-menu').hide()
+
+Copyray.createLogMenu = ->
+  baseUrl = $('[data-copy-tuner-url]').data('copy-tuner-url')
+  log = $('[data-copy-tuner-translation-log').data('copy-tuner-translation-log')
+  $tbody = $('#copy-tuner-bar-log-menu__tbody')
+  $.each log, (k, v) ->
+    if v != ''
+      url = baseUrl + '/blurbs/' + k + '/edit'
+      $tbody.append $("<tr><td><a href='#{url}' target='_blank' class='js-copy-tuner-blurb-link'>#{k}</a></td><td>#{v}</td></tr>")
+  $('.copy-tuner-bar-open-log').click ->
+    $('#copy-tuner-bar-log-menu').toggle()
+
+  $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
+    e.preventDefault()
+    window.open($(@).attr('href'), null, 'width=700, height=600')

@@ -96,3 +96,59 @@ a.copyray-toggle-button {
 a.copyray-toggle-button:hover {
   opacity: 1;
 }
+
+#copy-tuner-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  padding: 0 8px;
+  background: #222;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 200;
+  color: #fff;
+  z-index: 2147483647;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.1), inset 0 2px 6px rgba(0,0,0,0.8);
+  background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.3));
+}
+
+#copy-tuner-bar-log-menu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  max-height: calc(100vh - 40px);
+  background: #222;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #fff;
+  z-index: 2147483647;
+  overflow-y: auto;
+}
+
+#copy-tuner-bar-log-menu__tbody td {
+  padding: 2px 8px;
+}
+
+#copy-tuner-bar-log-menu__tbody tr:hover {
+  background: #444
+}
+
+#copy-tuner-bar-log-menu__tbody a {
+  color: #fff
+}
+
+#copy-tuner-bar-log-menu__tbody a:hover, #copy-tuner-bar-log-menu__tbody a:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.copy-tuner-bar-open-log {
+  line-height: 40px;
+  color: #fff;
+}
+
+.copy-tuner-bar-open-log:hover, .copy-tuner-bar-open-log:active {
+  color: #fff;
+  text-decoration: underline;
+}
