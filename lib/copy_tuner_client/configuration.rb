@@ -18,7 +18,7 @@ module CopyTunerClient
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval,
         :sync_interval_staging, :sync_ignore_path_regex, :logger,
-        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp].freeze
+        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp, :s3_host].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -110,6 +110,9 @@ module CopyTunerClient
     # @return [Regexp] Regular expression to exclude keys.
     attr_accessor :exclude_key_regexp
 
+    # @return [String] The S3 host to connect to (defaults to +copy-tuner-us.s3.amazonaws.com+).
+    attr_accessor :s3_host
+
     # @return [Regexp] Copyray js injection pattern for debug
     attr_accessor :copyray_js_injection_regexp_for_debug
 
@@ -133,6 +136,7 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = true
       self.test_environments = %w(test cucumber)
+      self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
 
       # Matches:
       #   <script src="/assets/jquery.js"></script>
@@ -145,6 +149,7 @@ module CopyTunerClient
       #   <script src="/application-xxxxxxx.js"></script>
       #   <script src="/application.js"></script>
       self.copyray_js_injection_regexp_for_precompiled = /<script[^>]+\/application.*\.js[^>]+><\/script>/
+
       @applied = false
     end
 
@@ -226,7 +231,7 @@ module CopyTunerClient
       end
 
       @applied = true
-      logger.info "Client #{VERSION} ready"
+      logger.info "Client #{VERSION} ready (s3_download)"
       logger.info "Environment Info: #{environment_info}"
 
       unless test?

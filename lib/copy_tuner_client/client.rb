@@ -28,7 +28,7 @@ module CopyTunerClient
     # @option options [String] :ca_file path to root certificate file for ssl verification
     def initialize(options)
       [:api_key, :host, :port, :public, :http_read_timeout,
-        :http_open_timeout, :secure, :logger, :ca_file].each do |option|
+        :http_open_timeout, :secure, :logger, :ca_file, :s3_host].each do |option|
         instance_variable_set "@#{option}", options[option]
       end
     end
@@ -44,7 +44,7 @@ module CopyTunerClient
     # @yield [Hash] downloaded blurbs
     # @raise [ConnectionError] if the connection fails
     def download
-      connect do |http|
+      connect(s3_host) do |http|
         request = Net::HTTP::Get.new(uri(download_resource))
         request['If-None-Match'] = @etag
         response = http.request(request)
@@ -64,7 +64,7 @@ module CopyTunerClient
     # @param data [Hash] the blurbs to upload
     # @raise [ConnectionError] if the connection fails
     def upload(data)
-      connect do |http|
+      connect(host) do |http|
         response = http.post(uri('draft_blurbs'), data.to_json, 'Content-Type' => 'application/json')
         check response
         log 'Uploaded missing translations'
@@ -74,7 +74,7 @@ module CopyTunerClient
     # Issues a deploy, marking all draft content as published for this project.
     # @raise [ConnectionError] if the connection fails
     def deploy
-      connect do |http|
+      connect(host) do |http|
         response = http.post(uri('deploys'), '')
         check response
         log 'Deployed'
@@ -84,7 +84,7 @@ module CopyTunerClient
     private
 
     attr_reader :host, :port, :api_key, :http_read_timeout,
-      :http_open_timeout, :secure, :logger, :ca_file
+      :http_open_timeout, :secure, :logger, :ca_file, :s3_host
 
     def public?
       @public
@@ -96,13 +96,13 @@ module CopyTunerClient
 
     def download_resource
       if public?
-        'published_blurbs'
+        'published_blurbs.json'
       else
-        'draft_blurbs'
+        'draft_blurbs.json'
       end
     end
 
-    def connect
+    def connect(host)
       http = Net::HTTP.new(host, port)
       http.open_timeout = http_open_timeout
       http.read_timeout = http_read_timeout

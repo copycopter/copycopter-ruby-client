@@ -43,14 +43,14 @@ class FakeCopyTunerApp < Sinatra::Base
     end
   end
 
-  get '/api/v2/projects/:api_key/published_blurbs' do |api_key|
+  get '/api/v2/projects/:api_key/published_blurbs.json' do |api_key|
     with_project(api_key) do |project|
       etag project.etag
       project.published.to_json
     end
   end
 
-  get '/api/v2/projects/:api_key/draft_blurbs' do |api_key|
+  get '/api/v2/projects/:api_key/draft_blurbs.json' do |api_key|
     with_project(api_key) do |project|
       etag project.etag
       project.draft.to_json
