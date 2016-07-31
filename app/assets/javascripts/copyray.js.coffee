@@ -27,7 +27,6 @@ Copyray.init = do ->
 
     Copyray.addToggleButton()
 
-    Copyray.createLogMenu()
     # Ready to rock.
     console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
@@ -176,6 +175,7 @@ class Copyray.Overlay
     Copyray.isShowing = false
     @$overlay.detach()
     @reset()
+    Copyray.hideBar()
 
 # Utility methods.
 util =
@@ -228,16 +228,19 @@ Copyray.hideBar = ->
   $('#copy-tuner-bar-log-menu').hide()
 
 Copyray.createLogMenu = ->
+  $tbody = $('#copy-tuner-bar-log-menu__tbody.is-not-initialized')
+  return if $tbody.length == 0
+  $tbody.removeClass('is-not-initialized')
   baseUrl = $('[data-copy-tuner-url]').data('copy-tuner-url')
   log = $('[data-copy-tuner-translation-log').data('copy-tuner-translation-log')
-  $tbody = $('#copy-tuner-bar-log-menu__tbody')
   $.each log, (k, v) ->
     if v != ''
       url = baseUrl + '/blurbs/' + k + '/edit'
       $tbody.append $("<tr><td><a href='#{url}' target='_blank' class='js-copy-tuner-blurb-link'>#{k}</a></td><td>#{v}</td></tr>")
-  $('.copy-tuner-bar-open-log').click ->
-    $('#copy-tuner-bar-log-menu').toggle()
-
   $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
     e.preventDefault()
     window.open($(@).attr('href'), null, 'width=700, height=600')
+
+$(document).on 'click', '.copy-tuner-bar-open-log', ->
+  Copyray.createLogMenu()
+  $('#copy-tuner-bar-log-menu').toggle()
