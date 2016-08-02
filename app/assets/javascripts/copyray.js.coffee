@@ -245,7 +245,7 @@ Copyray.createLogMenu = ->
   $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
     e.preventDefault()
   $tbody.on 'click', '.js-copy-tuner-blurb-row', ->
-    window.open($(@).find('a').attr('href'), null, 'width=700, height=600')
+    Copyray.open $(@).find('a').attr('href')
 
 $(document).on 'click', '.copy-tuner-bar-open-log', (e) ->
   e.preventDefault()
