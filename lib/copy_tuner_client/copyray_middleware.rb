@@ -36,7 +36,8 @@ module CopyTunerClient
 
     def append_translation_logs(html)
       json = CopyTunerClient::TranslationLog.translations.to_json
-      html.sub('</body>', "<div data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div></body>")
+      # Use block to avoid back reference \?
+      html.sub('</body>') { "<div data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div></body>" }
     end
 
     def inject_copy_tuner_bar(html)

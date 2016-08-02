@@ -235,8 +235,13 @@ Copyray.createLogMenu = ->
   log = $('[data-copy-tuner-translation-log').data('copy-tuner-translation-log')
   $.each log, (k, v) ->
     if v != ''
-      url = baseUrl + '/blurbs/' + k + '/edit'
-      $tbody.append $("<tr class='js-copy-tuner-blurb-row'><td><a href='#{url}' class='js-copy-tuner-blurb-link'>#{k}</a></td><td>#{v}</td></tr>")
+      url = "#{baseUrl}/blurbs/#{k}/edit"
+      $a = $("<a href='#{url}' class='js-copy-tuner-blurb-link'>").text k
+      $td1 = $('<td>').append $a
+      $td2 = $('<td>').text v
+      $tr = $("<tr class='js-copy-tuner-blurb-row'>")
+      $tr.append $td1, $td2
+      $tbody.append $tr
   $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
     e.preventDefault()
   $tbody.on 'click', '.js-copy-tuner-blurb-row', ->
