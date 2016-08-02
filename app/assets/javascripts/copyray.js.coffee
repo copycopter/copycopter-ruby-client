@@ -26,6 +26,7 @@ Copyray.init = do ->
     Copyray.findBlurbs()
 
     Copyray.addToggleButton()
+
     # Ready to rock.
     console?.log "Ready to Copyray. Press #{if is_mac then 'cmd+shift+k' else 'ctrl+shift+k'} to scan your UI."
 
@@ -71,10 +72,12 @@ Copyray.open = (url) ->
 # Show the Copyray overlay
 Copyray.show = (type = null) ->
   Copyray.Overlay.instance().show(type)
+  Copyray.showBar()
 
 # Hide the Copyray overlay
 Copyray.hide = ->
   Copyray.Overlay.instance().hide()
+  Copyray.hideBar()
 
 Copyray.toggleSettings = ->
   Copyray.Overlay.instance().settings.toggle()
@@ -172,6 +175,7 @@ class Copyray.Overlay
     Copyray.isShowing = false
     @$overlay.detach()
     @reset()
+    Copyray.hideBar()
 
 # Utility methods.
 util =
@@ -213,3 +217,37 @@ util =
       width  : boxFrame.right - boxFrame.left
       height : boxFrame.bottom - boxFrame.top
     }
+
+Copyray.showBar = ->
+  $('#copy-tuner-bar').show()
+  $('.copyray-toggle-button').hide()
+
+Copyray.hideBar = ->
+  $('#copy-tuner-bar').hide()
+  $('.copyray-toggle-button').show()
+  $('#copy-tuner-bar-log-menu').hide()
+
+Copyray.createLogMenu = ->
+  $tbody = $('#copy-tuner-bar-log-menu__tbody.is-not-initialized')
+  return if $tbody.length == 0
+  $tbody.removeClass('is-not-initialized')
+  baseUrl = $('[data-copy-tuner-url]').data('copy-tuner-url')
+  log = $('[data-copy-tuner-translation-log').data('copy-tuner-translation-log')
+  $.each log, (k, v) ->
+    if v != ''
+      url = "#{baseUrl}/blurbs/#{k}/edit"
+      $a = $("<a href='#{url}' class='js-copy-tuner-blurb-link'>").text k
+      $td1 = $('<td>').append $a
+      $td2 = $('<td>').text v
+      $tr = $("<tr class='js-copy-tuner-blurb-row'>")
+      $tr.append $td1, $td2
+      $tbody.append $tr
+  $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
+    e.preventDefault()
+  $tbody.on 'click', '.js-copy-tuner-blurb-row', ->
+    Copyray.open $(@).find('a').attr('href')
+
+$(document).on 'click', '.copy-tuner-bar-open-log', (e) ->
+  e.preventDefault()
+  Copyray.createLogMenu()
+  $('#copy-tuner-bar-log-menu').toggle()

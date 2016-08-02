@@ -7,10 +7,13 @@ module CopyTunerClient
     end
 
     def call(env)
+      CopyTunerClient::TranslationLog.clear
       status, headers, response = @app.call(env)
       if html_headers?(status, headers) && body = response_body(response)
-        body = append_css!(body)
-        body = append_js!(body)
+        body = append_css(body)
+        body = append_js(body)
+        body = append_translation_logs(body)
+        body = inject_copy_tuner_bar(body)
         content_length = body.bytesize.to_s
         if ActionDispatch::Response === response
           response.body = [body]
@@ -31,11 +34,32 @@ module CopyTunerClient
       ActionController::Base.helpers
     end
 
-    def append_css!(html)
+    def append_translation_logs(html)
+      json = CopyTunerClient::TranslationLog.translations.to_json
+      # Use block to avoid back reference \?
+      html.sub('</body>') { "<div data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div></body>" }
+    end
+
+    def inject_copy_tuner_bar(html)
+      html.sub(/<body[^>]*>/) { "#{$~}\n#{render_copy_tuner_bar}" }
+    end
+
+    def render_copy_tuner_bar
+      if ApplicationController.respond_to?(:render)
+        # Rails 5
+        ApplicationController.render(:partial => "/copy_tuner_bar").html_safe
+      else
+        # Rails <= 4.2
+        ac = ActionController::Base.new
+        ac.render_to_string(:partial => '/copy_tuner_bar').html_safe
+      end
+    end
+
+    def append_css(html)
       html.sub(/<body[^>]*>/) { "#{$~}\n#{css_tag}" }
     end
 
-    def append_js!(html)
+    def append_js(html)
       regexp = if ::Rails.application.config.assets.debug
                  CopyTunerClient.configuration.copyray_js_injection_regexp_for_debug
                else

@@ -96,3 +96,73 @@ a.copyray-toggle-button {
 a.copyray-toggle-button:hover {
   opacity: 1;
 }
+
+#copy-tuner-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  padding: 0 8px;
+  background: #222;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 200;
+  color: #fff;
+  z-index: 2147483647;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.1), inset 0 2px 6px rgba(0,0,0,0.8);
+  background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.3));
+}
+
+#copy-tuner-bar-log-menu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  max-height: calc(100vh - 40px);
+  background: #222;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #fff;
+  z-index: 2147483647;
+  overflow-y: auto;
+}
+
+#copy-tuner-bar-log-menu__tbody td {
+  padding: 2px 8px;
+}
+
+#copy-tuner-bar-log-menu__tbody tr:hover {
+  background: #444
+}
+
+#copy-tuner-bar-log-menu__tbody a {
+  color: #fff
+}
+
+#copy-tuner-bar-log-menu__tbody a:hover, #copy-tuner-bar-log-menu__tbody a:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.copy-tuner-bar-button {
+  position: relative;
+  display: inline-block;
+  color: #fff;
+  margin: 8px 1px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0 8px;
+  font-size: 14px;
+  cursor: pointer;
+  vertical-align: middle;
+  background-color: #444;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+  border-radius: 2px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 2px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.copy-tuner-bar-button:hover, .copy-tuner-bar-button:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #555;
+}
