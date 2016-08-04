@@ -11,7 +11,7 @@ module CopyTunerClient
         ActionView::Helpers::TranslationHelper.class_eval do
           def translate_with_copyray_comment(key, options = {})
             source = translate_without_copyray_comment(key, options)
-            if options[:rescue_format] == :html or options[:rescue_format].nil?
+            if !CopyTunerClient.configuration.disable_copyray_comment_injection && (options[:rescue_format] == :html || options[:rescue_format].nil?)
               CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
             else
               source
@@ -20,9 +20,12 @@ module CopyTunerClient
           if CopyTunerClient.configuration.enable_middleware?
             alias_method_chain :translate, :copyray_comment
             alias :t :translate
-            CopyTunerClient::TranslationLog.install_hook
           end
         end
+      end
+
+      if CopyTunerClient.configuration.enable_middleware?
+        CopyTunerClient::TranslationLog.install_hook
       end
     end
 

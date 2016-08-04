@@ -11,7 +11,7 @@ if defined?(SimpleForm)
     def label_translation_with_copyray_comment
       source = label_translation_without_copyray_comment
 
-      if object.class.respond_to?(:lookup_ancestors)
+      if !CopyTunerClient.configuration.disable_copyray_comment_injection && object.class.respond_to?(:lookup_ancestors)
         attributes_scope = "#{object.class.i18n_scope}.attributes"
         defaults = object.class.lookup_ancestors.map do |klass|
           "#{attributes_scope}.#{klass.model_name.i18n_key}.#{reflection_or_attribute_name}"
