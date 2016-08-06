@@ -226,10 +226,10 @@ Copyray.showBar = ->
 Copyray.hideBar = ->
   $('#copy-tuner-bar').hide()
   $('.copyray-toggle-button').show()
-  $('#copy-tuner-bar-log-menu').hide()
+  $('.js-copy-tuner-bar-log-menu').hide()
 
 Copyray.createLogMenu = ->
-  $tbody = $('#copy-tuner-bar-log-menu__tbody.is-not-initialized')
+  $tbody = $('.js-copy-tuner-bar-log-menu__tbody.is-not-initialized')
   return if $tbody.length == 0
   $tbody.removeClass('is-not-initialized')
   baseUrl = $('[data-copy-tuner-url]').data('copy-tuner-url')
@@ -255,9 +255,9 @@ Copyray.focusSearchBox = ->
 
 Copyray.toggleLogMenu = ->
   Copyray.createLogMenu()
-  $('#copy-tuner-bar-log-menu').toggle()
+  $('.js-copy-tuner-bar-log-menu').toggle()
 
-$(document).on 'click', '.copy-tuner-bar-open-log', (e) ->
+$(document).on 'click', '.js-copy-tuner-bar-open-log', (e) ->
   e.preventDefault()
   Copyray.toggleLogMenu()
 
@@ -269,7 +269,7 @@ do ->
   $(document).on 'keyup', '.js-copy-tuner-bar-search', ->
     keyword = $.trim($(@).val())
     if lastKeyword != keyword
-      Copyray.toggleLogMenu() if !$('#copy-tuner-bar-log-menu').is(':visible')
+      Copyray.toggleLogMenu() if !$('.js-copy-tuner-bar-log-menu').is(':visible')
       clearTimeout(timer)
       timer = setTimeout ->
         if keyword == ''
