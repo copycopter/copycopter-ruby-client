@@ -119,6 +119,9 @@ module CopyTunerClient
     # @return [Regexp] Copyray js injection pattern for precompiled
     attr_accessor :copyray_js_injection_regexp_for_precompiled
 
+    # @return [Boolean] To disable Copyray comment injection, set true
+    attr_accessor :disable_copyray_comment_injection
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -137,6 +140,7 @@ module CopyTunerClient
       self.secure = true
       self.test_environments = %w(test cucumber)
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
+      self.disable_copyray_comment_injection = false
 
       # Matches:
       #   <script src="/assets/jquery.js"></script>

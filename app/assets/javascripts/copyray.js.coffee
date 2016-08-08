@@ -221,25 +221,28 @@ util =
 Copyray.showBar = ->
   $('#copy-tuner-bar').show()
   $('.copyray-toggle-button').hide()
+  Copyray.focusSearchBox()
 
 Copyray.hideBar = ->
   $('#copy-tuner-bar').hide()
   $('.copyray-toggle-button').show()
-  $('#copy-tuner-bar-log-menu').hide()
+  $('.js-copy-tuner-bar-log-menu').hide()
 
 Copyray.createLogMenu = ->
-  $tbody = $('#copy-tuner-bar-log-menu__tbody.is-not-initialized')
+  $tbody = $('.js-copy-tuner-bar-log-menu__tbody.is-not-initialized')
   return if $tbody.length == 0
   $tbody.removeClass('is-not-initialized')
   baseUrl = $('[data-copy-tuner-url]').data('copy-tuner-url')
   log = $('[data-copy-tuner-translation-log').data('copy-tuner-translation-log')
-  $.each log, (k, v) ->
+  keys = Object.keys(log).sort()
+  $.each keys, (_, k) ->
+    v = log[k]
     if v != ''
       url = "#{baseUrl}/blurbs/#{k}/edit"
       $a = $("<a href='#{url}' class='js-copy-tuner-blurb-link'>").text k
       $td1 = $('<td>').append $a
       $td2 = $('<td>').text v
-      $tr = $("<tr class='js-copy-tuner-blurb-row'>")
+      $tr = $("<tr class='copy-tuner-bar-log-menu__row js-copy-tuner-blurb-row'>")
       $tr.append $td1, $td2
       $tbody.append $tr
   $tbody.on 'click', '.js-copy-tuner-blurb-link', (e) ->
@@ -247,7 +250,33 @@ Copyray.createLogMenu = ->
   $tbody.on 'click', '.js-copy-tuner-blurb-row', ->
     Copyray.open $(@).find('a').attr('href')
 
-$(document).on 'click', '.copy-tuner-bar-open-log', (e) ->
-  e.preventDefault()
+Copyray.focusSearchBox = ->
+  $('.js-copy-tuner-bar-search').focus()
+
+Copyray.toggleLogMenu = ->
   Copyray.createLogMenu()
-  $('#copy-tuner-bar-log-menu').toggle()
+  $('.js-copy-tuner-bar-log-menu').toggle()
+
+$(document).on 'click', '.js-copy-tuner-bar-open-log', (e) ->
+  e.preventDefault()
+  Copyray.toggleLogMenu()
+
+do ->
+  timer = null
+  lastKeyword = ''
+  $(document).on 'focus', '.js-copy-tuner-bar-search', ->
+    lastKeyword = $(@).val()
+  $(document).on 'keyup', '.js-copy-tuner-bar-search', ->
+    keyword = $.trim($(@).val())
+    if lastKeyword != keyword
+      Copyray.toggleLogMenu() if !$('.js-copy-tuner-bar-log-menu').is(':visible')
+      clearTimeout(timer)
+      timer = setTimeout ->
+        if keyword == ''
+          $('.js-copy-tuner-blurb-row').show()
+        else
+          $('.js-copy-tuner-blurb-row').hide()
+          $(".js-copy-tuner-blurb-row td:contains(#{keyword})").closest('.js-copy-tuner-blurb-row').show()
+      , 500
+      lastKeyword = keyword
+

@@ -130,12 +130,16 @@ a.copyray-toggle-button:hover {
   padding: 2px 8px;
 }
 
+#copy-tuner-bar-log-menu__tbody tr {
+  cursor: pointer;
+}
+
 #copy-tuner-bar-log-menu__tbody tr:hover {
-  background: #444
+  background: #444;
 }
 
 #copy-tuner-bar-log-menu__tbody a {
-  color: #fff
+  color: #fff;
 }
 
 #copy-tuner-bar-log-menu__tbody a:hover, #copy-tuner-bar-log-menu__tbody a:focus {
@@ -165,4 +169,17 @@ a.copyray-toggle-button:hover {
   color: #fff;
   text-decoration: none;
   background-color: #555;
+}
+
+.copy-tuner-bar__search {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 2px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 0 2px rgba(0, 0, 0, 0.2);
+  padding: 2px 8px;
+  vertical-align: middle;
+  color: black;
 }

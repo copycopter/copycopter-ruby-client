@@ -1,15 +1,19 @@
 module CopyTunerClient
   class TranslationLog
     def self.translations
-      Thread.current[:translations] ||= {}
+      Thread.current[:translations]
     end
 
     def self.clear
       Thread.current[:translations] = {}
     end
 
+    def self.initialized?
+      !Thread.current[:translations].nil?
+    end
+
     def self.add(key, result)
-      translations[key] = result unless translations.key? key
+      translations[key] = result if initialized? && !translations.key?(key)
     end
 
     def self.install_hook
