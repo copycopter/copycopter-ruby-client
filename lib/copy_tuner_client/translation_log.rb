@@ -26,13 +26,6 @@ module CopyTunerClient
             scope = scope.dup if scope.is_a?(Array) || scope.is_a?(String)
             result = translate_without_copy_tuner_hook(*args)
 
-            puts '********************* trnaslate_with_copy_tuner_hook'
-            puts "scope: #{options[:scope]}"
-            puts "default: #{options[:scope]}"
-            puts "key: #{key}"
-            puts "result: #{result}"
-            p Thread.current.backtrace.take(5)
-
             if key.is_a?(Array)
               key.zip(result).each { |k, v| CopyTunerClient::TranslationLog.add(I18n.normalize_keys(nil, k, scope).join('.'), v) unless v.is_a?(Array) }
             else
