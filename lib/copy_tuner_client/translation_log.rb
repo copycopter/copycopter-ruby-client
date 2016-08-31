@@ -21,12 +21,15 @@ module CopyTunerClient
         class << self
           def translate_with_copy_tuner_hook(*args)
             key = args[0]
+            options  = args.last.is_a?(Hash) ? args.last : {}
+            scope = options[:scope]
+            scope = scope.dup if scope.is_a?(Array) || scope.is_a?(String)
             result = translate_without_copy_tuner_hook(*args)
 
             if key.is_a?(Array)
-              key.zip(result).each { |k, v| CopyTunerClient::TranslationLog.add(k, v) unless v.is_a?(Array) }
+              key.zip(result).each { |k, v| CopyTunerClient::TranslationLog.add(I18n.normalize_keys(nil, k, scope).join('.'), v) unless v.is_a?(Array) }
             else
-              CopyTunerClient::TranslationLog.add(key, result) unless result.is_a?(Array)
+              CopyTunerClient::TranslationLog.add(I18n.normalize_keys(nil, key, scope).join('.'), result) unless result.is_a?(Array)
             end
             result
           end
