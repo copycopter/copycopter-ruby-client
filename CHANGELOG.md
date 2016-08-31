@@ -1,3 +1,7 @@
+## 0.3.2
+- Support I18n.t :scope option.
+- Update copyray_js_injection_regexp_for_debug. 
+
 ## 0.3.1
 - Add search box to copyray bar.
 - Add disable_copyray_comment_injection to configuration.
