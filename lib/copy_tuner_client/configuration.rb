@@ -122,6 +122,9 @@ module CopyTunerClient
     # @return [Boolean] To disable Copyray comment injection, set true
     attr_accessor :disable_copyray_comment_injection
 
+    # @return [Array<Symbol>] Restrict blurb locales to upload
+    attr_accessor :locales
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -141,6 +144,7 @@ module CopyTunerClient
       self.test_environments = %w(test cucumber)
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
       self.disable_copyray_comment_injection = false
+      self.locales = ::Rails.application.config.i18n.available_locales.presence || Array(::Rails.application.config.i18n.default_locale)
 
       # Matches:
       #   <script src="/assets/jquery.js"></script>
@@ -239,6 +243,7 @@ module CopyTunerClient
       @applied = true
       logger.info "Client #{VERSION} ready (s3_download)"
       logger.info "Environment Info: #{environment_info}"
+      logger.info "Available locales: #{self.locales.join(' ')}" if self.locales.present?
 
       unless test?
         process_guard.start
