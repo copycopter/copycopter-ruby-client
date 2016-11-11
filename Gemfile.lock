@@ -176,7 +176,7 @@ DEPENDENCIES
   cucumber (~> 1.3.16)
   rails (~> 4.2.6)
   rake
-  rspec (~> 2.3)
+  rspec (~> 2.99)
   sham_rack
   sinatra
   sqlite3

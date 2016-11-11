@@ -46,6 +46,26 @@ describe CopyTunerClient::Cache do
     client.uploaded.should == { 'test.key' => 'test value' }
   end
 
+  it 'upload without locale filter' do
+    cache = build_cache
+    cache['en.test.key'] = 'uploaded en'
+    cache['ja.test.key'] = 'uploaded ja'
+
+    cache.flush
+
+    expect(client.uploaded).to eq({'en.test.key' => 'uploaded en', 'ja.test.key' => 'uploaded ja'})
+  end
+
+  it 'upload with locale filter' do
+    cache = build_cache(locales: %(en))
+    cache['en.test.key'] = 'uploaded'
+    cache['ja.test.key'] = 'not uploaded'
+
+    cache.flush
+
+    expect(client.uploaded).to eq({'en.test.key' => 'uploaded'})
+  end
+
   it "downloads changes" do
     client['test.key'] = 'test value'
     cache = build_cache
