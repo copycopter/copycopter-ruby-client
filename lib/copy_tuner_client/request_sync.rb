@@ -93,7 +93,10 @@ module CopyTunerClient
         body = render_without_layout(view, binding)
       end
       if add_rack_array
-        ::Rack::Response.new(body).finish
+        ::Rack::Response.new(
+          body, 200,
+          ::Rack::CONTENT_TYPE => 'text/html; charset=utf-8'
+        ).finish
       else
         body
       end
