@@ -21,6 +21,7 @@ module CopyTunerClient
       @queued = {}
       @started = false
       @exclude_key_regexp = options[:exclude_key_regexp]
+      @locales = Array(options[:locales]).map(&:to_s)
     end
 
     # Returns content for the given blurb.
@@ -36,6 +37,7 @@ module CopyTunerClient
     # @param value [String] the new contents of the blurb
     def []=(key, value)
       return if key =~ @exclude_key_regexp
+      return if @locales.present? && !@locales.member?(key.split('.').first)
       lock { @queued[key] = value }
     end
 

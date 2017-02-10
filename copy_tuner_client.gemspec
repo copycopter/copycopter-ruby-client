@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'cucumber', '~> 1.3.16'
   s.add_development_dependency 'rails', '~> 4.2.6'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec', '~> 2.3'
+  s.add_development_dependency 'rspec', '~> 2.99'
   s.add_development_dependency 'sham_rack'
   s.add_development_dependency 'sinatra'
   s.add_development_dependency 'sqlite3'

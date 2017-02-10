@@ -204,7 +204,7 @@ describe CopyTunerClient::Configuration do
   end
 end
 
-shared_examples_for 'applied configuration' do
+shared_context 'stubbed configuration' do
   subject { CopyTunerClient::Configuration.new }
   let(:backend) { stub('i18n-backend') }
   let(:cache) { stub('cache', :download => "download") }
@@ -222,6 +222,10 @@ shared_examples_for 'applied configuration' do
     subject.logger = logger
     apply
   end
+end
+
+shared_examples_for 'applied configuration' do
+  include_context 'stubbed configuration'
 
   it { should be_applied }
 
@@ -313,5 +317,65 @@ describe CopyTunerClient::Configuration, 'applied with middleware when not devel
 
   it 'does not add the sync middleware' do
     middleware.should_not include(CopyTunerClient::RequestSync)
+  end
+end
+
+describe CopyTunerClient::Configuration, 'applied without locale filter' do
+  include_context 'stubbed configuration'
+
+  def apply
+    subject.apply
+  end
+
+  it 'should have locales [:en]' do
+    expect(subject.locales).to eq [:en]
+  end
+end
+
+describe CopyTunerClient::Configuration, 'applied with locale filter' do
+  include_context 'stubbed configuration'
+
+  def apply
+    subject.locales = %i(en ja)
+    subject.apply
+  end
+
+  it 'should have locales %i(en ja)' do
+    expect(subject.locales).to eq %i(en ja)
+  end
+end
+
+describe CopyTunerClient::Configuration, 'applied with Rails i18n config' do
+  def self.with_config(i18n_options)
+    around do |ex|
+      rails_defined = Object.const_defined?(:Rails)
+      Object.const_set :Rails, Module.new unless rails_defined
+      i18n = stub(i18n_options)
+      Rails.stubs application: stub(config: stub(i18n: i18n))
+      ex.run
+      Object.send(:remove_const, :Rails) unless rails_defined
+    end
+  end
+
+  def apply
+    subject.apply
+  end
+
+  context 'with available_locales' do
+    with_config(available_locales: %i(en ja))
+    include_context 'stubbed configuration'
+
+    it 'should have locales %i(en ja)' do
+      expect(subject.locales).to eq %i(en ja)
+    end
+  end
+
+  context 'with default_locale' do
+    with_config(available_locales: %i(ja))
+    include_context 'stubbed configuration'
+
+    it 'should have locales %i(ja)' do
+      expect(subject.locales).to eq %i(ja)
+    end
   end
 end

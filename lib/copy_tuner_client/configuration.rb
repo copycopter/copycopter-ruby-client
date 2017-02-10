@@ -18,7 +18,8 @@ module CopyTunerClient
         :client_version, :port, :protocol, :proxy_host, :proxy_pass,
         :proxy_port, :proxy_user, :secure, :polling_delay, :sync_interval,
         :sync_interval_staging, :sync_ignore_path_regex, :logger,
-        :framework, :middleware, :disable_middleware, :disable_test_translation, :ca_file, :exclude_key_regexp, :s3_host].freeze
+        :framework, :middleware, :disable_middleware, :disable_test_translation,
+        :ca_file, :exclude_key_regexp, :s3_host, :locales].freeze
 
     # @return [String] The API key for your project, found on the project edit form.
     attr_accessor :api_key
@@ -122,6 +123,9 @@ module CopyTunerClient
     # @return [Boolean] To disable Copyray comment injection, set true
     attr_accessor :disable_copyray_comment_injection
 
+    # @return [Array<Symbol>] Restrict blurb locales to upload
+    attr_accessor :locales
+
     alias_method :secure?, :secure
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
@@ -222,6 +226,14 @@ module CopyTunerClient
     #
     # When {#test?} returns +false+, the poller will be started.
     def apply
+      self.locales ||= begin
+        if defined?(::Rails)
+          self.locales = ::Rails.application.config.i18n.available_locales.presence || Array(::Rails.application.config.i18n.default_locale)
+        else
+          self.locales = [:en]
+        end
+      end
+
       self.client ||= Client.new(to_hash)
       self.cache ||= Cache.new(client, to_hash)
       poller = Poller.new(cache, to_hash)
@@ -239,6 +251,7 @@ module CopyTunerClient
       @applied = true
       logger.info "Client #{VERSION} ready (s3_download)"
       logger.info "Environment Info: #{environment_info}"
+      logger.info "Available locales: #{self.locales.join(' ')}"
 
       unless test?
         process_guard.start
