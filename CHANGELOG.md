@@ -1,3 +1,7 @@
+## 0.3.3
+- Add config.locales. (#24)
+- Fix initialization order bug. (#25)
+
 ## 0.3.2
 - Support I18n.t :scope option.
 - Update copyray_js_injection_regexp_for_debug. 
