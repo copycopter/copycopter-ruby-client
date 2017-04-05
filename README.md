@@ -22,3 +22,13 @@ Development
     $ bundle exec rake build      # build gem to pkg/ dir
     $ bundle exec rake install    # install to local gem
     $ bundle exec rake release    # release gem to rubygems.org
+
+## CopyTunerの翻訳ファイルをymlとして出力する
+
+該当のRailsプロジェクトで下記のrakeを実行する
+
+```
+bundle exec rake copy_tuner:export
+```
+
+これで、`config/locales/copy_tuner.yml` に翻訳ファイルが作成されます。
