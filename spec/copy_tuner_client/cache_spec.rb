@@ -199,7 +199,7 @@ describe CopyTunerClient::Cache do
         false
       end
 
-      failure_message_for_should do
+      failure_message do
         @failure_message
       end
     end
