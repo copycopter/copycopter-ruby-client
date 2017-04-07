@@ -1,3 +1,6 @@
+## 0.3.4
+- Use Logger to /dev/null as default when rails console
+
 ## 0.3.3
 - Add config.locales. (#24)
 - Fix initialization order bug. (#25)
