@@ -34,7 +34,7 @@ describe CopyTunerClient::Poller do
     client['test.key'] = 'value'
     wait_for_next_sync
 
-    cache['test.key'].should == 'value'
+    expect(cache['test.key']).to eq('value')
   end
 
   it "it doesn't poll before being started" do
@@ -43,7 +43,7 @@ describe CopyTunerClient::Poller do
 
     wait_for_next_sync
 
-    cache['test.key'].should be_nil
+    expect(cache['test.key']).to be_nil
   end
 
   it "stops polling when stopped" do
@@ -55,7 +55,7 @@ describe CopyTunerClient::Poller do
     client['test.key'] = 'value'
     wait_for_next_sync
 
-    cache['test.key'].should be_nil
+    expect(cache['test.key']).to be_nil
   end
 
   it "stops polling with an invalid api key" do
@@ -68,12 +68,12 @@ describe CopyTunerClient::Poller do
     poller.start
     wait_for_next_sync
 
-    logger.should have_entry(:error, failure)
+    expect(logger).to have_entry(:error, failure)
 
     client['test.key'] = 'test value'
     wait_for_next_sync
 
-    cache['test.key'].should be_nil
+    expect(cache['test.key']).to be_nil
   end
 
   it "logs an error if the background thread can't start" do
@@ -82,7 +82,7 @@ describe CopyTunerClient::Poller do
 
     build_poller(:logger => logger).start
 
-    logger.should have_entry(:error, "Couldn't start poller thread")
+    expect(logger).to have_entry(:error, "Couldn't start poller thread")
   end
 
   it "flushes the log when polling" do
@@ -93,7 +93,7 @@ describe CopyTunerClient::Poller do
 
     wait_for_next_sync
 
-    logger.should have_received(:flush).at_least_once
+    expect(logger).to have_received(:flush).at_least_once
   end
 
   it "starts from the top-level constant" do
@@ -103,6 +103,6 @@ describe CopyTunerClient::Poller do
 
     CopyTunerClient.start_poller
 
-    poller.should have_received(:start)
+    expect(poller).to have_received(:start)
   end
 end

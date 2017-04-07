@@ -11,18 +11,18 @@ describe CopyTunerClient::RequestSync do
 
   it "invokes the upstream app" do
     result = subject.call(env)
-    app.should have_received(:call).with(env)
-    result.should == response
+    expect(app).to have_received(:call).with(env)
+    expect(result).to eq(response)
   end
 
   it "flushes defaults" do
     subject.call(env)
-    cache.should have_received(:flush)
+    expect(cache).to have_received(:flush)
   end
 
   it "downloads new copy" do
     subject.call(env)
-    cache.should have_received(:download)
+    expect(cache).to have_received(:download)
   end
 end
 
@@ -38,11 +38,11 @@ describe CopyTunerClient::RequestSync, 'serving assets' do
 
   it "does not flush defaults" do
     subject.call(env)
-    cache.should have_received(:flush).never
+    expect(cache).to have_received(:flush).never
   end
   it "does not download new copy" do
     subject.call(env)
-    cache.should have_received(:download).never
+    expect(cache).to have_received(:download).never
   end
 end
 
@@ -57,11 +57,11 @@ describe CopyTunerClient::RequestSync do
     subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, :last_synced => Time.now) }
     it "does not flush defaults" do
       subject.call(env)
-      cache.should have_received(:flush).never
+      expect(cache).to have_received(:flush).never
     end
     it "does not download new copy" do
       subject.call(env)
-      cache.should have_received(:download).never
+      expect(cache).to have_received(:download).never
     end
   end
 
@@ -69,11 +69,11 @@ describe CopyTunerClient::RequestSync do
     subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10, :last_synced => Time.now - 60) }
     it "flushes defaults" do
       subject.call(env)
-      cache.should have_received(:flush)
+      expect(cache).to have_received(:flush)
     end
     it "downloads new copy" do
       subject.call(env)
-      cache.should have_received(:download)
+      expect(cache).to have_received(:download)
     end
   end
 
@@ -81,11 +81,11 @@ describe CopyTunerClient::RequestSync do
     subject { CopyTunerClient::RequestSync.new(app, :cache => cache, :interval => 10) }
     it "flushes defaults" do
       subject.call(env)
-      cache.should have_received(:flush)
+      expect(cache).to have_received(:flush)
     end
     it "downloads new copy" do
       subject.call(env)
-      cache.should have_received(:download)
+      expect(cache).to have_received(:download)
     end
   end
 end

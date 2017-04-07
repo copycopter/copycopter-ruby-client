@@ -17,8 +17,8 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    cache['en.test.key'].should == 'expected'
-    cache.keys.should match_array(%w(en.test.key en.test.other_key))
+    expect(cache['en.test.key']).to eq('expected')
+    expect(cache.keys).to match_array(%w(en.test.key en.test.other_key))
   end
 
   it "exclude data if exclude_key_regexp is set" do
@@ -28,13 +28,13 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    cache.queued.keys.should match_array(%w(en.test.key))
+    expect(cache.queued.keys).to match_array(%w(en.test.key))
   end
 
   it "doesn't upload without changes" do
     cache = build_cache
     cache.flush
-    client.should_not be_uploaded
+    expect(client).not_to be_uploaded
   end
 
   it "uploads changes when flushed" do
@@ -43,7 +43,7 @@ describe CopyTunerClient::Cache do
 
     cache.flush
 
-    client.uploaded.should == { 'test.key' => 'test value' }
+    expect(client.uploaded).to eq({ 'test.key' => 'test value' })
   end
 
   it 'upload without locale filter' do
@@ -72,7 +72,7 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    cache['test.key'].should == 'test value'
+    expect(cache['test.key']).to eq('test value')
   end
 
   it "downloads and uploads when synced" do
@@ -82,8 +82,8 @@ describe CopyTunerClient::Cache do
 
     cache.sync
 
-    client.uploaded.should == { 'other.key' => 'other value' }
-    cache['test.key'].should == 'test value'
+    expect(client.uploaded).to eq({ 'other.key' => 'other value' })
+    expect(cache['test.key']).to eq('test value')
   end
 
   it "handles connection errors when flushing" do
@@ -95,7 +95,7 @@ describe CopyTunerClient::Cache do
 
     cache.flush
 
-    logger.should have_entry(:error, failure)
+    expect(logger).to have_entry(:error, failure)
   end
 
   it "handles connection errors when downloading" do
@@ -106,7 +106,7 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    logger.should have_entry(:error, failure)
+    expect(logger).to have_entry(:error, failure)
   end
 
   it "blocks until the first download is complete" do
@@ -125,7 +125,7 @@ describe CopyTunerClient::Cache do
 
     sleep(1)
 
-    finished.should == true
+    expect(finished).to eq(true)
     # FIXME 成功したり、失敗していたりするので、一旦コメントアウト。後で直します。
     # logger.should have_entry(:info, "Waiting for first download")
     # logger.should have_received(:flush)
@@ -147,7 +147,7 @@ describe CopyTunerClient::Cache do
     sleep(1)
 
     expect { cache.download }.to raise_error(StandardError, "Failure")
-    finished.should == true
+    expect(finished).to eq(true)
   end
 
   it "doesn't block before downloading" do
@@ -162,8 +162,8 @@ describe CopyTunerClient::Cache do
 
     sleep(1)
 
-    finished.should == true
-    logger.should_not have_entry(:info, "Waiting for first download")
+    expect(finished).to eq(true)
+    expect(logger).not_to have_entry(:info, "Waiting for first download")
   end
 
   it "doesn't return blank copy" do
@@ -172,7 +172,7 @@ describe CopyTunerClient::Cache do
 
     cache.download
 
-    cache['en.test.key'].should be_nil
+    expect(cache['en.test.key']).to be_nil
   end
 
   describe "given locked mutex" do
@@ -213,15 +213,15 @@ describe CopyTunerClient::Cache do
     end
 
     it "synchronizes read access to keys between threads" do
-      Thread.new { cache['test.key'] }.should finish_after_unlocking(mutex)
+      expect(Thread.new { cache['test.key'] }).to finish_after_unlocking(mutex)
     end
 
     it "synchronizes read access to the key list between threads" do
-      Thread.new { cache.keys }.should finish_after_unlocking(mutex)
+      expect(Thread.new { cache.keys }).to finish_after_unlocking(mutex)
     end
 
     it "synchronizes write access to keys between threads" do
-      Thread.new { cache['test.key'] = 'value' }.should finish_after_unlocking(mutex)
+      expect(Thread.new { cache['test.key'] = 'value' }).to finish_after_unlocking(mutex)
     end
   end
 
@@ -255,11 +255,11 @@ describe CopyTunerClient::Cache do
 
       CopyTunerClient.export
 
-      @cache.should have_received(:export)
+      expect(@cache).to have_received(:export)
     end
 
     it "returns no yaml with no blurb keys" do
-      @cache.export.should == nil
+      expect(@cache.export).to eq(nil)
     end
 
     context "with single-level blurb keys" do
@@ -270,8 +270,8 @@ describe CopyTunerClient::Cache do
 
       it "returns blurbs as yaml" do
         exported = YAML.load(@cache.export)
-        exported['key'].should == 'test value'
-        exported['other_key'].should == 'other test value'
+        expect(exported['key']).to eq('test value')
+        expect(exported['other_key']).to eq('other test value')
       end
     end
 
@@ -284,9 +284,9 @@ describe CopyTunerClient::Cache do
 
       it "returns blurbs as yaml" do
         exported = YAML.load(@cache.export)
-        exported['en']['test']['key'].should == 'en test value'
-        exported['en']['test']['other_key'].should == 'en other test value'
-        exported['fr']['test']['key'].should == 'fr test value'
+        expect(exported['en']['test']['key']).to eq('en test value')
+        expect(exported['en']['test']['other_key']).to eq('en other test value')
+        expect(exported['fr']['test']['key']).to eq('fr test value')
       end
     end
 
@@ -298,7 +298,7 @@ describe CopyTunerClient::Cache do
 
       it "retains the new key" do
         exported = YAML.load(@cache.export)
-        exported['en']['test']['key'].should == 'other test value'
+        expect(exported['en']['test']['key']).to eq('other test value')
       end
     end
   end

@@ -31,29 +31,29 @@ describe CopyTunerClient do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_open_timeout => 4)
       client.download { |ignore| }
-      http.open_timeout.should == 4
+      expect(http.open_timeout).to eq(4)
     end
 
     it 'should timeout when reading' do
       project = add_project
       client = build_client(:api_key => project.api_key, :http_read_timeout => 4)
       client.download { |ignore| }
-      http.read_timeout.should == 4
+      expect(http.read_timeout).to eq(4)
     end
 
     it 'uses verified ssl when secure' do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => true)
       client.download { |ignore| }
-      http.use_ssl?.should == true
-      http.verify_mode.should == OpenSSL::SSL::VERIFY_PEER
+      expect(http.use_ssl?).to eq(true)
+      expect(http.verify_mode).to eq(OpenSSL::SSL::VERIFY_PEER)
     end
 
     it 'does not use ssl when insecure' do
       project = add_project
       client = build_client(:api_key => project.api_key, :secure => false)
       client.download { |ignore| }
-      http.use_ssl?.should == false
+      expect(http.use_ssl?).to eq(false)
     end
 
     it 'wraps HTTP errors with ConnectionError' do
@@ -75,8 +75,8 @@ describe CopyTunerClient do
         client = build_client_with_project
         expect { client.download { |ignore| } }.
           to raise_error(CopyTunerClient::ConnectionError) { |error|
-            error.message.
-              should == "#{original_error.class.name}: #{original_error.message}"
+            expect(error.message).
+              to eq("#{original_error.class.name}: #{original_error.message}")
           }
       end
     end
@@ -121,17 +121,17 @@ describe CopyTunerClient do
 
     client.download { |yielded| blurbs = yielded }
 
-    blurbs.should == {
+    expect(blurbs).to eq({
       'key.one' => 'expected one',
       'key.two' => 'expected two'
-    }
+    })
   end
 
   it 'logs that it performed a download' do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
     client.download { |ignore| }
-    logger.should have_entry(:info, 'Downloaded translations')
+    expect(logger).to have_entry(:info, 'Downloaded translations')
   end
 
   it 'downloads draft blurbs for an existing project' do
@@ -151,10 +151,10 @@ describe CopyTunerClient do
 
     client.download { |yielded| blurbs = yielded }
 
-    blurbs.should == {
+    expect(blurbs).to eq({
       'key.one' => 'expected one',
       'key.two' => 'expected two'
-    }
+    })
   end
 
   it "handles a 304 response when downloading" do
@@ -170,8 +170,8 @@ describe CopyTunerClient do
       client.download { |ignore| yields += 1 }
     end
 
-    yields.should == 1
-    logger.should have_entry(:info, "No new translations")
+    expect(yields).to eq(1)
+    expect(logger).to have_entry(:info, "No new translations")
   end
 
   it "uploads defaults for missing blurbs in an existing project" do
@@ -185,14 +185,14 @@ describe CopyTunerClient do
     client = build_client(:api_key => project.api_key, :public => true)
     client.upload(blurbs)
 
-    project.reload.draft.should == blurbs
+    expect(project.reload.draft).to eq(blurbs)
   end
 
   it "logs that it performed an upload" do
     logger = FakeLogger.new
     client = build_client_with_project(:logger => logger)
     client.upload({})
-    logger.should have_entry(:info, "Uploaded missing translations")
+    expect(logger).to have_entry(:info, "Uploaded missing translations")
   end
 
   it "deploys from the top-level constant" do
@@ -204,7 +204,7 @@ describe CopyTunerClient do
 
     CopyTunerClient.deploy
 
-    client.should have_received(:deploy)
+    expect(client).to have_received(:deploy)
   end
 
   it "deploys" do
@@ -224,11 +224,11 @@ describe CopyTunerClient do
 
     client.deploy
 
-    project.reload.published.should == {
+    expect(project.reload.published).to eq({
       'key.one'   => "expected one",
       'key.two'   => "expected two"
-    }
-    logger.should have_entry(:info, "Deployed")
+    })
+    expect(logger).to have_entry(:info, "Deployed")
   end
 
   it "handles deploy errors" do

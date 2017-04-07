@@ -8,12 +8,12 @@ describe CopyTunerClient do
   end
 
   it 'delegates cache to the configuration object' do
-    CopyTunerClient.cache.should == 'cache'
-    CopyTunerClient.configuration.should have_received(:cache).once
+    expect(CopyTunerClient.cache).to eq('cache')
+    expect(CopyTunerClient.configuration).to have_received(:cache).once
   end
 
   it 'delegates client to the configuration object' do
-    CopyTunerClient.client.should == 'client'
-    CopyTunerClient.configuration.should have_received(:client).once
+    expect(CopyTunerClient.client).to eq('client')
+    expect(CopyTunerClient.configuration).to have_received(:client).once
   end
 end
