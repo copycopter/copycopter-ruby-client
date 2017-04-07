@@ -111,7 +111,7 @@ end
 Then /^the log should contain "([^"]*)"$/ do |line|
   prefix = "** [CopyTuner] "
   pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
-  log_path = "log/development.log"
+  log_path = "log/copy_tuner.log"
   in_current_dir do
     File.open(log_path) do |file|
       unless file.readlines.any? { |file_line| file_line =~ pattern }
@@ -122,7 +122,7 @@ Then /^the log should contain "([^"]*)"$/ do |line|
 end
 
 Then /^the log should not contain "([^"]*)"$/ do |line|
-  log_path = "log/development.log"
+  log_path = "log/copy_tuner.log"
   in_current_dir do
     File.open(log_path) do |file|
       if bad_line = file.readlines.detect { |file_line| file_line.include?(line) }
