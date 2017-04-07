@@ -53,7 +53,7 @@ end
 
 Then /^the "([^"]*)" project should not have the "([^"]*)" blurb$/ do |api_key, blurb_key|
   project = FakeCopyTunerApp.project(api_key)
-  project.draft[blurb_key].should be_nil
+  expect(project.draft[blurb_key]).to be_nil
 end
 
 When /^I wait for changes to be synchronized$/ do

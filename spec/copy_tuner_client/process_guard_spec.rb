@@ -25,7 +25,7 @@ describe CopyTunerClient::ProcessGuard do
 
     process_guard.start
 
-    poller.should have_received(:start)
+    expect(poller).to have_received(:start)
   end
 
   it "registers passenger hooks from the passenger master" do
@@ -36,8 +36,8 @@ describe CopyTunerClient::ProcessGuard do
     process_guard = build_process_guard(:logger => logger)
     process_guard.start
 
-    logger.should have_entry(:info, "Registered Phusion Passenger fork hook")
-    poller.should have_received(:start).never
+    expect(logger).to have_entry(:info, "Registered Phusion Passenger fork hook")
+    expect(poller).to have_received(:start).never
   end
 
   it "starts polling from a passenger worker" do
@@ -49,7 +49,7 @@ describe CopyTunerClient::ProcessGuard do
     process_guard.start
     passenger.spawn
 
-    poller.should have_received(:start)
+    expect(poller).to have_received(:start)
   end
 
   it "registers unicorn hooks from the unicorn master" do
@@ -62,8 +62,8 @@ describe CopyTunerClient::ProcessGuard do
     process_guard = build_process_guard(:logger => logger)
     process_guard.start
 
-    logger.should have_entry(:info, "Registered Unicorn fork hook")
-    poller.should have_received(:start).never
+    expect(logger).to have_entry(:info, "Registered Unicorn fork hook")
+    expect(poller).to have_received(:start).never
   end
 
   it "starts polling from a unicorn worker" do
@@ -77,7 +77,7 @@ describe CopyTunerClient::ProcessGuard do
     process_guard.start
     unicorn.spawn
 
-    poller.should have_received(:start)
+    expect(poller).to have_received(:start)
   end
 
   it "flushes when the process terminates" do
@@ -89,7 +89,7 @@ describe CopyTunerClient::ProcessGuard do
     end
     Process.wait
 
-    cache.should be_written
+    expect(cache).to be_written
   end
 
   it "flushes after running a resque job" do
@@ -103,8 +103,8 @@ describe CopyTunerClient::ProcessGuard do
     process_guard.start
     job.fork_and_perform
 
-    cache.should be_written
-    logger.should have_entry(:info, "Registered Resque after_perform hook")
+    expect(cache).to be_written
+    expect(logger).to have_entry(:info, "Registered Resque after_perform hook")
   end
 
   it "doesn't fail if only Resque is defined and not Resque::Job" do

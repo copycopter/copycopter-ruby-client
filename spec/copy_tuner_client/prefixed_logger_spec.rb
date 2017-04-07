@@ -7,11 +7,11 @@ describe CopyTunerClient::PrefixedLogger do
   subject { CopyTunerClient::PrefixedLogger.new(prefix, output_logger) }
 
   it "provides the prefix" do
-    subject.prefix.should == prefix
+    expect(subject.prefix).to eq(prefix)
   end
 
   it "provides the logger" do
-    subject.original_logger.should == output_logger
+    expect(subject.original_logger).to eq(output_logger)
   end
 
   [:debug, :info, :warn, :error, :fatal].each do |level|
@@ -19,7 +19,7 @@ describe CopyTunerClient::PrefixedLogger do
       message = 'hello'
       subject.send(level, message)
 
-      output_logger.should have_entry(level, "#{prefix} #{thread_info} #{message}")
+      expect(output_logger).to have_entry(level, "#{prefix} #{thread_info} #{message}")
     end
   end
 
@@ -28,10 +28,10 @@ describe CopyTunerClient::PrefixedLogger do
 
     subject.flush
 
-    output_logger.should have_received(:flush)
+    expect(output_logger).to have_received(:flush)
   end
 
   it "doesn't call flush for a logger that doesn't respond to flush" do
-    lambda { subject.flush }.should_not raise_error
+    expect { subject.flush }.not_to raise_error
   end
 end

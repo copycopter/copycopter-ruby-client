@@ -111,7 +111,7 @@ end
 Then /^the log should contain "([^"]*)"$/ do |line|
   prefix = "** [CopyTuner] "
   pattern = Regexp.compile([Regexp.escape(prefix), Regexp.escape(line)].join(".*"))
-  log_path = "log/development.log"
+  log_path = "log/copy_tuner.log"
   in_current_dir do
     File.open(log_path) do |file|
       unless file.readlines.any? { |file_line| file_line =~ pattern }
@@ -122,7 +122,7 @@ Then /^the log should contain "([^"]*)"$/ do |line|
 end
 
 Then /^the log should not contain "([^"]*)"$/ do |line|
-  log_path = "log/development.log"
+  log_path = "log/copy_tuner.log"
   in_current_dir do
     File.open(log_path) do |file|
       if bad_line = file.readlines.detect { |file_line| file_line.include?(line) }
@@ -137,11 +137,11 @@ When /^I successfully rake "([^"]*)"$/ do |task|
 end
 
 Then /^the response should contain "([^"]+)"$/ do |text|
-  @last_response.body.should include(text)
+  expect(@last_response.body).to include(text)
 end
 
 When /^show me the page$/ do
-  @last_response.body.should == nil
+  expect(@last_response.body).to be_nil
 end
 
 When /^I route the "([^"]+)" resource$/ do |resource|

@@ -47,11 +47,11 @@ RSpec::Matchers.define :have_entry do |severity, entry|
     logger.has_entry?(severity, entry)
   end
 
-  failure_message_for_should do
+  failure_message do
     "Expected #{severity}(#{entry.inspect}); got entries:\n\n#{entries}"
   end
 
-  failure_message_for_should_not do
+  failure_message_when_negated do
     "Unexpected #{severity}(#{entry.inspect}); got entries:\n\n#{entries}"
   end
 

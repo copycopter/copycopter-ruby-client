@@ -158,6 +158,7 @@ class FakeCopyTunerApp < Sinatra::Base
     def self.open_project_data
       MUTEX.synchronize do
         project_file = File.expand_path('../../../tmp/projects.json', __FILE__)
+        FileUtils.mkdir_p File.dirname(project_file)
 
         if File.exist? project_file
           data = JSON.parse(IO.read(project_file))
