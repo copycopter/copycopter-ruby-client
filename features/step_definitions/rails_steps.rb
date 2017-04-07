@@ -137,11 +137,11 @@ When /^I successfully rake "([^"]*)"$/ do |task|
 end
 
 Then /^the response should contain "([^"]+)"$/ do |text|
-  @last_response.body.should include(text)
+  expect(@last_response.body).to include(text)
 end
 
 When /^show me the page$/ do
-  @last_response.body.should == nil
+  expect(@last_response.body).to be_nil
 end
 
 When /^I route the "([^"]+)" resource$/ do |resource|

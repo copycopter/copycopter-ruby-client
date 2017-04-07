@@ -3,9 +3,9 @@ appraise '4.0' do
 end
 
 appraise '4.1' do
-  gem 'rails', '4.1.15'
+  gem 'rails', '4.1.16'
 end
 
 appraise '4.2' do
-  gem 'rails', '4.2.6'
+  gem 'rails', '4.2.8'
 end
