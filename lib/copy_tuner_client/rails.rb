@@ -6,7 +6,13 @@ module CopyTunerClient
     def self.initialize
       CopyTunerClient.configure(false) do |config|
         config.environment_name = ::Rails.env
-        config.logger           = ::Rails.logger
+        config.logger           = if defined?(::Rails::Console)
+          Logger.new('/dev/null')
+        elsif defined?(::Rails) && ::Rails.env.development?
+          Logger.new('log/copy_tuner.log')
+        else
+          ::Rails.logger
+        end
         config.framework        = "Rails: #{::Rails::VERSION::STRING}"
         config.middleware       = ::Rails.configuration.middleware
       end
