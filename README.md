@@ -18,7 +18,7 @@ CopyTunerClient.configure do |config|
   config.api_key = 'YOUR-API-KEY'
   config.host = 'COPY-TUNER-HOST-NAME'
   
-  # I18n key and messages will be sent to server if the locale matches
+  # I18n keys and messages will be sent to server if the locale matches
   config.locales = [:ja, :en]
 end
 ```
