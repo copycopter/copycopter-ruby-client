@@ -1,3 +1,6 @@
+## 0.3.5
+- Support Rails 5.1
+
 ## 0.3.4
 - Use Logger to /dev/null as default when rails console
 
