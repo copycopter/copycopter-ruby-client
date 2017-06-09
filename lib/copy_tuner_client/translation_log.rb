@@ -34,7 +34,8 @@ module CopyTunerClient
             result
           end
           if CopyTunerClient.configuration.enable_middleware?
-            alias_method_chain :translate, :copy_tuner_hook
+            alias_method :translate_without_copy_tuner_hook, :translate
+            alias_method :translate, :translate_with_copy_tuner_hook
             alias :t :translate
           end
         end

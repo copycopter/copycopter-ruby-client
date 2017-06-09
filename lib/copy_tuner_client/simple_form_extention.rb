@@ -22,7 +22,8 @@ if defined?(SimpleForm)
       end
     end
     if CopyTunerClient.configuration.enable_middleware?
-      alias_method_chain :label_translation, :copyray_comment
+      alias_method :label_translation_without_copyray_comment, :label_translation
+      alias_method :label_translation, :label_translation_with_copyray_comment
     end
   end
 end
