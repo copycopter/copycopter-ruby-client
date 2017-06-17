@@ -1,8 +1,8 @@
 window.Copyray ?= {}
-# return unless $ = window.jQuery
 
 # Max CSS z-index. The overlay and copyray bar use this.
 MAX_ZINDEX = 2147483647
+HIDDEN_CLASS = 'copy-tuner-hidden'
 
 isMac = navigator.platform.toUpperCase().indexOf('MAC') isnt -1
 
@@ -230,14 +230,14 @@ util =
     }
 
 Copyray.showBar = ->
-  document.getElementById('copy-tuner-bar').classList.remove('copy-tuner-hidden')
-  document.getElementsByClassName('copyray-toggle-button')[0].classList.add('copy-tuner-hidden')
+  document.getElementById('copy-tuner-bar').classList.remove(HIDDEN_CLASS)
+  document.querySelector('.copyray-toggle-button').classList.add(HIDDEN_CLASS)
   Copyray.focusSearchBox()
 
 Copyray.hideBar = ->
-  document.getElementById('copy-tuner-bar').classList.add('copy-tuner-hidden')
-  document.getElementsByClassName('copyray-toggle-button')[0].classList.remove('copy-tuner-hidden')
-  document.getElementsByClassName('js-copy-tuner-bar-log-menu')[0].classList.add('copy-tuner-hidden')
+  document.getElementById('copy-tuner-bar').classList.add(HIDDEN_CLASS)
+  document.querySelector('.copyray-toggle-button').classList.remove(HIDDEN_CLASS)
+  document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS)
 
 Copyray.createLogMenu = ->
   tbody = document.querySelector('.js-copy-tuner-bar-log-menu__tbody.is-not-initialized')
@@ -274,14 +274,14 @@ Copyray.createLogMenu = ->
   )
 
 Copyray.focusSearchBox = ->
-  document.getElementsByClassName('js-copy-tuner-bar-search')[0].focus()
+  document.querySelector('.js-copy-tuner-bar-search').focus()
 
 Copyray.toggleLogMenu = ->
   Copyray.createLogMenu()
-  document.getElementById('copy-tuner-bar-log-menu').classList.toggle('copy-tuner-hidden')
+  document.getElementById('copy-tuner-bar-log-menu').classList.toggle(HIDDEN_CLASS)
 
 Copyray.setupLogMenu = ->
-  element = document.getElementsByClassName('js-copy-tuner-bar-open-log')[0]
+  element = document.querySelector('.js-copy-tuner-bar-open-log')
   element.addEventListener('click', (event) ->
     event.preventDefault()
     Copyray.toggleLogMenu()
@@ -290,7 +290,7 @@ Copyray.setupLogMenu = ->
 Copyray.setupSearchBar = ->
   timer = null
   lastKeyword = ''
-  barElement = document.getElementsByClassName('js-copy-tuner-bar-search')[0]
+  barElement = document.querySelector('.js-copy-tuner-bar-search')
 
   barElement.addEventListener('focus', ({target}) ->
     lastKeyword = target.value
@@ -305,11 +305,11 @@ Copyray.setupSearchBar = ->
         rows = Array.from(document.getElementsByClassName('js-copy-tuner-blurb-row'))
         if keyword == ''
           rows.forEach((row) ->
-            row.classList.remove('copy-tuner-hidden')
+            row.classList.remove(HIDDEN_CLASS)
           )
         else
           rows.forEach((row) ->
-            row.classList.add('copy-tuner-hidden')
+            row.classList.add(HIDDEN_CLASS)
           )
 
           rows.filter((row) ->
@@ -317,7 +317,7 @@ Copyray.setupSearchBar = ->
               td.textContent.includes(keyword)
             )
           ).forEach((row) ->
-            row.classList.remove('copy-tuner-hidden')
+            row.classList.remove(HIDDEN_CLASS)
           )
       , 500
       lastKeyword = keyword
