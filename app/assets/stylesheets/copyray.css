@@ -1,83 +1,96 @@
 @charset "UTF-8";
 
 /* selector for element and children */
-#copyray-overlay, #copyray-overlay *, #copyray-overlay a:hover, #copyray-overlay a:visited, #copyray-overlay a:active {
-  background:none;
-  border:none;
-  bottom:auto;
-  clear:none;
-  cursor:default;
-  float:none;
-  font-family:Arial, Helvetica, sans-serif;
-  font-size:medium;
-  font-style:normal;
-  font-weight:normal;
-  height:auto;
-  left:auto;
-  letter-spacing:normal;
-  line-height:normal;
-  max-height:none;
-  max-width:none;
-  min-height:0;
-  min-width:0;
-  overflow:visible;
-  position:static;
-  right:auto;
-  text-align:left;
-  text-decoration:none;
-  text-indent:0;
-  text-transform:none;
-  top:auto;
-  visibility:visible;
-  white-space:normal;
-  width:auto;
-  z-index:auto;
+#copyray-overlay,
+#copyray-overlay *,
+#copyray-overlay a:hover,
+#copyray-overlay a:visited,
+#copyray-overlay a:active {
+  background: none;
+  border: none;
+  bottom: auto;
+  clear: none;
+  cursor: default;
+  float: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  font-style: normal;
+  font-weight: normal;
+  height: auto;
+  left: auto;
+  letter-spacing: normal;
+  line-height: normal;
+  max-height: none;
+  max-width: none;
+  min-height: 0;
+  min-width: 0;
+  overflow: visible;
+  position: static;
+  right: auto;
+  text-align: left;
+  text-decoration: none;
+  text-indent: 0;
+  text-transform: none;
+  top: auto;
+  visibility: visible;
+  white-space: normal;
+  width: auto;
+  z-index: auto;
 }
 
 #copyray-overlay {
-  position: fixed; left: 0; top: 0; bottom: 0; right: 0;
-  background: rgba(0,0,0,0.7);
-  background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.8) 100%);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  background: -webkit-radial-gradient(
+    center,
+    ellipse cover,
+    rgba(0, 0, 0, 0.4) 10%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
   z-index: 9000;
 }
 
 .copyray-specimen {
   position: absolute;
-  background: rgba(255,255,255,0.15);
-  outline: 1px solid rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.15);
+  outline: 1px solid rgba(255, 255, 255, 0.8);
   outline-offset: -1px;
   color: #666;
   font-family: "Helvetica Neue", sans-serif;
   font-size: 13px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-  .copyray-specimen:hover {
-    cursor: pointer;
-    background: rgba(255,255,255,0.4);
-  }
+.copyray-specimen:hover {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.4);
+}
 
-  .copyray-specimen.BlurbSpecimen {
-    outline: 1px solid rgba(255,50,50,0.8);
-    background: rgba(255,50,50,0.1);
-  }
+.copyray-specimen.BlurbSpecimen {
+  outline: 1px solid rgba(255, 50, 50, 0.8);
+  background: rgba(255, 50, 50, 0.1);
+}
 
-  .copyray-specimen.BlurbSpecimen:hover {
-    background: rgba(255,50,50,0.4);
-  }
+.copyray-specimen.BlurbSpecimen:hover {
+  background: rgba(255, 50, 50, 0.4);
+}
 
-  .copyray-specimen-handle {
-    float:left;
-    background: #fff;
-    padding: 0 3px;
-    color: #333;
-    font-size: 10px;
-  }
+.copyray-specimen-handle {
+  float: left;
+  background: #fff;
+  padding: 0 3px;
+  color: #333;
+  font-size: 10px;
+}
 
-  .copyray-specimen-handle.BlurbSpecimen {
-    background: rgba(255,50,50,0.8);
-    color: #fff;
-  }
+.copyray-specimen-handle.BlurbSpecimen {
+  background: rgba(255, 50, 50, 0.8);
+  color: #fff;
+}
 
 a.copyray-toggle-button {
   display: block;
@@ -109,8 +122,9 @@ a.copyray-toggle-button:hover {
   font-weight: 200;
   color: #fff;
   z-index: 2147483647;
-  box-shadow: 0 -1px 0 rgba(255,255,255,0.1), inset 0 2px 6px rgba(0,0,0,0.8);
-  background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.3));
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
 }
 
 #copy-tuner-bar-log-menu {
@@ -142,7 +156,8 @@ a.copyray-toggle-button:hover {
   color: #fff;
 }
 
-#copy-tuner-bar-log-menu__tbody a:hover, #copy-tuner-bar-log-menu__tbody a:focus {
+#copy-tuner-bar-log-menu__tbody a:hover,
+#copy-tuner-bar-log-menu__tbody a:focus {
   color: #fff;
   text-decoration: underline;
 }
@@ -161,7 +176,9 @@ a.copyray-toggle-button:hover {
   background-color: #444;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
   border-radius: 2px;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 2px rgba(255, 255, 255, 0.2);
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 2px rgba(255, 255, 255, 0.2);
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
@@ -178,10 +195,15 @@ input[type="text"].copy-tuner-bar__search {
   border: none;
   border-radius: 2px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2),
+    inset 0 0 2px rgba(0, 0, 0, 0.2);
   padding: 2px 8px;
   margin: 0;
   line-height: 20px;
   vertical-align: middle;
   color: black;
+}
+
+.copy-tuner-hidden {
+  display: none !important;
 }
