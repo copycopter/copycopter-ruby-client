@@ -1,0 +1,14 @@
+{
+  "name": "copy-tuner-ruby-client",
+  "private": true,
+  "repository": "https://github.com/SonicGarden/copy-tuner-ruby-client",
+  "author": "SonicGarden",
+  "license": "MIT",
+  "scripts": {
+    "build": "coffee -o app/assets/javascripts -c src/copyray.coffee",
+    "watch": "coffee -o app/assets/javascripts -w src/copyray.coffee"
+  },
+  "devDependencies": {
+    "coffeescript": "^1.12.6"
+  }
+}
