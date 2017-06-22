@@ -1,3 +1,6 @@
+## 0.4.0
+- Remove jQuery dependency.
+
 ## 0.3.5
 - Support Rails 5.1
 
