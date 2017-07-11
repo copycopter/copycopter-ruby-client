@@ -211,7 +211,7 @@ util =
       right  : Number.NEGATIVE_INFINITY
       bottom : Number.NEGATIVE_INFINITY
 
-    elements.forEach((element) ->
+    Array.from(elements).forEach((element) ->
       return unless isVisible(element)
       frame = getOffset(element)
       frame.right  = frame.left + element.offsetWidth
