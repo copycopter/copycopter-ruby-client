@@ -64,13 +64,8 @@ module CopyTunerClient
     end
 
     def append_js(html)
-      regexp = if ::Rails.application.config.assets.debug
-                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_debug
-               else
-                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_precompiled
-               end
-      html.sub(regexp) do
-        "#{$~}\n" + helpers.javascript_include_tag(:copyray)
+      html.sub(%r{</body>}) do
+       "#{helpers.javascript_include_tag(:copyray)}\n#{$~}"
       end
     end
 

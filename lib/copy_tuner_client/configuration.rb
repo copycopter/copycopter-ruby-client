@@ -128,6 +128,14 @@ module CopyTunerClient
 
     alias_method :secure?, :secure
 
+    def copyray_js_injection_regexp_for_debug=(value)
+      logger.warn 'DEPRECATION WARNING: copyray_js_injection_regexp_for_debug is deprecated'
+    end
+
+    def copyray_js_injection_regexp_for_precompiled=(value)
+      logger.warn 'DEPRECATION WARNING: copyray_js_injection_regexp_for_precompiled is deprecated'
+    end
+
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
     def initialize
       self.client_name = 'CopyTuner Client'
@@ -145,20 +153,6 @@ module CopyTunerClient
       self.test_environments = %w(test cucumber)
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
       self.disable_copyray_comment_injection = false
-
-      # Matches:
-      #   <script src="/assets/jquery.js"></script>
-      #   <script src="/assets/jquery-min.js"></script>
-      #   <script src="/assets/jquery.min.1.9.1.js"></script>
-      #   <script src="/assets/jquery.self-xxxxxx.js"></script>
-      #   <script src="/assets/jquery2.self-a4777c1acac0a74340755725342901a54ed000955bf6f5320491b8b2514c86ec.js?body=1" data-turbolinks-track="true"></script>
-      #   <script src="/assets/jquery-09abf132254111788afa8aca28fc7872.js?body=1"></script>
-      self.copyray_js_injection_regexp_for_debug = /<script[^>]+\/jquery[23]?([-.]{1}[\d\.]+)?([-.]{1}min(\.[\d\.]+)?)?(\.self)?(\-[\da-f]+)?\.js[^>]+><\/script>/
-
-      # Matches:
-      #   <script src="/application-xxxxxxx.js"></script>
-      #   <script src="/application.js"></script>
-      self.copyray_js_injection_regexp_for_precompiled = /<script[^>]+\/application.*\.js[^>]+><\/script>/
 
       @applied = false
     end
