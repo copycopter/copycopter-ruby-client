@@ -304,7 +304,7 @@
         right: Number.NEGATIVE_INFINITY,
         bottom: Number.NEGATIVE_INFINITY
       };
-      elements.forEach(function(element) {
+      Array.from(elements).forEach(function(element) {
         var frame;
         if (!isVisible(element)) {
           return;
