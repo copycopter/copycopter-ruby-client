@@ -14,7 +14,15 @@ module CopyTunerClient
           def translate_with_copyray_comment(key, options = {})
             source = translate_without_copyray_comment(key, options)
             if !CopyTunerClient.configuration.disable_copyray_comment_injection && (options[:rescue_format] == :html || options[:rescue_format].nil?)
-              CopyTunerClient::Copyray.augment_template(source, scope_key_by_partial(key))
+              separator = options[:separator] || I18n.default_separator
+              scope = options[:scope]
+              normalized_key =
+                if key.to_s.first == '.'
+                  scope_key_by_partial(key)
+                else
+                  I18n.normalize_keys(nil, key, scope, separator).join(separator)
+                end
+              CopyTunerClient::Copyray.augment_template(source, normalized_key)
             else
               source
             end
