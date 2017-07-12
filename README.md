@@ -17,7 +17,7 @@ Create config/initializers/copy_tuner.rb
 CopyTunerClient.configure do |config|
   config.api_key = 'YOUR-API-KEY'
   config.host = 'COPY-TUNER-HOST-NAME'
-  
+
   # I18n keys and messages will be sent to server if the locale matches
   config.locales = [:ja, :en]
 end
@@ -32,6 +32,16 @@ bundle exec rake copy_tuner:export
 ```
 
 これで、`config/locales/copy_tuner.yml` に翻訳ファイルが作成されます。
+
+## IE等のレガシーブラウザ対応が必要な場合
+
+以下のスクリプトタグを追加する。(必要なpolyfillを個別に読み込んでも可)
+
+```
+<script src="https://ft-polyfill-service.herokuapp.com/v2/polyfill.min.js"></script>
+```
+
+[Polyfill service](https://cdn.polyfill.io/v2/docs/)
 
 Development
 =================
@@ -53,3 +63,9 @@ Development
     $ bundle exec rake install    # install to local gem
     $ bundle exec rake release    # release gem to rubygems.org
 
+## CoffeeScript
+
+```
+$ npm run watch   # Watch files for changes, rerunning the specified command when any file is updated.
+$ npm run build   # Compile a .coffee script into a .js JavaScript file of the same name.
+```
