@@ -1,3 +1,13 @@
+## 0.4.1
+- bug fixes
+  - js injection failed if jquery is not used. #33
+  - Fix some js error. #34
+  - Wrong key is displayed if scoped option is used. #35
+
+- deprecation
+  - config.copyray_js_injection_regexp_for_debug is no loger needed.
+  - config.copyray_js_injection_regexp_for_precompiled  is no loger needed.
+
 ## 0.4.0
 - Remove jQuery dependency.
 
@@ -13,7 +23,7 @@
 
 ## 0.3.2
 - Support I18n.t :scope option.
-- Update copyray_js_injection_regexp_for_debug. 
+- Update copyray_js_injection_regexp_for_debug.
 
 ## 0.3.1
 - Add search box to copyray bar.
