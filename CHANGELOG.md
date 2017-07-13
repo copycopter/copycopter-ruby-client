@@ -5,8 +5,8 @@
   - Wrong key is displayed if scoped option is used. #35
 
 - deprecation
-  - config.copyray_js_injection_regexp_for_debug is no loger needed.
-  - config.copyray_js_injection_regexp_for_precompiled  is no loger needed.
+  - config.copyray_js_injection_regexp_for_debug is no longer needed.
+  - config.copyray_js_injection_regexp_for_precompiled  is no longer needed.
 
 ## 0.4.0
 - Remove jQuery dependency.
