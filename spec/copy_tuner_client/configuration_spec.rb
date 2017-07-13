@@ -190,18 +190,6 @@ describe CopyTunerClient::Configuration do
     expect(prefixed_logger).to be_a(CopyTunerClient::PrefixedLogger)
     expect(prefixed_logger.original_logger).to eq(logger)
   end
-
-  describe 'copyray_js_injection_regexp_for_debug' do
-    let(:config) { CopyTunerClient::Configuration.new }
-    subject { config.copyray_js_injection_regexp_for_debug }
-
-    it { is_expected.to match '<script src="/assets/jquery.js"></script>' }
-    it { is_expected.to match '<script src="/assets/jquery-min.js"></script>' }
-    it { is_expected.to match '<script src="/assets/jquery.min.1.9.1.js"></script>' }
-    it { is_expected.to match '<script src="/assets/jquery/jquery.self-a4777c1acac0a74340755725342901a54ed000955bf6f5320491b8b2514c86ec.js?body=1" data-turbolinks-track="true"></script>' }
-    it { is_expected.to match '<script src="/assets/jquery2.self-a4777c1acac0a74340755725342901a54ed000955bf6f5320491b8b2514c86ec.js?body=1" data-turbolinks-track="true"></script>' }
-    it { is_expected.to match '<script src="/assets/jquery-09abf132254111788afa8aca28fc7872.js?body=1"></script>' }
-  end
 end
 
 shared_context 'stubbed configuration' do

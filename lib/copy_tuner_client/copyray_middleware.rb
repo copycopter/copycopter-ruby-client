@@ -45,7 +45,7 @@ module CopyTunerClient
     end
 
     def inject_copy_tuner_bar(html)
-      html.sub(/<body[^>]*>/) { "#{$~}\n#{render_copy_tuner_bar}" }
+      html.sub(/<body[^>]*>/) { "#{Regexp.last_match}\n#{render_copy_tuner_bar}" }
     end
 
     def render_copy_tuner_bar
@@ -60,17 +60,12 @@ module CopyTunerClient
     end
 
     def append_css(html)
-      html.sub(/<body[^>]*>/) { "#{$~}\n#{css_tag}" }
+      html.sub(/<body[^>]*>/) { "#{Regexp.last_match}\n#{css_tag}" }
     end
 
     def append_js(html)
-      regexp = if ::Rails.application.config.assets.debug
-                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_debug
-               else
-                 CopyTunerClient.configuration.copyray_js_injection_regexp_for_precompiled
-               end
-      html.sub(regexp) do
-        "#{$~}\n" + helpers.javascript_include_tag(:copyray)
+      html.sub(%r{</body>}) do
+       "#{helpers.javascript_include_tag(:copyray)}\n#{Regexp.last_match}"
       end
     end
 
