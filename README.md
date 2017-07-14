@@ -38,7 +38,7 @@ bundle exec rake copy_tuner:export
 以下のスクリプトタグを追加する。(必要なpolyfillを個別に読み込んでも可)
 
 ```
-<script src="https://ft-polyfill-service.herokuapp.com/v2/polyfill.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 ```
 
 [Polyfill service](https://cdn.polyfill.io/v2/docs/)
