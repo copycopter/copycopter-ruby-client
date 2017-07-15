@@ -38,7 +38,7 @@ getAllComments = (rootElement) ->
   comments
 
 # Scans the document for blurbs, creating Copyray.BlurbSpecimen for them.
-Copyray.findBlurbs = -> util.bm 'findBlurbs', ->
+Copyray.findBlurbs = ->
   # Find all <!-- COPYRAY START ... --> comments
   comments = getAllComments(document.body).filter((comment) ->
     comment.nodeValue.startsWith('COPYRAY START')
@@ -48,14 +48,10 @@ Copyray.findBlurbs = -> util.bm 'findBlurbs', ->
     [_, id, path, url] = comment.nodeValue.match(/^COPYRAY START (\d+) (\S*) (\S*)/)
     blurbElement = null
     el = comment.nextSibling
-    until !el or (el.nodeType == Node.COMMENT_NODE and el.data == "COPYRAY END #{id}")
-      if el.nodeType == Node.ELEMENT_NODE and el.tagName != 'SCRIPT'
-        blurbElement = el
-        break
-      el = el.nextSibling
+    blurbElement = el.parentNode
 
     # Remove COPYRAY template comments from the DOM.
-    el.parentNode.removeChild(el) if el?.nodeType == Node.COMMENT_NODE
+    blurbElement.removeChild(el) if el?.nodeType == Node.COMMENT_NODE
     comment.parentNode.removeChild(comment)
 
     if blurbElement
@@ -165,19 +161,19 @@ class Copyray.Overlay
   show: (type = null) ->
     @reset()
     Copyray.isShowing = true
-    util.bm 'show', =>
-      unless document.body.contains(@overlay)
-        document.body.appendChild(@overlay)
-        Copyray.findBlurbs()
-        specimens = Copyray.specimens()
 
-      for element in specimens
-        element.makeBox()
-        # A cheap way to "order" the boxes, where boxes positioned closer to the
-        # bottom right of the document have a higher z-index.
-        element.box.style.zIndex = Math.ceil(MAX_ZINDEX*0.9 + element.bounds.top + element.bounds.left)
-        @shownBoxes.push element.box
-        document.body.appendChild(element.box)
+    unless document.body.contains(@overlay)
+      document.body.appendChild(@overlay)
+      Copyray.findBlurbs()
+      specimens = Copyray.specimens()
+
+    for element in specimens
+      element.makeBox()
+      # A cheap way to "order" the boxes, where boxes positioned closer to the
+      # bottom right of the document have a higher z-index.
+      element.box.style.zIndex = Math.ceil(MAX_ZINDEX*0.9 + element.bounds.top + element.bounds.left)
+      @shownBoxes.push element.box
+      document.body.appendChild(element.box)
 
   reset: ->
     $box.remove() for $box in @shownBoxes
@@ -191,20 +187,8 @@ class Copyray.Overlay
 
 # Utility methods.
 util =
-  # Benchmark a piece of code
-  bm: (name, fn) ->
-    time = new Date
-    result = fn()
-    # console.log "#{name} : #{new Date() - time}ms"
-    result
-
   # elements with no parent in the set.
   computeBoundingBox: (elements) ->
-    # Edge case: the container may not physically wrap its children, for
-    # example if they are floated and no clearfix is present.
-    if elements.length == 1 and elements[0].clientHeight
-      return util.computeBoundingBox(elements[0].children)
-
     boxFrame =
       top    : Number.POSITIVE_INFINITY
       left   : Number.POSITIVE_INFINITY

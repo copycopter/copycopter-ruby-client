@@ -61,35 +61,27 @@
   };
 
   Copyray.findBlurbs = function() {
-    return util.bm('findBlurbs', function() {
-      var comments;
-      comments = getAllComments(document.body).filter(function(comment) {
-        return comment.nodeValue.startsWith('COPYRAY START');
-      });
-      return comments.forEach(function(comment) {
-        var _, blurbElement, el, id, path, ref, url;
-        ref = comment.nodeValue.match(/^COPYRAY START (\d+) (\S*) (\S*)/), _ = ref[0], id = ref[1], path = ref[2], url = ref[3];
-        blurbElement = null;
-        el = comment.nextSibling;
-        while (!(!el || (el.nodeType === Node.COMMENT_NODE && el.data === ("COPYRAY END " + id)))) {
-          if (el.nodeType === Node.ELEMENT_NODE && el.tagName !== 'SCRIPT') {
-            blurbElement = el;
-            break;
-          }
-          el = el.nextSibling;
-        }
-        if ((el != null ? el.nodeType : void 0) === Node.COMMENT_NODE) {
-          el.parentNode.removeChild(el);
-        }
-        comment.parentNode.removeChild(comment);
-        if (blurbElement) {
-          return Copyray.BlurbSpecimen.add(blurbElement, {
-            name: path.split('/').slice(-1)[0],
-            path: path,
-            url: url
-          });
-        }
-      });
+    var comments;
+    comments = getAllComments(document.body).filter(function(comment) {
+      return comment.nodeValue.startsWith('COPYRAY START');
+    });
+    return comments.forEach(function(comment) {
+      var _, blurbElement, el, id, path, ref, url;
+      ref = comment.nodeValue.match(/^COPYRAY START (\d+) (\S*) (\S*)/), _ = ref[0], id = ref[1], path = ref[2], url = ref[3];
+      blurbElement = null;
+      el = comment.nextSibling;
+      blurbElement = el.parentNode;
+      if ((el != null ? el.nodeType : void 0) === Node.COMMENT_NODE) {
+        blurbElement.removeChild(el);
+      }
+      comment.parentNode.removeChild(comment);
+      if (blurbElement) {
+        return Copyray.BlurbSpecimen.add(blurbElement, {
+          name: path.split('/').slice(-1)[0],
+          path: path,
+          url: url
+        });
+      }
     });
   };
 
@@ -239,30 +231,26 @@
     }
 
     Overlay.prototype.show = function(type) {
+      var element, i, len, results, specimens;
       if (type == null) {
         type = null;
       }
       this.reset();
       Copyray.isShowing = true;
-      return util.bm('show', (function(_this) {
-        return function() {
-          var element, i, len, results, specimens;
-          if (!document.body.contains(_this.overlay)) {
-            document.body.appendChild(_this.overlay);
-            Copyray.findBlurbs();
-            specimens = Copyray.specimens();
-          }
-          results = [];
-          for (i = 0, len = specimens.length; i < len; i++) {
-            element = specimens[i];
-            element.makeBox();
-            element.box.style.zIndex = Math.ceil(MAX_ZINDEX * 0.9 + element.bounds.top + element.bounds.left);
-            _this.shownBoxes.push(element.box);
-            results.push(document.body.appendChild(element.box));
-          }
-          return results;
-        };
-      })(this));
+      if (!document.body.contains(this.overlay)) {
+        document.body.appendChild(this.overlay);
+        Copyray.findBlurbs();
+        specimens = Copyray.specimens();
+      }
+      results = [];
+      for (i = 0, len = specimens.length; i < len; i++) {
+        element = specimens[i];
+        element.makeBox();
+        element.box.style.zIndex = Math.ceil(MAX_ZINDEX * 0.9 + element.bounds.top + element.bounds.left);
+        this.shownBoxes.push(element.box);
+        results.push(document.body.appendChild(element.box));
+      }
+      return results;
     };
 
     Overlay.prototype.reset = function() {
@@ -287,17 +275,8 @@
   })();
 
   util = {
-    bm: function(name, fn) {
-      var result, time;
-      time = new Date;
-      result = fn();
-      return result;
-    },
     computeBoundingBox: function(elements) {
       var boxFrame;
-      if (elements.length === 1 && elements[0].clientHeight) {
-        return util.computeBoundingBox(elements[0].children);
-      }
       boxFrame = {
         top: Number.POSITIVE_INFINITY,
         left: Number.POSITIVE_INFINITY,

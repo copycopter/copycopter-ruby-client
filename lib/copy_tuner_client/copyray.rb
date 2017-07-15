@@ -19,7 +19,7 @@ module CopyTunerClient
       id = next_id
       # skim doesn't allow html comments, so use skim's comment syntax if it's skim
       augmented = if source.present?
-                    "<!--COPYRAY START #{id} #{key} #{CopyTunerClient.configuration.project_url} -->\n<span>#{source}</span>\n<!--COPYRAY END #{id}-->"
+                    "<!--COPYRAY START #{id} #{key} #{CopyTunerClient.configuration.project_url} -->#{source}<!--COPYRAY END #{id}-->"
                   else
                     source
                   end
