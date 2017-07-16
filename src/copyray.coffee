@@ -20,46 +20,10 @@ getOffset = (elment) ->
 Copyray.specimens = ->
   Copyray.BlurbSpecimen.all
 
-# Looks up the stored constructor info
-Copyray.constructorInfo = (constructor) ->
-  if window.CopyrayPaths
-    for own info, func of window.CopyrayPaths
-      return JSON.parse(info) if func == constructor
-  null
-
-getAllComments = (rootElement) ->
-  filterNone = ->
-    NodeFilter.FILTER_ACCEPT
-
-  comments = []
-  iterator = document.createNodeIterator(rootElement, NodeFilter.SHOW_COMMENT, filterNone, false)
-  while (curNode = iterator.nextNode())
-    comments.push(curNode)
-  comments
-
 # Scans the document for blurbs, creating Copyray.BlurbSpecimen for them.
 Copyray.findBlurbs = ->
-  # Find all <!-- COPYRAY START ... --> comments
-  comments = getAllComments(document.body).filter((comment) ->
-    comment.nodeValue.startsWith('COPYRAY START')
-  )
-
-  comments.forEach((comment) ->
-    [_, id, path, url] = comment.nodeValue.match(/^COPYRAY START (\d+) (\S*) (\S*)/)
-    blurbElement = null
-    el = comment.nextSibling
-    blurbElement = el.parentNode
-
-    # Remove COPYRAY template comments from the DOM.
-    blurbElement.removeChild(el) if el?.nodeType == Node.COMMENT_NODE
-    comment.parentNode.removeChild(comment)
-
-    if blurbElement
-      # Add the template specimen
-      Copyray.BlurbSpecimen.add blurbElement,
-        name: path.split('/').slice(-1)[0]
-        path: path
-        url: url
+  Array.from(document.querySelectorAll('[data-copyray-key]')).forEach((span) ->
+    Copyray.BlurbSpecimen.add(span, span.dataset.copyrayKey)
   )
 
 # Open the given filesystem path by calling out to Copyray's server.
@@ -88,8 +52,8 @@ Copyray.addToggleButton = ->
 # Wraps a DOM element that Copyray is tracking. This is subclassed by
 # Copyray.Blurbsspecimen
 class Copyray.Specimen
-  @add: (el, info = {}) ->
-    @all.push new this(el, info)
+  @add: (el, key) ->
+    @all.push new this(el, key)
 
   @remove: (el) ->
     @find(el)?.remove()
@@ -102,11 +66,7 @@ class Copyray.Specimen
   @reset: ->
     @all = []
 
-  constructor: (el, info = {}) ->
-    @el = el
-    @name = info.name
-    @path = info.path
-    @url = info.url
+  constructor: (@el, @key) ->
 
   remove: ->
     idx = @constructor.all.indexOf(this)
@@ -128,7 +88,9 @@ class Copyray.Specimen
         left     : getComputedStyle(@el).left
 
     @box.addEventListener('click', =>
-      Copyray.open "#{@url}/blurbs/#{@path}/edit"
+      # TODO: 都度取得しないようにリファクタ
+      baseUrl = document.getElementById('copy-tuner-data').dataset.copyTunerUrl
+      Copyray.open "#{baseUrl}/blurbs/#{@key}/edit"
     )
 
     @box.appendChild(@makeLabel())
@@ -137,7 +99,7 @@ class Copyray.Specimen
     div = document.createElement('div')
     div.classList.add('copyray-specimen-handle')
     div.classList.add(@constructor.name)
-    div.textContent = @name
+    div.textContent = @key
     div
 
 # copy-tuner blurbs
