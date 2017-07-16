@@ -73,7 +73,7 @@ class Copyray.Specimen
     @constructor.all.splice(idx, 1) unless idx == -1
 
   makeBox: ->
-    @bounds = util.computeBoundingBox([@el])
+    @bounds = util.computeBoundingBox(@el)
     @box = document.createElement('div')
     @box.classList.add('copyray-specimen')
     @box.classList.add(@constructor.name)
@@ -150,23 +150,12 @@ class Copyray.Overlay
 # Utility methods.
 util =
   # elements with no parent in the set.
-  computeBoundingBox: (elements) ->
-    boxFrame =
-      top    : Number.POSITIVE_INFINITY
-      left   : Number.POSITIVE_INFINITY
-      right  : Number.NEGATIVE_INFINITY
-      bottom : Number.NEGATIVE_INFINITY
+  computeBoundingBox: (element) ->
+    return unless isVisible(element)
 
-    Array.from(elements).forEach((element) ->
-      return unless isVisible(element)
-      frame = getOffset(element)
-      frame.right  = frame.left + element.offsetWidth
-      frame.bottom = frame.top + element.offsetHeight
-      boxFrame.top    = frame.top if frame.top < boxFrame.top
-      boxFrame.left   = frame.left if frame.left < boxFrame.left
-      boxFrame.right  = frame.right if frame.right > boxFrame.right
-      boxFrame.bottom = frame.bottom if frame.bottom > boxFrame.bottom
-    )
+    boxFrame = getOffset(element)
+    boxFrame.right  = boxFrame.left + element.offsetWidth
+    boxFrame.bottom = boxFrame.top + element.offsetHeight
 
     return {
       left   : boxFrame.left

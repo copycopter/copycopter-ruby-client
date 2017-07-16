@@ -108,7 +108,7 @@
 
     Specimen.prototype.makeBox = function() {
       var key, ref, value;
-      this.bounds = util.computeBoundingBox([this.el]);
+      this.bounds = util.computeBoundingBox(this.el);
       this.box = document.createElement('div');
       this.box.classList.add('copyray-specimen');
       this.box.classList.add(this.constructor.name);
@@ -222,35 +222,14 @@
   })();
 
   util = {
-    computeBoundingBox: function(elements) {
+    computeBoundingBox: function(element) {
       var boxFrame;
-      boxFrame = {
-        top: Number.POSITIVE_INFINITY,
-        left: Number.POSITIVE_INFINITY,
-        right: Number.NEGATIVE_INFINITY,
-        bottom: Number.NEGATIVE_INFINITY
-      };
-      Array.from(elements).forEach(function(element) {
-        var frame;
-        if (!isVisible(element)) {
-          return;
-        }
-        frame = getOffset(element);
-        frame.right = frame.left + element.offsetWidth;
-        frame.bottom = frame.top + element.offsetHeight;
-        if (frame.top < boxFrame.top) {
-          boxFrame.top = frame.top;
-        }
-        if (frame.left < boxFrame.left) {
-          boxFrame.left = frame.left;
-        }
-        if (frame.right > boxFrame.right) {
-          boxFrame.right = frame.right;
-        }
-        if (frame.bottom > boxFrame.bottom) {
-          return boxFrame.bottom = frame.bottom;
-        }
-      });
+      if (!isVisible(element)) {
+        return;
+      }
+      boxFrame = getOffset(element);
+      boxFrame.right = boxFrame.left + element.offsetWidth;
+      boxFrame.bottom = boxFrame.top + element.offsetHeight;
       return {
         left: boxFrame.left,
         top: boxFrame.top,
