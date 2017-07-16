@@ -6,5 +6,9 @@ export default {
   entry: 'src/main.js',
   dest: 'app/assets/javascripts/copyray.js',
   format: 'iife',
-  plugins: [resolve({ jsnext: true, main: true }), commonjs(), babel()],
+  plugins: [
+    resolve({ jsnext: true, main: true }),
+    commonjs(),
+    babel({ exclude: 'node_modules/**' }),
+  ],
 };

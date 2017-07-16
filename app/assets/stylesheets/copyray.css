@@ -70,12 +70,12 @@
   background: rgba(255, 255, 255, 0.4);
 }
 
-.copyray-specimen.BlurbSpecimen {
+.copyray-specimen.Specimen {
   outline: 1px solid rgba(255, 50, 50, 0.8);
   background: rgba(255, 50, 50, 0.1);
 }
 
-.copyray-specimen.BlurbSpecimen:hover {
+.copyray-specimen.Specimen:hover {
   background: rgba(255, 50, 50, 0.4);
 }
 
@@ -87,7 +87,7 @@
   font-size: 10px;
 }
 
-.copyray-specimen-handle.BlurbSpecimen {
+.copyray-specimen-handle.Specimen {
   background: rgba(255, 50, 50, 0.8);
   color: #fff;
 }
@@ -122,8 +122,7 @@ a.copyray-toggle-button:hover {
   font-weight: 200;
   color: #fff;
   z-index: 2147483647;
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), inset 0 2px 6px rgba(0, 0, 0, 0.8);
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
 }
 
@@ -176,13 +175,13 @@ a.copyray-toggle-button:hover {
   background-color: #444;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
   border-radius: 2px;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2),
     inset 0 0 2px rgba(255, 255, 255, 0.2);
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
-.copy-tuner-bar-button:hover, .copy-tuner-bar-button:focus {
+.copy-tuner-bar-button:hover,
+.copy-tuner-bar-button:focus {
   color: #fff;
   text-decoration: none;
   background-color: #555;
@@ -195,8 +194,7 @@ input[type="text"].copy-tuner-bar__search {
   border: none;
   border-radius: 2px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2),
-    inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 0 2px rgba(0, 0, 0, 0.2);
   padding: 2px 8px;
   margin: 0;
   line-height: 20px;

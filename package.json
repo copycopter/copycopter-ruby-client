@@ -9,6 +9,7 @@
     "watch": "rollup -c -w"
   },
   "dependencies": {
+    "keycode-js": "0.0.4",
     "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {

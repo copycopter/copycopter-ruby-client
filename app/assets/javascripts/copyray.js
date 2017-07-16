@@ -3,7 +3,264 @@
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var KeyCode$1 = createCommonjsModule(function (module, exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+
+    var keys = {
+        KEY_CANCEL: 3,
+        KEY_HELP: 6,
+        KEY_BACK_SPACE: 8,
+        KEY_TAB: 9,
+        KEY_CLEAR: 12,
+        KEY_RETURN: 13,
+        KEY_ENTER: 14,
+        KEY_SHIFT: 16,
+        KEY_CONTROL: 17,
+        KEY_ALT: 18,
+        KEY_PAUSE: 19,
+        KEY_CAPS_LOCK: 20,
+        KEY_ESCAPE: 27,
+        KEY_SPACE: 32,
+        KEY_PAGE_UP: 33,
+        KEY_PAGE_DOWN: 34,
+        KEY_END: 35,
+        KEY_HOME: 36,
+        KEY_LEFT: 37,
+        KEY_UP: 38,
+        KEY_RIGHT: 39,
+        KEY_DOWN: 40,
+        KEY_PRINTSCREEN: 44,
+        KEY_INSERT: 45,
+        KEY_DELETE: 46,
+        KEY_0: 48,
+        KEY_1: 49,
+        KEY_2: 50,
+        KEY_3: 51,
+        KEY_4: 52,
+        KEY_5: 53,
+        KEY_6: 54,
+        KEY_7: 55,
+        KEY_8: 56,
+        KEY_9: 57,
+        KEY_SEMICOLON: 59,
+        KEY_EQUALS: 61,
+        KEY_A: 65,
+        KEY_B: 66,
+        KEY_C: 67,
+        KEY_D: 68,
+        KEY_E: 69,
+        KEY_F: 70,
+        KEY_G: 71,
+        KEY_H: 72,
+        KEY_I: 73,
+        KEY_J: 74,
+        KEY_K: 75,
+        KEY_L: 76,
+        KEY_M: 77,
+        KEY_N: 78,
+        KEY_O: 79,
+        KEY_P: 80,
+        KEY_Q: 81,
+        KEY_R: 82,
+        KEY_S: 83,
+        KEY_T: 84,
+        KEY_U: 85,
+        KEY_V: 86,
+        KEY_W: 87,
+        KEY_X: 88,
+        KEY_Y: 89,
+        KEY_Z: 90,
+        KEY_CONTEXT_MENU: 93,
+        KEY_NUMPAD0: 96,
+        KEY_NUMPAD1: 97,
+        KEY_NUMPAD2: 98,
+        KEY_NUMPAD3: 99,
+        KEY_NUMPAD4: 100,
+        KEY_NUMPAD5: 101,
+        KEY_NUMPAD6: 102,
+        KEY_NUMPAD7: 103,
+        KEY_NUMPAD8: 104,
+        KEY_NUMPAD9: 105,
+        KEY_MULTIPLY: 106,
+        KEY_ADD: 107,
+        KEY_SEPARATOR: 108,
+        KEY_SUBTRACT: 109,
+        KEY_DECIMAL: 110,
+        KEY_DIVIDE: 111,
+        KEY_F1: 112,
+        KEY_F2: 113,
+        KEY_F3: 114,
+        KEY_F4: 115,
+        KEY_F5: 116,
+        KEY_F6: 117,
+        KEY_F7: 118,
+        KEY_F8: 119,
+        KEY_F9: 120,
+        KEY_F10: 121,
+        KEY_F11: 122,
+        KEY_F12: 123,
+        KEY_F13: 124,
+        KEY_F14: 125,
+        KEY_F15: 126,
+        KEY_F16: 127,
+        KEY_F17: 128,
+        KEY_F18: 129,
+        KEY_F19: 130,
+        KEY_F20: 131,
+        KEY_F21: 132,
+        KEY_F22: 133,
+        KEY_F23: 134,
+        KEY_F24: 135,
+        KEY_NUM_LOCK: 144,
+        KEY_SCROLL_LOCK: 145,
+        KEY_COMMA: 188,
+        KEY_PERIOD: 190,
+        KEY_SLASH: 191,
+        KEY_BACK_QUOTE: 192,
+        KEY_OPEN_BRACKET: 219,
+        KEY_BACK_SLASH: 220,
+        KEY_CLOSE_BRACKET: 221,
+        KEY_QUOTE: 222,
+        KEY_META: 224
+    };
+
+    function KeyCode() {}
+
+    Object.keys(keys).forEach(function (key) {
+        KeyCode[key] = keys[key];
+    });
+
+    return KeyCode;
+}();
+});
+
+var index = KeyCode$1.default;
+
+var isMac = navigator.platform.toUpperCase().indexOf('MAC') !== -1;
+
+var isVisible = function isVisible(element) {
+  return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+};
+
+var getOffset = function getOffset(elment) {
+  var box = elment.getBoundingClientRect();
+
+  return {
+    top: box.top + (window.pageYOffset - document.documentElement.clientTop),
+    left: box.left + (window.pageXOffset - document.documentElement.clientLeft)
+  };
+};
+
+var computeBoundingBox = function computeBoundingBox(element) {
+  if (!isVisible(element)) {
+    return null;
+  }
+
+  var boxFrame = getOffset(element);
+  boxFrame.right = boxFrame.left + element.offsetWidth;
+  boxFrame.bottom = boxFrame.top + element.offsetHeight;
+
+  return {
+    left: boxFrame.left,
+    top: boxFrame.top,
+    width: boxFrame.right - boxFrame.left,
+    height: boxFrame.bottom - boxFrame.top
+  };
+};
+
+var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ZINDEX = 2000000000;
+
+var Specimen = function () {
+  function Specimen(element, key, callback) {
+    _classCallCheck$1(this, Specimen);
+
+    this.element = element;
+    this.key = key;
+    this.callback = callback;
+  }
+
+  _createClass$1(Specimen, [{
+    key: 'show',
+    value: function show() {
+      var _this = this;
+
+      this.box = this.makeBox();
+
+      this.box.addEventListener('click', function () {
+        _this.callback(_this.key);
+      });
+
+      document.body.appendChild(this.box);
+    }
+  }, {
+    key: 'remove',
+    value: function remove() {
+      if (!this.box) {
+        return;
+      }
+      this.box.remove();
+      this.box = null;
+    }
+  }, {
+    key: 'makeBox',
+    value: function makeBox() {
+      var box = document.createElement('div');
+      box.classList.add('copyray-specimen');
+      box.classList.add('Specimen');
+
+      var bounds = computeBoundingBox(this.element);
+
+      Object.keys(bounds).forEach(function (key) {
+        var value = bounds[key];
+        box.style[key] = value + 'px';
+      });
+      box.style.zIndex = ZINDEX;
+
+      var _getComputedStyle = getComputedStyle(this.element),
+          position = _getComputedStyle.position,
+          top = _getComputedStyle.top,
+          left = _getComputedStyle.left;
+
+      if (position === 'fixed') {
+        this.box.style.position = 'fixed';
+        this.box.style.top = top + 'px';
+        this.box.style.left = left + 'px';
+      }
+
+      box.appendChild(this.makeLabel());
+      return box;
+    }
+  }, {
+    key: 'makeLabel',
+    value: function makeLabel() {
+      var div = document.createElement('div');
+      div.classList.add('copyray-specimen-handle');
+      div.classList.add('Specimen');
+      div.textContent = this.key;
+      return div;
+    }
+  }]);
+
+  return Specimen;
+}();
 
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -29,10 +286,10 @@ var reIsOctal = /^0o[0-7]+$/i;
 var freeParseInt = parseInt;
 
 /** Detect free variable `global` from Node.js. */
-var freeGlobal = _typeof(commonjsGlobal) == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
 /** Detect free variable `self`. */
-var freeSelf = (typeof self === 'undefined' ? 'undefined' : _typeof(self)) == 'object' && self && self.Object === Object && self;
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
 var root = freeGlobal || freeSelf || Function('return this')();
@@ -67,7 +324,7 @@ var nativeMin = Math.min;
  * }, _.now());
  * // => Logs the number of milliseconds it took for the deferred invocation.
  */
-var now = function now() {
+var now = function() {
   return root.Date.now();
 };
 
@@ -182,7 +439,8 @@ function debounce(func, wait, options) {
     // Either this is the first call, activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
     // it as the trailing edge, or we've hit the `maxWait` limit.
-    return lastCallTime === undefined || timeSinceLastCall >= wait || timeSinceLastCall < 0 || maxing && timeSinceLastInvoke >= maxWait;
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
   }
 
   function timerExpired() {
@@ -272,7 +530,7 @@ function debounce(func, wait, options) {
  * // => false
  */
 function isObject(value) {
-  var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
+  var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }
 
@@ -301,7 +559,7 @@ function isObject(value) {
  * // => false
  */
 function isObjectLike(value) {
-  return !!value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object';
+  return !!value && typeof value == 'object';
 }
 
 /**
@@ -322,7 +580,8 @@ function isObjectLike(value) {
  * // => false
  */
 function isSymbol(value) {
-  return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'symbol' || isObjectLike(value) && objectToString.call(value) == symbolTag;
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
 
 /**
@@ -357,393 +616,275 @@ function toNumber(value) {
   }
   if (isObject(value)) {
     var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-    value = isObject(other) ? other + '' : other;
+    value = isObject(other) ? (other + '') : other;
   }
   if (typeof value != 'string') {
     return value === 0 ? value : +value;
   }
   value = value.replace(reTrim, '');
   var isBinary = reIsBinary.test(value);
-  return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
 }
 
-var index = debounce;
+var index$1 = debounce;
 
-var isMac = navigator.platform.toUpperCase().indexOf('MAC') !== -1;
+var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var isVisible = function isVisible(element) {
-  return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
-};
+function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var getOffset = function getOffset(elment) {
-  var box = elment.getBoundingClientRect();
-
-  return {
-    top: box.top + (window.pageYOffset - document.documentElement.clientTop),
-    left: box.left + (window.pageXOffset - document.documentElement.clientLeft)
-  };
-};
-
-var computeBoundingBox = function computeBoundingBox(element) {
-  if (!isVisible(element)) {
-    return null;
-  }
-
-  var boxFrame = getOffset(element);
-  boxFrame.right = boxFrame.left + element.offsetWidth;
-  boxFrame.bottom = boxFrame.top + element.offsetHeight;
-
-  return {
-    left: boxFrame.left,
-    top: boxFrame.top,
-    width: boxFrame.right - boxFrame.left,
-    height: boxFrame.bottom - boxFrame.top
-  };
-};
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Copyray = {};
-
-var MAX_ZINDEX = 2147483647;
 var HIDDEN_CLASS = 'copy-tuner-hidden';
 
-Copyray.specimens = function () {
-  return Copyray.BlurbSpecimen.all;
-};
+var CopytunerBar = function () {
+  function CopytunerBar(element, data, callback) {
+    _classCallCheck$2(this, CopytunerBar);
 
-Copyray.findBlurbs = function () {
-  return Array.from(document.querySelectorAll('[data-copyray-key]')).forEach(function (span) {
-    return Copyray.BlurbSpecimen.add(span, span.dataset.copyrayKey);
-  });
-};
+    this.element = element;
+    this.data = data;
+    this.callback = callback;
+    this.searchBoxElement = element.querySelector('.js-copy-tuner-bar-search');
+    this.logMenuElement = this.makeLogMenu();
+    this.element.appendChild(this.logMenuElement);
 
-Copyray.open = function (url) {
-  window.open(url, null, 'width=700, height=600');
-};
-
-Copyray.show = function () {
-  Copyray.Overlay.instance().show();
-  Copyray.showBar();
-};
-
-Copyray.hide = function () {
-  Copyray.Overlay.instance().hide();
-  Copyray.hideBar();
-};
-
-Copyray.addToggleButton = function () {
-  var element = document.createElement('a');
-
-  element.addEventListener('click', function () {
-    return Copyray.show();
-  });
-
-  element.classList.add('copyray-toggle-button');
-  element.textContent = 'Open CopyTuner';
-  document.body.appendChild(element);
-};
-
-Copyray.Specimen = function () {
-  _createClass(Specimen, null, [{
-    key: 'add',
-    value: function add(el, key) {
-      this.all.push(new this(el, key));
-    }
-  }]);
-
-  function Specimen(el, key) {
-    _classCallCheck(this, Specimen);
-
-    this.makeLabel = this.makeLabel.bind(this);
-    this.el = el;
-    this.key = key;
+    this.addHandler();
   }
 
-  _createClass(Specimen, [{
-    key: 'remove',
-    value: function remove() {
-      var idx = this.constructor.all.indexOf(this);
-
-      if (idx !== -1) {
-        this.constructor.all.splice(idx, 1);
-      }
-    }
-  }, {
-    key: 'makeBox',
-    value: function makeBox() {
+  _createClass$2(CopytunerBar, [{
+    key: 'addHandler',
+    value: function addHandler() {
       var _this = this;
 
-      this.bounds = computeBoundingBox(this.el);
-      this.box = document.createElement('div');
-      this.box.classList.add('copyray-specimen');
-      this.box.classList.add(this.constructor.name);
-
-      Object.keys(this.bounds).forEach(function (key) {
-        var value = _this.bounds[key];
-        _this.box.style[key] = value + 'px';
+      var openLogButton = this.element.querySelector('.js-copy-tuner-bar-open-log');
+      openLogButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        _this.toggleLogMenu();
       });
 
-      if (getComputedStyle(this.el).position === 'fixed') {
-        this.box.css({
-          position: 'fixed',
-          top: getComputedStyle(this.el).top,
-          left: getComputedStyle(this.el).left
-        });
-      }
-
-      this.box.addEventListener('click', function () {
-        var baseUrl = document.getElementById('copy-tuner-data').dataset.copyTunerUrl;
-        Copyray.open(baseUrl + '/blurbs/' + _this.key + '/edit');
-      });
-
-      this.box.appendChild(this.makeLabel());
-      return this.box;
+      this.searchBoxElement.addEventListener('input', index$1(this.onKeyup.bind(this), 250));
     }
   }, {
-    key: 'makeLabel',
-    value: function makeLabel() {
-      var div = document.createElement('div');
-      div.classList.add('copyray-specimen-handle');
-      div.classList.add(this.constructor.name);
-      div.textContent = this.key;
-      return div;
-    }
-  }]);
-
-  return Specimen;
-}();
-
-Copyray.BlurbSpecimen = function (_Copyray$Specimen) {
-  _inherits(BlurbSpecimen, _Copyray$Specimen);
-
-  function BlurbSpecimen() {
-    _classCallCheck(this, BlurbSpecimen);
-
-    return _possibleConstructorReturn(this, (BlurbSpecimen.__proto__ || Object.getPrototypeOf(BlurbSpecimen)).apply(this, arguments));
-  }
-
-  return BlurbSpecimen;
-}(Copyray.Specimen);
-Copyray.BlurbSpecimen.all = [];
-
-Copyray.Overlay = function () {
-  _createClass(Overlay, null, [{
-    key: 'instance',
-    value: function instance() {
-      return this.singletonInstance || (this.singletonInstance = new this());
-    }
-  }]);
-
-  function Overlay() {
-    var _this3 = this;
-
-    _classCallCheck(this, Overlay);
-
-    Copyray.Overlay.singletonInstance = this;
-    this.overlay = document.createElement('div');
-    this.overlay.setAttribute('id', 'copyray-overlay');
-    this.shownBoxes = [];
-
-    this.overlay.addEventListener('click', function () {
-      return _this3.hide();
-    });
-  }
-
-  _createClass(Overlay, [{
     key: 'show',
     value: function show() {
-      var _this4 = this;
-
-      var specimens = void 0;
-      this.reset();
-      Copyray.isShowing = true;
-
-      if (!document.body.contains(this.overlay)) {
-        document.body.appendChild(this.overlay);
-        Copyray.findBlurbs();
-        specimens = Copyray.specimens();
-      }
-
-      specimens.forEach(function (specimen) {
-        var box = specimen.makeBox();
-        box.style.zIndex = Math.ceil(
-        // eslint-disable-next-line no-mixed-operators
-        MAX_ZINDEX * 0.9 + (specimen.bounds.top + specimen.bounds.left));
-        _this4.shownBoxes.push(box);
-        document.body.appendChild(box);
-      });
-    }
-  }, {
-    key: 'reset',
-    value: function reset() {
-      this.shownBoxes.forEach(function (box) {
-        box.remove();
-      });
-      this.shownBoxes = [];
+      this.element.classList.remove(HIDDEN_CLASS);
+      this.searchBoxElement.focus();
     }
   }, {
     key: 'hide',
     value: function hide() {
-      Copyray.isShowing = false;
-      this.overlay.remove();
-      this.reset();
-      Copyray.hideBar();
+      this.element.classList.add(HIDDEN_CLASS);
+    }
+  }, {
+    key: 'showLogMenu',
+    value: function showLogMenu() {
+      this.logMenuElement.classList.remove(HIDDEN_CLASS);
+    }
+  }, {
+    key: 'toggleLogMenu',
+    value: function toggleLogMenu() {
+      this.logMenuElement.classList.toggle(HIDDEN_CLASS);
+    }
+  }, {
+    key: 'makeLogMenu',
+    value: function makeLogMenu() {
+      var _this2 = this;
+
+      var div = document.createElement('div');
+      div.setAttribute('id', 'copy-tuner-bar-log-menu');
+      div.classList.add(HIDDEN_CLASS);
+
+      var table = document.createElement('table');
+      var tbody = document.createElement('tbody');
+      tbody.classList.remove('is-not-initialized');
+
+      Object.keys(this.data).sort().forEach(function (key) {
+        var value = _this2.data[key];
+
+        if (value === '') {
+          return;
+        }
+
+        var td1 = document.createElement('td');
+        td1.textContent = key;
+        var td2 = document.createElement('td');
+        td2.textContent = value;
+        var tr = document.createElement('tr');
+        tr.classList.add('copy-tuner-bar-log-menu__row');
+        tr.dataset.key = key;
+
+        tr.addEventListener('click', function (_ref) {
+          var currentTarget = _ref.currentTarget;
+
+          _this2.callback(currentTarget.dataset.key);
+        });
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      div.appendChild(table);
+
+      return div;
+    }
+  }, {
+    key: 'onKeyup',
+    value: function onKeyup(_ref2) {
+      var target = _ref2.target;
+
+      var keyword = target.value.trim();
+      this.showLogMenu();
+
+      var rows = Array.from(this.logMenuElement.getElementsByTagName('tr'));
+
+      rows.forEach(function (row) {
+        var isShow = keyword === '' || Array.from(row.getElementsByTagName('td')).some(function (td) {
+          return td.textContent.includes(keyword);
+        });
+        row.classList.toggle(HIDDEN_CLASS, !isShow);
+      });
     }
   }]);
 
-  return Overlay;
+  return CopytunerBar;
 }();
 
-Copyray.showBar = function () {
-  document.getElementById('copy-tuner-bar').classList.remove(HIDDEN_CLASS);
-  document.querySelector('.copyray-toggle-button').classList.add(HIDDEN_CLASS);
-  Copyray.focusSearchBox();
-};
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Copyray.hideBar = function () {
-  document.getElementById('copy-tuner-bar').classList.add(HIDDEN_CLASS);
-  document.querySelector('.copyray-toggle-button').classList.remove(HIDDEN_CLASS);
-  document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS);
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-Copyray.createLogMenu = function () {
-  var tbody = document.querySelector('.js-copy-tuner-bar-log-menu__tbody.is-not-initialized');
+var Copyray = function () {
+  function Copyray(baseUrl, data) {
+    _classCallCheck(this, Copyray);
 
-  if (!tbody) {
-    return;
+    this.baseUrl = baseUrl;
+    this.data = data;
+    this.isShowing = false;
+    this.specimens = [];
+    this.overlay = this.makeOverlay();
+    this.toggleButton = this.makeToggleButton();
+
+    this.copyTunerBar = new CopytunerBar(document.getElementById('copy-tuner-bar'), this.data, this.open.bind(this));
   }
 
-  tbody.classList.remove('is-not-initialized');
-  var baseUrl = document.getElementById('copy-tuner-data').dataset.copyTunerUrl;
-  var log = JSON.parse(document.getElementById('copy-tuner-data').dataset.copyTunerTranslationLog);
+  _createClass(Copyray, [{
+    key: 'show',
+    value: function show() {
+      this.reset();
 
-  Object.keys(log).sort().forEach(function (key) {
-    var value = log[key];
+      document.body.appendChild(this.overlay);
+      this.findBlurbs();
 
-    if (value === '') {
-      return;
-    }
-
-    var url = baseUrl + '/blurbs/' + key + '/edit';
-    var td1 = document.createElement('td');
-    td1.textContent = key;
-    var td2 = document.createElement('td');
-    td2.textContent = value;
-    var tr = document.createElement('tr');
-    tr.classList.add('copy-tuner-bar-log-menu__row');
-    tr.classList.add('js-copy-tuner-blurb-row');
-    tr.dataset.url = url;
-
-    tr.addEventListener('click', function (_ref) {
-      var currentTarget = _ref.currentTarget;
-      return Copyray.open(currentTarget.dataset.url);
-    });
-
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    tbody.appendChild(tr);
-  });
-};
-
-Copyray.focusSearchBox = function () {
-  document.querySelector('.js-copy-tuner-bar-search').focus();
-};
-
-Copyray.toggleLogMenu = function () {
-  Copyray.createLogMenu();
-  document.getElementById('copy-tuner-bar-log-menu').classList.toggle(HIDDEN_CLASS);
-};
-
-Copyray.setupLogMenu = function () {
-  var element = document.querySelector('.js-copy-tuner-bar-open-log');
-
-  element.addEventListener('click', function (event) {
-    event.preventDefault();
-    Copyray.toggleLogMenu();
-  });
-};
-
-Copyray.setupSearchBar = function () {
-  var barElement = document.querySelector('.js-copy-tuner-bar-search');
-
-  var onKeyup = function onKeyup(_ref2) {
-    var target = _ref2.target;
-
-    var keyword = target.value.trim();
-
-    if (!isVisible(document.getElementById('copy-tuner-bar-log-menu'))) {
-      Copyray.toggleLogMenu();
-    }
-
-    var rows = Array.from(document.getElementsByClassName('js-copy-tuner-blurb-row'));
-
-    if (keyword === '') {
-      rows.forEach(function (row) {
-        return row.classList.remove(HIDDEN_CLASS);
+      this.specimens.forEach(function (specimen) {
+        specimen.show();
       });
-      return;
+
+      this.copyTunerBar.show();
+      this.isShowing = true;
     }
-    rows.forEach(function (row) {
-      return row.classList.add(HIDDEN_CLASS);
-    });
-
-    rows.filter(function (row) {
-      return Array.from(row.getElementsByTagName('td')).some(function (td) {
-        return td.textContent.includes(keyword);
-      });
-    }).forEach(function (row) {
-      return row.classList.remove(HIDDEN_CLASS);
-    });
-  };
-
-  barElement.addEventListener('keyup', index(onKeyup, 250));
-};
-
-var init = function init() {
-  if (Copyray.initialized) {
-    return;
-  }
-
-  Copyray.initialized = true;
-
-  document.addEventListener('keydown', function (event) {
-    if ((isMac && event.metaKey || !isMac) && event.ctrlKey && event.shiftKey && event.keyCode === 75) {
-      if (Copyray.isShowing) {
-        Copyray.hide();
+  }, {
+    key: 'hide',
+    value: function hide() {
+      this.overlay.remove();
+      this.reset();
+      this.copyTunerBar.hide();
+      this.isShowing = false;
+    }
+  }, {
+    key: 'toggle',
+    value: function toggle() {
+      if (this.isShowing) {
+        this.hide();
       } else {
-        Copyray.show();
+        this.show();
       }
     }
+  }, {
+    key: 'open',
+    value: function open(key) {
+      var url = this.baseUrl + '/blurbs/' + key + '/edit';
+      window.open(url, null, 'width=700, height=600');
+    }
+  }, {
+    key: 'findBlurbs',
+    value: function findBlurbs() {
+      var _this = this;
 
-    if (Copyray.isShowing && event.keyCode === 27) {
-      Copyray.hide();
+      Array.from(document.querySelectorAll('[data-copyray-key]')).forEach(function (span) {
+        _this.specimens.push(new Specimen(span, span.dataset.copyrayKey, _this.open.bind(_this)));
+      });
+    }
+  }, {
+    key: 'makeToggleButton',
+    value: function makeToggleButton() {
+      var _this2 = this;
+
+      var element = document.createElement('a');
+
+      element.addEventListener('click', function () {
+        _this2.show();
+      });
+
+      element.classList.add('copyray-toggle-button');
+      element.textContent = 'Open CopyTuner';
+      document.body.appendChild(element);
+
+      return element;
+    }
+  }, {
+    key: 'makeOverlay',
+    value: function makeOverlay() {
+      var _this3 = this;
+
+      var div = document.createElement('div');
+      div.setAttribute('id', 'copyray-overlay');
+      div.addEventListener('click', function () {
+        return _this3.hide();
+      });
+      return div;
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.specimens.forEach(function (specimen) {
+        specimen.remove();
+      });
+    }
+  }]);
+
+  return Copyray;
+}();
+
+var start = function start() {
+  var dataElement = document.getElementById('copy-tuner-data');
+  var copyTunerUrl = dataElement.dataset.copyTunerUrl;
+  var data = JSON.parse(document.getElementById('copy-tuner-data').dataset.copyTunerTranslationLog);
+  var copyray = new Copyray(copyTunerUrl, data);
+
+  document.addEventListener('keydown', function (event) {
+    if (copyray.isShowing && event.keyCode === index.KEY_ESCAPE) {
+      copyray.hide();
+      return;
+    }
+
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.keyCode === index.KEY_K) {
+      copyray.toggle();
     }
   });
-
-  Copyray.findBlurbs();
-  Copyray.addToggleButton();
-  Copyray.setupSearchBar();
-  Copyray.setupLogMenu();
 
   if (console) {
     // eslint-disable-next-line no-console
     console.log('Ready to Copyray. Press ' + (isMac ? 'cmd+shift+k' : 'ctrl+shift+k') + ' to scan your UI.');
   }
 
-  window.Copyray = Copyray;
+  window.copyray = copyray;
 };
 
 if (document.readyState === 'complete' || document.readyState !== 'loading') {
-  init();
+  start();
 } else {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', start);
 }
 
 }());
