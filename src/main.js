@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce';
 import { isMac, isVisible, computeBoundingBox } from './util';
 
 const Copyray = {};
@@ -215,41 +216,31 @@ Copyray.setupLogMenu = () => {
 };
 
 Copyray.setupSearchBar = () => {
-  let timer = null;
-  let lastKeyword = '';
   const barElement = document.querySelector('.js-copy-tuner-bar-search');
 
-  barElement.addEventListener('focus', ({ target }) => (lastKeyword = target.value));
-
-  barElement.addEventListener('keyup', ({ target }) => {
+  const onKeyup = ({ target }) => {
     const keyword = target.value.trim();
 
-    if (lastKeyword !== keyword) {
-      if (!isVisible(document.getElementById('copy-tuner-bar-log-menu'))) {
-        Copyray.toggleLogMenu();
-      }
-
-      clearTimeout(timer);
-
-      timer = setTimeout(() => {
-        const rows = Array.from(document.getElementsByClassName('js-copy-tuner-blurb-row'));
-
-        if (keyword === '') {
-          rows.forEach(row => row.classList.remove(HIDDEN_CLASS));
-          return;
-        }
-        rows.forEach(row => row.classList.add(HIDDEN_CLASS));
-
-        rows
-          .filter(row =>
-            Array.from(row.getElementsByTagName('td')).some(td => td.textContent.includes(keyword)),
-          )
-          .forEach(row => row.classList.remove(HIDDEN_CLASS));
-      }, 500);
-
-      lastKeyword = keyword;
+    if (!isVisible(document.getElementById('copy-tuner-bar-log-menu'))) {
+      Copyray.toggleLogMenu();
     }
-  });
+
+    const rows = Array.from(document.getElementsByClassName('js-copy-tuner-blurb-row'));
+
+    if (keyword === '') {
+      rows.forEach(row => row.classList.remove(HIDDEN_CLASS));
+      return;
+    }
+    rows.forEach(row => row.classList.add(HIDDEN_CLASS));
+
+    rows
+      .filter(row =>
+        Array.from(row.getElementsByTagName('td')).some(td => td.textContent.includes(keyword)),
+      )
+      .forEach(row => row.classList.remove(HIDDEN_CLASS));
+  };
+
+  barElement.addEventListener('keyup', debounce(onKeyup, 250));
 };
 
 const init = () => {
