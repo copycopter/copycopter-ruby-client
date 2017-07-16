@@ -19,12 +19,12 @@ Copyray.open = (url) => {
 
 Copyray.show = () => {
   Copyray.Overlay.instance().show();
-  return Copyray.showBar();
+  Copyray.showBar();
 };
 
 Copyray.hide = () => {
   Copyray.Overlay.instance().hide();
-  return Copyray.hideBar();
+  Copyray.hideBar();
 };
 
 Copyray.addToggleButton = () => {
@@ -34,12 +34,12 @@ Copyray.addToggleButton = () => {
 
   element.classList.add('copyray-toggle-button');
   element.textContent = 'Open CopyTuner';
-  return document.body.appendChild(element);
+  document.body.appendChild(element);
 };
 
 Copyray.Specimen = class Specimen {
   static add(el, key) {
-    return this.all.push(new this(el, key));
+    this.all.push(new this(el, key));
   }
 
   constructor(el, key) {
@@ -77,7 +77,7 @@ Copyray.Specimen = class Specimen {
 
     this.box.addEventListener('click', () => {
       const baseUrl = document.getElementById('copy-tuner-data').dataset.copyTunerUrl;
-      return Copyray.open(`${baseUrl}/blurbs/${this.key}/edit`);
+      Copyray.open(`${baseUrl}/blurbs/${this.key}/edit`);
     });
 
     this.box.appendChild(this.makeLabel());
@@ -143,20 +143,20 @@ Copyray.Overlay = class Overlay {
     Copyray.isShowing = false;
     this.overlay.remove();
     this.reset();
-    return Copyray.hideBar();
+    Copyray.hideBar();
   }
 };
 
 Copyray.showBar = () => {
   document.getElementById('copy-tuner-bar').classList.remove(HIDDEN_CLASS);
   document.querySelector('.copyray-toggle-button').classList.add(HIDDEN_CLASS);
-  return Copyray.focusSearchBox();
+  Copyray.focusSearchBox();
 };
 
 Copyray.hideBar = () => {
   document.getElementById('copy-tuner-bar').classList.add(HIDDEN_CLASS);
   document.querySelector('.copyray-toggle-button').classList.remove(HIDDEN_CLASS);
-  return document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS);
+  document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS);
 };
 
 Copyray.createLogMenu = () => {
@@ -211,7 +211,7 @@ Copyray.setupLogMenu = () => {
 
   element.addEventListener('click', (event) => {
     event.preventDefault();
-    return Copyray.toggleLogMenu();
+    Copyray.toggleLogMenu();
   });
 };
 

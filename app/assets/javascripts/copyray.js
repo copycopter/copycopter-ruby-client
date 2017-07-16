@@ -5,16 +5,6 @@ var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/**
- * lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="npm" -o ./`
- * Copyright jQuery Foundation and other contributors <https://jquery.org/>
- * Released under MIT license <https://lodash.com/license>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- */
-
-/** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /** Used as references for various `Number` constants. */
@@ -440,12 +430,12 @@ Copyray.open = function (url) {
 
 Copyray.show = function () {
   Copyray.Overlay.instance().show();
-  return Copyray.showBar();
+  Copyray.showBar();
 };
 
 Copyray.hide = function () {
   Copyray.Overlay.instance().hide();
-  return Copyray.hideBar();
+  Copyray.hideBar();
 };
 
 Copyray.addToggleButton = function () {
@@ -457,14 +447,14 @@ Copyray.addToggleButton = function () {
 
   element.classList.add('copyray-toggle-button');
   element.textContent = 'Open CopyTuner';
-  return document.body.appendChild(element);
+  document.body.appendChild(element);
 };
 
 Copyray.Specimen = function () {
   _createClass(Specimen, null, [{
     key: 'add',
     value: function add(el, key) {
-      return this.all.push(new this(el, key));
+      this.all.push(new this(el, key));
     }
   }]);
 
@@ -510,7 +500,7 @@ Copyray.Specimen = function () {
 
       this.box.addEventListener('click', function () {
         var baseUrl = document.getElementById('copy-tuner-data').dataset.copyTunerUrl;
-        return Copyray.open(baseUrl + '/blurbs/' + _this.key + '/edit');
+        Copyray.open(baseUrl + '/blurbs/' + _this.key + '/edit');
       });
 
       this.box.appendChild(this.makeLabel());
@@ -604,7 +594,7 @@ Copyray.Overlay = function () {
       Copyray.isShowing = false;
       this.overlay.remove();
       this.reset();
-      return Copyray.hideBar();
+      Copyray.hideBar();
     }
   }]);
 
@@ -614,13 +604,13 @@ Copyray.Overlay = function () {
 Copyray.showBar = function () {
   document.getElementById('copy-tuner-bar').classList.remove(HIDDEN_CLASS);
   document.querySelector('.copyray-toggle-button').classList.add(HIDDEN_CLASS);
-  return Copyray.focusSearchBox();
+  Copyray.focusSearchBox();
 };
 
 Copyray.hideBar = function () {
   document.getElementById('copy-tuner-bar').classList.add(HIDDEN_CLASS);
   document.querySelector('.copyray-toggle-button').classList.remove(HIDDEN_CLASS);
-  return document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS);
+  document.querySelector('.js-copy-tuner-bar-log-menu').classList.add(HIDDEN_CLASS);
 };
 
 Copyray.createLogMenu = function () {
@@ -676,7 +666,7 @@ Copyray.setupLogMenu = function () {
 
   element.addEventListener('click', function (event) {
     event.preventDefault();
-    return Copyray.toggleLogMenu();
+    Copyray.toggleLogMenu();
   });
 };
 
