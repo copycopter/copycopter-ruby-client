@@ -139,24 +139,24 @@ a.copyray-toggle-button:hover {
   overflow-y: auto;
 }
 
-#copy-tuner-bar-log-menu__tbody td {
+#copy-tuner-bar-log-menu tbody td {
   padding: 2px 8px;
 }
 
-#copy-tuner-bar-log-menu__tbody tr {
+#copy-tuner-bar-log-menu tbody tr {
   cursor: pointer;
 }
 
-#copy-tuner-bar-log-menu__tbody tr:hover {
+#copy-tuner-bar-log-menu tbody tr:hover {
   background: #444;
 }
 
-#copy-tuner-bar-log-menu__tbody a {
+#copy-tuner-bar-log-menu tbody a {
   color: #fff;
 }
 
-#copy-tuner-bar-log-menu__tbody a:hover,
-#copy-tuner-bar-log-menu__tbody a:focus {
+#copy-tuner-bar-log-menu tbody a:hover,
+#copy-tuner-bar-log-menu tbody a:focus {
   color: #fff;
   text-decoration: underline;
 }
