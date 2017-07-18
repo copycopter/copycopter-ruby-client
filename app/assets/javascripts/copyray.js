@@ -752,7 +752,35 @@ var CopytunerBar = function () {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var findBlurbs = function findBlurbs() {
+  var filterNone = function filterNone() {
+    return NodeFilter.FILTER_ACCEPT;
+  };
+
+  var iterator = document.createNodeIterator(document.body, NodeFilter.SHOW_COMMENT, filterNone, false);
+
+  var comments = [];
+  var curNode = void 0;
+  // eslint-disable-next-line no-cond-assign
+  while (curNode = iterator.nextNode()) {
+    comments.push(curNode);
+  }
+
+  return comments.filter(function (comment) {
+    return comment.nodeValue.startsWith('COPYRAY');
+  }).map(function (comment) {
+    var _comment$nodeValue$ma = comment.nodeValue.match(/^COPYRAY (\S*)$/),
+        _comment$nodeValue$ma2 = _slicedToArray(_comment$nodeValue$ma, 2),
+        key = _comment$nodeValue$ma2[1];
+
+    var element = comment.nextSibling.parentNode;
+    return { key: key, element: element };
+  });
+};
 
 var Copyray = function () {
   function Copyray(baseUrl, data) {
@@ -764,8 +792,9 @@ var Copyray = function () {
     this.specimens = [];
     this.overlay = this.makeOverlay();
     this.toggleButton = this.makeToggleButton();
+    this.boundOpen = this.open.bind(this);
 
-    this.copyTunerBar = new CopytunerBar(document.getElementById('copy-tuner-bar'), this.data, this.open.bind(this));
+    this.copyTunerBar = new CopytunerBar(document.getElementById('copy-tuner-bar'), this.data, this.boundOpen);
   }
 
   _createClass(Copyray, [{
@@ -774,7 +803,7 @@ var Copyray = function () {
       this.reset();
 
       document.body.appendChild(this.overlay);
-      this.findBlurbs();
+      this.makeSpecimens();
 
       this.specimens.forEach(function (specimen) {
         specimen.show();
@@ -807,12 +836,15 @@ var Copyray = function () {
       window.open(url, null, 'width=700, height=600');
     }
   }, {
-    key: 'findBlurbs',
-    value: function findBlurbs() {
+    key: 'makeSpecimens',
+    value: function makeSpecimens() {
       var _this = this;
 
-      Array.from(document.querySelectorAll('[data-copyray-key]')).forEach(function (span) {
-        _this.specimens.push(new Specimen(span, span.dataset.copyrayKey, _this.open.bind(_this)));
+      findBlurbs().forEach(function (_ref) {
+        var element = _ref.element,
+            key = _ref.key;
+
+        _this.specimens.push(new Specimen(element, key, _this.boundOpen));
       });
     }
   }, {

@@ -3,10 +3,10 @@ module CopyTunerClient
     # This:
     #   message
     # Becomes:
-    #   <span data-copyray-key="views.home.index.message">message</span>
+    #   <!--COPYRAY views.home.index.message-->message
     def self.augment_template(source, key)
       augmented = if source.present?
-                    "<span data-copyray-key='#{key}'>#{source}</span>"
+                    "<!--COPYRAY #{key}-->#{source}"
                   else
                     source
                   end

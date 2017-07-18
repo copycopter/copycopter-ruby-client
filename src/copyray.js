@@ -1,6 +1,30 @@
 import Specimen from './specimen';
 import CopyTunerBar from './copytuner_bar';
 
+const findBlurbs = () => {
+  const filterNone = () => NodeFilter.FILTER_ACCEPT;
+
+  const iterator = document.createNodeIterator(
+    document.body,
+    NodeFilter.SHOW_COMMENT,
+    filterNone,
+    false,
+  );
+
+  const comments = [];
+  let curNode;
+  // eslint-disable-next-line no-cond-assign
+  while ((curNode = iterator.nextNode())) {
+    comments.push(curNode);
+  }
+
+  return comments.filter(comment => comment.nodeValue.startsWith('COPYRAY')).map((comment) => {
+    const [, key] = comment.nodeValue.match(/^COPYRAY (\S*)$/);
+    const element = comment.nextSibling.parentNode;
+    return { key, element };
+  });
+};
+
 export default class Copyray {
   constructor(baseUrl, data) {
     this.baseUrl = baseUrl;
@@ -9,11 +33,12 @@ export default class Copyray {
     this.specimens = [];
     this.overlay = this.makeOverlay();
     this.toggleButton = this.makeToggleButton();
+    this.boundOpen = this.open.bind(this);
 
     this.copyTunerBar = new CopyTunerBar(
       document.getElementById('copy-tuner-bar'),
       this.data,
-      this.open.bind(this),
+      this.boundOpen,
     );
   }
 
@@ -21,7 +46,7 @@ export default class Copyray {
     this.reset();
 
     document.body.appendChild(this.overlay);
-    this.findBlurbs();
+    this.makeSpecimens();
 
     this.specimens.forEach((specimen) => {
       specimen.show();
@@ -51,9 +76,9 @@ export default class Copyray {
     window.open(url, null, 'width=700, height=600');
   }
 
-  findBlurbs() {
-    Array.from(document.querySelectorAll('[data-copyray-key]')).forEach((span) => {
-      this.specimens.push(new Specimen(span, span.dataset.copyrayKey, this.open.bind(this)));
+  makeSpecimens() {
+    findBlurbs().forEach(({ element, key }) => {
+      this.specimens.push(new Specimen(element, key, this.boundOpen));
     });
   }
 
