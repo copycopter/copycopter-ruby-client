@@ -203,6 +203,7 @@ var Specimen = function () {
       var _this = this;
 
       this.box = this.makeBox();
+      if (this.box === null) return;
 
       this.box.addEventListener('click', function () {
         _this.callback(_this.key);
@@ -227,6 +228,7 @@ var Specimen = function () {
       box.classList.add('Specimen');
 
       var bounds = computeBoundingBox(this.element);
+      if (bounds === null) return null;
 
       Object.keys(bounds).forEach(function (key) {
         var value = bounds[key];

@@ -11,6 +11,7 @@ export default class Specimen {
 
   show() {
     this.box = this.makeBox();
+    if (this.box === null) return;
 
     this.box.addEventListener('click', () => {
       this.callback(this.key);
@@ -33,6 +34,7 @@ export default class Specimen {
     box.classList.add('Specimen');
 
     const bounds = computeBoundingBox(this.element);
+    if (bounds === null) return null;
 
     Object.keys(bounds).forEach((key) => {
       const value = bounds[key];
