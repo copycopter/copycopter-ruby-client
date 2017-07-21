@@ -5,10 +5,23 @@
   "author": "SonicGarden",
   "license": "MIT",
   "scripts": {
-    "build": "coffee -o app/assets/javascripts -c src/copyray.coffee",
-    "watch": "coffee -o app/assets/javascripts -w src/copyray.coffee"
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "dependencies": {
+    "keycode-js": "0.0.4",
+    "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
-    "coffeescript": "^1.12.6"
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "rollup": "^0.45.2",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-watch": "^4.3.1"
   }
 }

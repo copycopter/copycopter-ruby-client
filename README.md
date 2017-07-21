@@ -63,9 +63,9 @@ Development
     $ bundle exec rake install    # install to local gem
     $ bundle exec rake release    # release gem to rubygems.org
 
-## CoffeeScript
+## JavaScript
 
 ```
-$ npm run watch   # Watch files for changes, rerunning the specified command when any file is updated.
-$ npm run build   # Compile a .coffee script into a .js JavaScript file of the same name.
+$ npm run watch   # Watch files for changes
+$ npm run build   # Compile to a <script> containing a self-executing function
 ```
