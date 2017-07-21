@@ -20,7 +20,7 @@ const findBlurbs = () => {
 
   return comments.filter(comment => comment.nodeValue.startsWith('COPYRAY')).map((comment) => {
     const [, key] = comment.nodeValue.match(/^COPYRAY (\S*)$/);
-    const element = comment.nextSibling.parentNode;
+    const element = comment.parentNode;
     return { key, element };
   });
 };

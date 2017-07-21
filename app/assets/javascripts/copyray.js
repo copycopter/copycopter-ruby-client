@@ -182,22 +182,106 @@ var computeBoundingBox = function computeBoundingBox(element) {
   };
 };
 
-var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
 
-function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
 
 var ZINDEX = 2000000000;
 
 var Specimen = function () {
   function Specimen(element, key, callback) {
-    _classCallCheck$1(this, Specimen);
+    classCallCheck(this, Specimen);
 
     this.element = element;
     this.key = key;
     this.callback = callback;
   }
 
-  _createClass$1(Specimen, [{
+  createClass(Specimen, [{
     key: 'show',
     value: function show() {
       var _this = this;
@@ -260,10 +344,19 @@ var Specimen = function () {
       return div;
     }
   }]);
-
   return Specimen;
 }();
 
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /** Used as references for various `Number` constants. */
@@ -632,15 +725,11 @@ function toNumber(value) {
 
 var index$1 = debounce;
 
-var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var HIDDEN_CLASS = 'copy-tuner-hidden';
 
 var CopytunerBar = function () {
   function CopytunerBar(element, data, callback) {
-    _classCallCheck$2(this, CopytunerBar);
+    classCallCheck(this, CopytunerBar);
 
     this.element = element;
     this.data = data;
@@ -652,7 +741,7 @@ var CopytunerBar = function () {
     this.addHandler();
   }
 
-  _createClass$2(CopytunerBar, [{
+  createClass(CopytunerBar, [{
     key: 'addHandler',
     value: function addHandler() {
       var _this = this;
@@ -748,15 +837,8 @@ var CopytunerBar = function () {
       });
     }
   }]);
-
   return CopytunerBar;
 }();
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var findBlurbs = function findBlurbs() {
   var filterNone = function filterNone() {
@@ -776,17 +858,17 @@ var findBlurbs = function findBlurbs() {
     return comment.nodeValue.startsWith('COPYRAY');
   }).map(function (comment) {
     var _comment$nodeValue$ma = comment.nodeValue.match(/^COPYRAY (\S*)$/),
-        _comment$nodeValue$ma2 = _slicedToArray(_comment$nodeValue$ma, 2),
+        _comment$nodeValue$ma2 = slicedToArray(_comment$nodeValue$ma, 2),
         key = _comment$nodeValue$ma2[1];
 
-    var element = comment.nextSibling.parentNode;
+    var element = comment.parentNode;
     return { key: key, element: element };
   });
 };
 
 var Copyray = function () {
   function Copyray(baseUrl, data) {
-    _classCallCheck(this, Copyray);
+    classCallCheck(this, Copyray);
 
     this.baseUrl = baseUrl;
     this.data = data;
@@ -799,7 +881,7 @@ var Copyray = function () {
     this.copyTunerBar = new CopytunerBar(document.getElementById('copy-tuner-bar'), this.data, this.boundOpen);
   }
 
-  _createClass(Copyray, [{
+  createClass(Copyray, [{
     key: 'show',
     value: function show() {
       this.reset();
@@ -886,7 +968,6 @@ var Copyray = function () {
       });
     }
   }]);
-
   return Copyray;
 }();
 
