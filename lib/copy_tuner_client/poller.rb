@@ -16,6 +16,7 @@ module CopyTunerClient
     end
 
     def start
+      @logger.info 'start poller'
       Thread.new { poll } or logger.error("Couldn't start poller thread")
     end
 
