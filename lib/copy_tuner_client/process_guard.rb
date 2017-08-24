@@ -97,8 +97,7 @@ module CopyTunerClient
     end
 
     def register_puma_hook
-      # If Puma is clustered mode without preload_app,
-      # this method is called on worker process.
+      # If Puma is clustered mode without preload_app, this method is called on worker process.
       # Just start poller and return.
       if $0.include?('cluster worker')
         @logger.info('Puma would be clustered mode without preload_app')
@@ -107,8 +106,7 @@ module CopyTunerClient
       end
 
       @logger.info('Register Puma fork hook')
-      # If Puma is clustered mode with preload_app,
-      # this method is called before fork.
+      # If Puma is clustered mode with preload_app, this method is called before fork.
       # Delay poller start until Puma::Runner#start_server which is called on worker process.
       poller = @poller
       hook_module = Module.new do
