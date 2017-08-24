@@ -42,7 +42,7 @@ module CopyTunerClient
     end
 
     def puma_spawner?
-      defined?(Puma::Cluster) && $0.include?('puma')
+      defined?(Puma::Runner) && $0.include?('puma')
     end
 
     def delayed_job_spawner?
@@ -97,15 +97,27 @@ module CopyTunerClient
     end
 
     def register_puma_hook
-      @logger.info("Registered Puma fork hook")
+      # If Puma is clustered mode without preload_app,
+      # this method is called on worker process.
+      # Just start poller and return.
+      if $0.include?('cluster worker')
+        @logger.info('Puma would be clustered mode without preload_app')
+        @poller.start
+        return
+      end
+
+      @logger.info('Register Puma fork hook')
+      # If Puma is clustered mode with preload_app,
+      # this method is called before fork.
+      # Delay poller start until Puma::Runner#start_server which is called on worker process.
       poller = @poller
-      Puma::Cluster.class_eval do
-        alias_method :worker_without_copy_tuner, :worker
-        define_method :worker do |index, master|
+      hook_module = Module.new do
+        define_method :start_server do
           poller.start
-          worker_without_copy_tuner(index, master)
+          super()
         end
       end
+      Puma::Runner.prepend hook_module
     end
 
     def register_exit_hooks
