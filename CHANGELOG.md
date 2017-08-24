@@ -1,3 +1,7 @@
+## 0.4.3
+- bug fix
+  - Start poller thread regardless of puma mode. #39
+   
 ## 0.4.2
 - changes
   - span tag is no longer added to translation text. 
