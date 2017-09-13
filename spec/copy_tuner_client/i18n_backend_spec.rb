@@ -62,7 +62,7 @@ describe CopyTunerClient::I18nBackend do
     expect { subject.translate('en', 'test.key') }.
       to throw_symbol(:exception)
 
-    expect(cache['en.test.key']).to eq("")
+    expect(cache['en.test.key']).to eq nil
   end
 
   it "queues missing keys with scope" do
@@ -79,7 +79,7 @@ describe CopyTunerClient::I18nBackend do
 
     expect(subject.translate('en', 'key.three', :default => :"key.one")).to eq 'Expected'
 
-    expect(cache['en.key.three']).to eq ''
+    expect(cache['en.key.three']).to eq nil
   end
 
   it "does not queues missing keys with an array of default" do
@@ -87,7 +87,9 @@ describe CopyTunerClient::I18nBackend do
 
     expect(subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).to eq 'Expected'
 
-    expect(cache['en.key.three']).to eq ''
+    expect(cache['en.key.three']).to eq nil
+
+    expect(subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).to eq 'Expected'
   end
 
   it "queues missing keys with interpolation" do
@@ -176,7 +178,7 @@ describe CopyTunerClient::I18nBackend do
 
       # default と Fallbacks を併用した場合、キャッシュにデフォルト値は入らない仕様に変えた
       # その仕様にしないと、うまく Fallbacks の処理が動かないため
-      expect(cache['en.test.key']).to eq('')
+      expect(cache['en.test.key']).to eq nil
     end
   end
 end

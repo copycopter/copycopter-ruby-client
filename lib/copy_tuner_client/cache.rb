@@ -147,8 +147,19 @@ module CopyTunerClient
       end
 
       if changes_to_push
-        yield changes_to_push
+        yield nil_value_to_empty(changes_to_push)
       end
+    end
+
+    def nil_value_to_empty(hash)
+      hash.each do |k, v|
+        if v.nil?
+          hash[k] = ''.freeze
+        elsif v.is_a?(Hash)
+          nil_value_to_empty(v)
+        end
+      end
+      hash
     end
 
     def lock(&block)
