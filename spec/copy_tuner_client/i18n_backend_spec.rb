@@ -58,11 +58,20 @@ describe CopyTunerClient::I18nBackend do
     expect(cache['en.test.key']).to eq(default)
   end
 
+  it "queues missing keys with default string in an array" do
+    default = 'default value'
+
+    expect(subject.translate('en', 'test.key', :default => [default])).to eq(default)
+
+    expect(cache['en.test.key']).to eq(default)
+  end
+
   it "queues missing keys without default" do
     expect { subject.translate('en', 'test.key') }.
       to throw_symbol(:exception)
 
-    expect(cache['en.test.key']).to eq nil
+    expect(cache).to have_key 'en.test.key'
+    expect(cache['en.test.key']).to be_nil
   end
 
   it "queues missing keys with scope" do
@@ -79,7 +88,10 @@ describe CopyTunerClient::I18nBackend do
 
     expect(subject.translate('en', 'key.three', :default => :"key.one")).to eq 'Expected'
 
-    expect(cache['en.key.three']).to eq nil
+    expect(cache).to have_key 'en.key.three'
+    expect(cache['en.key.three']).to be_nil
+
+    expect(subject.translate('en', 'key.three', :default => :"key.one")).to eq 'Expected'
   end
 
   it "does not queues missing keys with an array of default" do
@@ -87,7 +99,8 @@ describe CopyTunerClient::I18nBackend do
 
     expect(subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).to eq 'Expected'
 
-    expect(cache['en.key.three']).to eq nil
+    expect(cache).to have_key 'en.key.three'
+    expect(cache['en.key.three']).to be_nil
 
     expect(subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).to eq 'Expected'
   end
@@ -178,7 +191,8 @@ describe CopyTunerClient::I18nBackend do
 
       # default と Fallbacks を併用した場合、キャッシュにデフォルト値は入らない仕様に変えた
       # その仕様にしないと、うまく Fallbacks の処理が動かないため
-      expect(cache['en.test.key']).to eq nil
+      expect(cache).to have_key 'en.test.key'
+      expect(cache['en.test.key']).to be_nil
     end
   end
 end
