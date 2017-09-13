@@ -86,8 +86,10 @@ module CopyTunerClient
       content = super(locale, object, subject, options)
       if content.respond_to?(:to_str)
         parts = I18n.normalize_keys(locale, object, options[:scope], options[:separator])
-        key = parts.join('.')
-        cache[key] = content.to_str
+        if subject.is_a?(String)
+          key = parts.join('.')
+          cache[key] = content.to_str
+        end
       end
       content
     end

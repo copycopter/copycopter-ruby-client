@@ -74,6 +74,22 @@ describe CopyTunerClient::I18nBackend do
     expect(cache['en.test.key']).to eq(default)
   end
 
+  it "does not queues missing keys with a symbol of default" do
+    cache['en.key.one'] = "Expected"
+
+    expect(subject.translate('en', 'key.three', :default => :"key.one")).to eq 'Expected'
+
+    expect(cache['en.key.three']).to eq ''
+  end
+
+  it "does not queues missing keys with an array of default" do
+    cache['en.key.one'] = "Expected"
+
+    expect(subject.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).to eq 'Expected'
+
+    expect(cache['en.key.three']).to eq ''
+  end
+
   it "marks strings as html safe" do
     cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
     backend = build_backend
