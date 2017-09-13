@@ -90,6 +90,14 @@ describe CopyTunerClient::I18nBackend do
     expect(cache['en.key.three']).to eq ''
   end
 
+  it "queues missing keys with interpolation" do
+    default = 'default %{interpolate}'
+
+    expect(subject.translate('en', 'test.key', :default => default, :interpolate => 'interpolated')).to eq 'default interpolated'
+
+    expect(cache['en.test.key']).to eq 'default %{interpolate}'
+  end
+
   it "marks strings as html safe" do
     cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
     backend = build_backend
