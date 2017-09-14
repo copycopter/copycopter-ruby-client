@@ -1,3 +1,7 @@
+## 0.4.4
+- bug fix
+  - Don't upload resolved default values.
+
 ## 0.4.3
 - bug fix
   - Start poller thread regardless of puma mode. #39

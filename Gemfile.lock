@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    copy_tuner_client (0.4.3)
+    copy_tuner_client (0.4.4)
       i18n (>= 0.5.0)
       json
 
@@ -78,7 +78,7 @@ GEM
       activesupport (>= 4.1.0)
     hashdiff (0.3.2)
     i18n (0.8.1)
-    json (2.0.3)
+    json (2.1.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
