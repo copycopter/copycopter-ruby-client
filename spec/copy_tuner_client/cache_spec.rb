@@ -46,6 +46,15 @@ describe CopyTunerClient::Cache do
     expect(client.uploaded).to eq({ 'test.key' => 'test value' })
   end
 
+  it "uploads empties when nil is assigned" do
+    cache = build_cache
+    cache['test.key'] = nil
+
+    cache.flush
+
+    expect(client.uploaded).to eq({ 'test.key' => '' })
+  end
+
   it 'upload without locale filter' do
     cache = build_cache
     cache['en.test.key'] = 'uploaded en'

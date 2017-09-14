@@ -62,7 +62,7 @@ module CopyTunerClient
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key_with_locale = parts.join('.')
       content = cache[key_with_locale] || super
-      cache[key_with_locale] = "" if content.nil?
+      cache[key_with_locale] = nil if content.nil?
       content
     end
 
@@ -86,8 +86,11 @@ module CopyTunerClient
       content = super(locale, object, subject, options)
       if content.respond_to?(:to_str)
         parts = I18n.normalize_keys(locale, object, options[:scope], options[:separator])
-        key = parts.join('.')
-        cache[key] = content.to_str
+        # NOTE: ActionView::Helpers::TranslationHelper#translate wraps default String in an Array
+        if subject.is_a?(String) || (subject.is_a?(Array) && subject.size == 1 && subject.first.is_a?(String))
+          key = parts.join('.')
+          cache[key] = content.to_str
+        end
       end
       content
     end

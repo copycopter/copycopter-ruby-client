@@ -245,7 +245,7 @@ Feature: Using copy_tuner in a rails app
     When I wait for changes to be synchronized
     Then the "abc123" project should have the following error blurbs:
       | key                        | draft content  |
-      | user.attributes.name.blank | can't be blank |
+      | user.attributes.name.blank |                |
 
   Scenario: ensure keys are synced with short lived processes
     When I configure the copy_tuner client to have a polling delay of 86400 seconds
