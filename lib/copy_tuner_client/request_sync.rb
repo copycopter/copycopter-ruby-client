@@ -16,10 +16,12 @@ module CopyTunerClient
     # @option options [Cache] :cache agent that should be flushed after each request
     def initialize(app, options)
       @app = app
+      @poller = options[:poller]
       @cache = options[:cache]
       @interval = options[:interval]
       @ignore_regex = options[:ignore_regex]
       @last_synced = options[:last_synced]
+      @first = true
     end
 
     attr_accessor :last_synced
@@ -30,9 +32,16 @@ module CopyTunerClient
       if /^\/copytuner/ =~ ::Rack::Request.new(env).path_info
         dup._call(env)
       else
-        @cache.download unless cancel_sync?(env)
+        first_request = @first
+        if first_request
+          @first = false
+          @cache.download
+        end
+
+        cancel_sync = cancel_sync?(env)
         response = @app.call(env)
-        @cache.flush    unless cancel_sync?(env)
+        @poller.start_sync unless first_request || cancel_sync
+
         update_last_synced unless in_interval?
         response
       end
@@ -139,6 +148,10 @@ module CopyTunerClient
 
     def update_last_synced
       @last_synced = Time.now.utc
+    end
+
+    def logger
+      CopyTunerClient.configuration.logger
     end
   end
 end

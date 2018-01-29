@@ -12,10 +12,6 @@ module CopyTunerClient
     # Must act like a hash and return sensible values for all CopyTuner
     # configuration options. Usually set when {.configure} is called.
     attr_accessor :configuration
-
-    # @return [Poller] instance used to poll for changes.
-    # This is set when {.configure} is called.
-    attr_accessor :poller
   end
 
   # Issues a new deploy, marking all draft blurbs as published.
@@ -30,11 +26,6 @@ module CopyTunerClient
     cache.export
   end
 
-  # Starts the polling process.
-  def self.start_poller
-    poller.start
-  end
-
   # Flush queued changed synchronously
   def self.flush
     cache.flush
@@ -46,6 +37,10 @@ module CopyTunerClient
 
   def self.client
     CopyTunerClient.configuration.client
+  end
+
+  def self.poller
+    CopyTunerClient.configuration.poller
   end
 
   # Call this method to modify defaults in your initializers.

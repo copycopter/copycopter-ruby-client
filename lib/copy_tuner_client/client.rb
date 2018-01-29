@@ -47,13 +47,15 @@ module CopyTunerClient
       connect(s3_host) do |http|
         request = Net::HTTP::Get.new(uri(download_resource))
         request['If-None-Match'] = @etag
+        log 'Start downloading translations'
+        t = Time.now
         response = http.request(request)
-
+        t_ms = ((Time.now - t) * 1000).to_i
         if check response
-          log 'Downloaded translations'
+          log "Downloaded translations (#{t_ms}ms)"
           yield JSON.parse(response.body)
         else
-          log 'No new translations'
+          log "No new translations (#{t_ms}ms)"
         end
 
         @etag = response['ETag']

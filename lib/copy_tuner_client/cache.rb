@@ -13,15 +13,16 @@ module CopyTunerClient
     # @param options [Hash]
     # @option options [Logger] :logger where errors should be logged
     def initialize(client, options)
-      @blurbs = {}
       @client = client
-      @downloaded = false
       @logger = options[:logger]
       @mutex = Mutex.new
-      @queued = {}
-      @started = false
       @exclude_key_regexp = options[:exclude_key_regexp]
       @locales = Array(options[:locales]).map(&:to_s)
+      # mutable states
+      @blurbs = {}
+      @queued = {}
+      @started = false
+      @downloaded = false
     end
 
     # Returns content for the given blurb.
