@@ -198,6 +198,9 @@ input[type="text"].copy-tuner-bar__search {
   line-height: 20px;
   vertical-align: middle;
   color: black;
+  width: auto;
+  height: auto;
+  font-size: 14px;
 }
 
 .copy-tuner-hidden {
