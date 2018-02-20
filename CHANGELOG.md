@@ -1,7 +1,6 @@
 ## 0.4.5
 - changes
   - Fix deprecated css.
-  - Update Ruby and libraries.
 
 ## 0.4.4
 - bug fix
