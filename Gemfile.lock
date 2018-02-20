@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    copy_tuner_client (0.4.4)
+    copy_tuner_client (0.4.5)
       i18n (>= 0.5.0)
       json
 
@@ -87,14 +87,14 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.3.0)
     minitest (5.10.1)
     mocha (1.2.1)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
     multi_test (0.1.2)
-    nokogiri (1.7.1)
-      mini_portile2 (~> 2.1.0)
+    nokogiri (1.8.2)
+      mini_portile2 (~> 2.3.0)
     public_suffix (2.0.5)
     rack (1.6.5)
     rack-protection (1.5.3)
@@ -189,4 +189,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.14.6
+   1.16.1
