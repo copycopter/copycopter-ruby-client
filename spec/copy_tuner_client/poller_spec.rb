@@ -95,14 +95,4 @@ describe CopyTunerClient::Poller do
 
     expect(logger).to have_received(:flush).at_least_once
   end
-
-  it "starts from the top-level constant" do
-    poller = build_poller
-    CopyTunerClient.poller = poller
-    poller.stubs(:start)
-
-    CopyTunerClient.start_poller
-
-    expect(poller).to have_received(:start)
-  end
 end

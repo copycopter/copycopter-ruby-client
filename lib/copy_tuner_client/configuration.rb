@@ -105,6 +105,8 @@ module CopyTunerClient
     # @return [Client] instance used to communicate with a CopyTuner Server.
     attr_accessor :client
 
+    attr_accessor :poller
+
     # @return [Boolean] To enable inline-translation-mode, set true.
     attr_accessor :inline_translation
 
@@ -230,16 +232,16 @@ module CopyTunerClient
 
       self.client ||= Client.new(to_hash)
       self.cache ||= Cache.new(client, to_hash)
-      poller = Poller.new(cache, to_hash)
-      process_guard = ProcessGuard.new(cache, poller, to_hash)
+      @poller = Poller.new(cache, to_hash)
+      process_guard = ProcessGuard.new(cache, @poller, to_hash)
       I18n.backend = I18nBackend.new(cache)
 
       if enable_middleware?
         logger.info "Using copytuner sync middleware"
-        middleware.use RequestSync, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
+        middleware.use RequestSync, :poller => @poller, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
         middleware.use CopyTunerClient::CopyrayMiddleware
       else
-        logger.info "[[[Warn]]] Not useing copytuner sync middleware" unless middleware
+        logger.info "[[[Warn]]] Not using copytuner sync middleware" unless middleware
       end
 
       @applied = true

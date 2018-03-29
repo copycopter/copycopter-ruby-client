@@ -1,5 +1,6 @@
 require 'thread'
 require 'copy_tuner_client/cache'
+require 'copy_tuner_client/queue_with_timeout'
 
 module CopyTunerClient
   # Starts a background thread that continually resynchronizes with the remote
@@ -12,16 +13,34 @@ module CopyTunerClient
       @cache         = cache
       @polling_delay = options[:polling_delay]
       @logger        = options[:logger]
-      @stop          = false
+      @command_queue = CopyTunerClient::QueueWithTimeout.new
+      @mutex         = Mutex.new
+      @thread        = nil
     end
 
     def start
-      @logger.info 'start poller'
-      Thread.new { poll } or logger.error("Couldn't start poller thread")
+      @mutex.synchronize do
+        if @thread.nil?
+          @logger.info 'start poller thread'
+          @thread = Thread.new { poll } or logger.error("Couldn't start poller thread")
+        end
+      end
     end
 
     def stop
-      @stop = true
+      @mutex.synchronize do
+        @command_queue.uniq_push(:stop)
+        @thread.join if @thread
+        @thread = nil
+      end
+    end
+
+    def start_sync
+      @command_queue.uniq_push(:sync)
+    end
+
+    def wait_for_download
+      @cache.wait_for_download
     end
 
     private
@@ -29,17 +48,19 @@ module CopyTunerClient
     attr_reader :cache, :logger, :polling_delay
 
     def poll
-      until @stop
+      loop do
         cache.sync
         logger.flush if logger.respond_to?(:flush)
-        delay
+        begin
+          command = @command_queue.pop_with_timeout(polling_delay)
+          break if command == :stop
+        rescue ThreadError
+          # timeout
+        end
       end
+      @logger.info 'stop poller thread'
     rescue InvalidApiKey => error
       logger.error(error.message)
-    end
-
-    def delay
-      sleep(polling_delay)
     end
   end
 end
