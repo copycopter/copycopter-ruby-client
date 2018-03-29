@@ -93,6 +93,9 @@ module CopyTunerClient
     # @return [Boolean] disable middleware setting
     attr_accessor :disable_middleware
 
+    # {before: OtherMiddleware} or {after: OtherMiddleware}
+    attr_accessor :middleware_position
+
     # @return [Boolean] disable download translation for test enviroment
     attr_accessor :disable_test_translation
 
@@ -238,8 +241,17 @@ module CopyTunerClient
 
       if enable_middleware?
         logger.info "Using copytuner sync middleware"
-        middleware.use RequestSync, :poller => @poller, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex
-        middleware.use CopyTunerClient::CopyrayMiddleware
+        request_sync_options = {:poller => @poller, :cache => cache, :interval => sync_interval, :ignore_regex => sync_ignore_path_regex}
+        if middleware_position.is_a?(Hash) && middleware_position[:before]
+          middleware.insert_before middleware_position[:before], RequestSync, request_sync_options
+          middleware.insert_before middleware_position[:before], CopyTunerClient::CopyrayMiddleware
+        elsif middleware_position.is_a?(Hash) && middleware_position[:after]
+          middleware.insert_after middleware_position[:after], RequestSync, request_sync_options
+          middleware.insert_after middleware_position[:after], CopyTunerClient::CopyrayMiddleware
+        else
+          middleware.use RequestSync, request_sync_options
+          middleware.use CopyTunerClient::CopyrayMiddleware
+        end
       else
         logger.info "[[[Warn]]] Not using copytuner sync middleware" unless middleware
       end
