@@ -1,3 +1,8 @@
+## 0.4.6
+- changes
+  - Performance imporovement (sync with server asynchronously)
+  - Add config.middleware_position
+
 ## 0.4.5
 - changes
   - Fix deprecated css.
