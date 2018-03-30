@@ -1,3 +1,7 @@
+## 0.4.7
+- changes
+  - Compatibile with bullet gem (rewrap response with ActionDispatch::Response::RackBody)
+
 ## 0.4.6
 - changes
   - Performance imporovement (sync with server asynchronously)
