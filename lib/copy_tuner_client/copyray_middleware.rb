@@ -15,12 +15,11 @@ module CopyTunerClient
         body = append_translation_logs(body)
         body = inject_copy_tuner_bar(body)
         content_length = body.bytesize.to_s
-        if ActionDispatch::Response === response
-          response.body = [body]
-          response.headers['Content-Length'] = content_length
-          response.to_a
+        headers['Content-Length'] = content_length
+        # maintains compatibility with other middlewares
+        if defined?(ActionDispatch::Response::RackBody) && ActionDispatch::Response::RackBody === response
+          ActionDispatch::Response.new(status, headers, [body]).to_a
         else
-          headers['Content-Length'] = content_length
           [status, headers, [body]]
         end
       else
