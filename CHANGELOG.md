@@ -1,3 +1,7 @@
+## 0.4.8
+- changes
+  - Support passenger 5.3.x
+
 ## 0.4.7
 - changes
   - Compatibile with bullet gem (rewrap response with ActionDispatch::Response::RackBody)
@@ -18,10 +22,10 @@
 ## 0.4.3
 - bug fix
   - Start poller thread regardless of puma mode. #39
-   
+
 ## 0.4.2
 - changes
-  - span tag is no longer added to translation text. 
+  - span tag is no longer added to translation text.
 
 ## 0.4.1
 - bug fixes
