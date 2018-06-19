@@ -34,7 +34,7 @@ module CopyTunerClient
     end
 
     def passenger_spawner?
-      defined?(PhusionPassenger) && ($0.include?("ApplicationSpawner") || $0.include?("rack-preloader"))
+      defined?(PhusionPassenger) && ($0.include?("Passenger AppPreloader") || $0.include?("ApplicationSpawner") || $0.include?("rack-preloader"))
     end
 
     def unicorn_spawner?
