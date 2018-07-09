@@ -46,6 +46,16 @@ bundle exec rake copy_tuner:export
 Development
 =================
 
+## JavaScript
+
+`app/assets/javascripts/copyray.js`を直接編集したらダメよ。
+
+```
+$ npm run watch   # Watch files for changes
+$ npm run build   # Compile to a <script> containing a self-executing function
+```
+
+
 ## Spec
 
 ### default spec
@@ -63,9 +73,3 @@ Development
     $ bundle exec rake install    # install to local gem
     $ bundle exec rake release    # release gem to rubygems.org
 
-## JavaScript
-
-```
-$ npm run watch   # Watch files for changes
-$ npm run build   # Compile to a <script> containing a self-executing function
-```
