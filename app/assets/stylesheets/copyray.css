@@ -97,11 +97,13 @@ a.copyray-toggle-button {
   bottom: 0;
   color: white;
   background: black;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border-radius: 0 10px 0 0;
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
   z-index: 10000;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 a.copyray-toggle-button:hover {
@@ -205,4 +207,10 @@ input[type="text"].copy-tuner-bar__search {
 
 .copy-tuner-hidden {
   display: none !important;
+}
+
+@media screen and (max-width: 480px) {
+  .hidden-on-mobile {
+    display: none;
+  }
 }

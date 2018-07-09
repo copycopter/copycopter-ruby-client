@@ -943,6 +943,7 @@ var Copyray = function () {
       });
 
       element.classList.add('copyray-toggle-button');
+      element.classList.add('hidden-on-mobile');
       element.textContent = 'Open CopyTuner';
       document.body.appendChild(element);
 
