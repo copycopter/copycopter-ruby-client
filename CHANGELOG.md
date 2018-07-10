@@ -1,3 +1,8 @@
+## 0.4.9
+- changes
+  - Smaller toggle button.
+  - Hide toggle button on mobile device.
+
 ## 0.4.8
 - changes
   - Support passenger 5.3.x
