@@ -14,7 +14,7 @@ namespace :copy_tuner do
       File.new("#{Rails.root}/#{path}", 'w').write(yml)
       puts "Successfully exported blurbs to #{path}."
     else
-      puts "No blurbs have been cached."
+      raise "No blurbs have been cached."
     end
   end
 end
