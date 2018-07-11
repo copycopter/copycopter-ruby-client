@@ -4,6 +4,9 @@
   "repository": "https://github.com/SonicGarden/copy-tuner-ruby-client",
   "author": "SonicGarden",
   "license": "MIT",
+  "engines": {
+    "node": "8.x"
+  },
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w"
