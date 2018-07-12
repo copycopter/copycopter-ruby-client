@@ -121,20 +121,15 @@ describe CopyTunerClient::Cache do
   it "blocks until the first download is complete" do
     logger = FakeLogger.new
     expect(logger).to receive(:flush)
-    client.delay = 0.5
+    client.delay = 1
     cache = build_cache(:logger => logger)
 
     Thread.new { cache.download }
 
-    finished = false
-    Thread.new do
+    t = Thread.new do
       cache.wait_for_download
-      finished = true
     end
-
-    sleep(1)
-
-    expect(finished).to eq(true)
+    expect(t.join(5)).not_to be_nil
     expect(logger).to have_entry(:info, "Waiting for first download")
   end
 
