@@ -162,9 +162,8 @@ describe CopyTunerClient::Configuration do
 
   it 'logs to $stdout by default' do
     logger = FakeLogger.new
-    Logger.stubs :new => logger
+    expect(Logger).to receive(:new).with($stdout).and_return(logger)
     config = CopyTunerClient::Configuration.new
-    expect(Logger).to have_received(:new).with($stdout)
     expect(config.logger.original_logger).to eq(logger)
   end
 
@@ -194,19 +193,19 @@ end
 
 shared_context 'stubbed configuration' do
   subject { CopyTunerClient::Configuration.new }
-  let(:backend) { stub('i18n-backend') }
-  let(:cache) { stub('cache', :download => "download") }
-  let(:client) { stub('client') }
+  let(:backend) { double('i18n-backend') }
+  let(:cache) { double('cache', download: "download") }
+  let(:client) { double('client') }
   let(:logger) { FakeLogger.new }
-  let(:poller) { stub('poller') }
-  let(:process_guard) { stub('process_guard', :start => nil) }
+  let(:poller) { double('poller') }
+  let(:process_guard) { double('process_guard', start: nil) }
 
   before do
-    CopyTunerClient::I18nBackend.stubs :new => backend
-    CopyTunerClient::Client.stubs :new => client
-    CopyTunerClient::Cache.stubs :new => cache
-    CopyTunerClient::Poller.stubs :new => poller
-    CopyTunerClient::ProcessGuard.stubs :new => process_guard
+    allow(CopyTunerClient::I18nBackend).to receive(:new).and_return(backend)
+    allow(CopyTunerClient::Client).to receive(:new).and_return(client)
+    allow(CopyTunerClient::Cache).to receive(:new).and_return(cache)
+    allow(CopyTunerClient::Poller).to receive(:new).and_return(poller)
+    allow(CopyTunerClient::ProcessGuard).to receive(:new).and_return(process_guard)
     subject.logger = logger
     apply
   end
@@ -243,7 +242,7 @@ end
 describe CopyTunerClient::Configuration, 'applied when testing' do
   it_should_behave_like 'applied configuration' do
     it 'does not start the process guard' do
-      expect(process_guard).to have_received(:start).never
+      expect(process_guard).not_to receive(:start)
     end
   end
 
@@ -334,13 +333,16 @@ describe CopyTunerClient::Configuration, 'applied with locale filter' do
 end
 
 describe CopyTunerClient::Configuration, 'applied with Rails i18n config' do
+  let!(:rails_defined) { Object.const_defined?(:Rails) }
+
   def self.with_config(i18n_options)
-    around do |ex|
-      rails_defined = Object.const_defined?(:Rails)
+    before do
       Object.const_set :Rails, Module.new unless rails_defined
-      i18n = stub(i18n_options)
-      Rails.stubs application: stub(config: stub(i18n: i18n))
-      ex.run
+      i18n = double('i18n', i18n_options)
+      allow(Rails).to receive_message_chain(:application, :config, :i18n) { i18n }
+    end
+
+    after do
       Object.send(:remove_const, :Rails) unless rails_defined
     end
   end

@@ -11,24 +11,26 @@ describe CopyTunerClient::ProcessGuard do
     $0 = @original_process_name
   end
 
-  let(:cache) { stub('cache', :flush => nil) }
-  let(:poller) { stub('poller', :start => nil) }
+  let(:cache) { double('cache', flush: nil) }
+  let(:poller) { double('poller', start: nil) }
 
   def build_process_guard(options = {})
+    preserve_exit_hook = options.delete(:preserve_exit_hook)
     options[:logger] ||= FakeLogger.new
     options[:cache]  ||= cache
-    CopyTunerClient::ProcessGuard.new(options[:cache], poller, options)
+    process_guard = CopyTunerClient::ProcessGuard.new(options[:cache], poller, options)
+    allow(process_guard).to receive(:register_exit_hooks) unless preserve_exit_hook
+    process_guard
   end
 
   it "starts polling from a worker process" do
+    expect(poller).to receive(:start)
     process_guard = build_process_guard
-
     process_guard.start
-
-    expect(poller).to have_received(:start)
   end
 
   it "registers passenger hooks from the passenger master" do
+    expect(poller).not_to receive(:start)
     logger = FakeLogger.new
     passenger = define_constant('PhusionPassenger', FakePassenger.new)
     passenger.become_master
@@ -37,10 +39,10 @@ describe CopyTunerClient::ProcessGuard do
     process_guard.start
 
     expect(logger).to have_entry(:info, "Registered Phusion Passenger fork hook")
-    expect(poller).to have_received(:start).never
   end
 
   it "starts polling from a passenger worker" do
+    expect(poller).to receive(:start)
     logger = FakeLogger.new
     passenger = define_constant('PhusionPassenger', FakePassenger.new)
     passenger.become_master
@@ -48,11 +50,10 @@ describe CopyTunerClient::ProcessGuard do
 
     process_guard.start
     passenger.spawn
-
-    expect(poller).to have_received(:start)
   end
 
   it "registers unicorn hooks from the unicorn master" do
+    expect(poller).not_to receive(:start)
     logger = FakeLogger.new
     define_constant('Unicorn', Module.new)
     http_server = Class.new(FakeUnicornServer)
@@ -63,10 +64,10 @@ describe CopyTunerClient::ProcessGuard do
     process_guard.start
 
     expect(logger).to have_entry(:info, "Registered Unicorn fork hook")
-    expect(poller).to have_received(:start).never
   end
 
   it "starts polling from a unicorn worker" do
+    expect(poller).to receive(:start)
     logger = FakeLogger.new
     define_constant('Unicorn', Module.new)
     http_server = Class.new(FakeUnicornServer)
@@ -76,14 +77,12 @@ describe CopyTunerClient::ProcessGuard do
 
     process_guard.start
     unicorn.spawn
-
-    expect(poller).to have_received(:start)
   end
 
   it "flushes when the process terminates" do
     cache = WritingCache.new
     pid = fork do
-      process_guard = build_process_guard(:cache => cache)
+      process_guard = build_process_guard(cache: cache, preserve_exit_hook: true)
       process_guard.start
       exit
     end

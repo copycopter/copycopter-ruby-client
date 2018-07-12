@@ -24,7 +24,7 @@ describe CopyTunerClient do
     let(:http) { Net::HTTP.new(config.host, config.port) }
 
     before do
-      Net::HTTP.stubs(:new => http)
+      allow(Net::HTTP).to receive(:new).and_return(http)
     end
 
     it 'should timeout when connecting' do
@@ -71,7 +71,7 @@ describe CopyTunerClient do
       ]
 
       errors.each do |original_error|
-        http.stubs(:request).raises(original_error)
+        allow(http).to receive(:request).and_raise(original_error)
         client = build_client_with_project
         expect { client.download { |ignore| } }.
           to raise_error(CopyTunerClient::ConnectionError) { |error|
@@ -200,11 +200,9 @@ describe CopyTunerClient do
     CopyTunerClient.configure do |config|
       config.client = client
     end
-    client.stubs(:deploy)
+    expect(client).to receive(:deploy)
 
     CopyTunerClient.deploy
-
-    expect(client).to have_received(:deploy)
   end
 
   it "deploys" do

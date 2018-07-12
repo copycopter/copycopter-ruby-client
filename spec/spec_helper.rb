@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rspec'
-require 'bourne'
 require 'sham_rack'
 require 'webmock/rspec'
 require 'active_support'
@@ -22,7 +21,6 @@ ShamRack.at('copy-tuner.com', 443).mount(FakeCopyTunerApp.new)
 RSpec.configure do |config|
   config.include ClientSpecHelpers
   config.include WebMock::API
-  config.mock_with :mocha
 
   config.before do
     FakeCopyTunerApp.reset

@@ -98,7 +98,7 @@ describe CopyTunerClient::Cache do
   it "handles connection errors when flushing" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:upload).raises(CopyTunerClient::ConnectionError.new(failure))
+    expect(client).to receive(:upload).and_raise(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
     cache['upload.key'] = 'upload'
 
@@ -110,7 +110,7 @@ describe CopyTunerClient::Cache do
   it "handles connection errors when downloading" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:download).raises(CopyTunerClient::ConnectionError.new(failure))
+    expect(client).to receive(:download).and_raise(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
 
     cache.download
@@ -120,7 +120,7 @@ describe CopyTunerClient::Cache do
 
   it "blocks until the first download is complete" do
     logger = FakeLogger.new
-    logger.stubs(:flush)
+    expect(logger).to receive(:flush)
     client.delay = 0.5
     cache = build_cache(:logger => logger)
 
@@ -135,9 +135,7 @@ describe CopyTunerClient::Cache do
     sleep(1)
 
     expect(finished).to eq(true)
-    # FIXME 成功したり、失敗していたりするので、一旦コメントアウト。後で直します。
-    # logger.should have_entry(:info, "Waiting for first download")
-    # logger.should have_received(:flush)
+    expect(logger).to have_entry(:info, "Waiting for first download")
   end
 
   it "doesn't block if the first download fails" do
@@ -218,7 +216,7 @@ describe CopyTunerClient::Cache do
 
     before do
       mutex.lock
-      Mutex.stubs(:new => mutex)
+      allow(Mutex).to receive(:new).and_return(mutex)
     end
 
     it "synchronizes read access to keys between threads" do
@@ -239,12 +237,9 @@ describe CopyTunerClient::Cache do
     CopyTunerClient.configure do |config|
       config.cache = cache
     end
-    cache.stubs(:flush)
+    expect(cache).to receive(:flush)
 
     CopyTunerClient.flush
-
-    # FIXME 不安定なので後ほど修正する。
-    # cache.should have_received(:flush)
   end
 
   describe "#export" do
@@ -260,11 +255,9 @@ describe CopyTunerClient::Cache do
       CopyTunerClient.configure do |config|
         config.cache = @cache
       end
-      @cache.stubs(:export)
+      expect(@cache).to receive(:export)
 
       CopyTunerClient.export
-
-      expect(@cache).to have_received(:export)
     end
 
     it "returns no yaml with no blurb keys" do
