@@ -4,6 +4,9 @@ class FakeClient
     @uploaded = {}
     @uploads = 0
     @downloads = 0
+    @mutex = Mutex.new
+    @cond = ConditionVariable.new
+    @go = false
   end
 
   attr_reader :uploaded, :uploads, :downloads
@@ -36,11 +39,20 @@ class FakeClient
     @downloads > 0
   end
 
+  def go
+    @mutex.synchronize do
+      @go = true
+      @cond.signal
+    end
+  end
+
   private
 
   def wait_for_delay
     if delay
-      sleep delay
+      @mutex.synchronize do
+        @cond.wait(@mutex) until @go
+      end
     end
   end
 

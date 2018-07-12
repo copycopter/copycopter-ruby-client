@@ -133,6 +133,10 @@ module CopyTunerClient
       "#<CopyTunerClient::Cache:#{object_id}>"
     end
 
+    def pending?
+      @started && !@downloaded
+    end
+
     private
 
     attr_reader :client, :logger
@@ -165,10 +169,6 @@ module CopyTunerClient
 
     def lock(&block)
       @mutex.synchronize &block
-    end
-
-    def pending?
-      @started && !@downloaded
     end
   end
 end

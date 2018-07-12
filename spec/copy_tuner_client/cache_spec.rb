@@ -121,35 +121,45 @@ describe CopyTunerClient::Cache do
   it "blocks until the first download is complete" do
     logger = FakeLogger.new
     expect(logger).to receive(:flush)
-    client.delay = 1
+    client.delay = true
     cache = build_cache(:logger => logger)
 
-    Thread.new { cache.download }
+    t_download = Thread.new { cache.download }
+    sleep 0.1 until cache.pending?
 
-    t = Thread.new do
+    t_wait = Thread.new do
       cache.wait_for_download
     end
-    expect(t.join(5)).not_to be_nil
-    expect(logger).to have_entry(:info, "Waiting for first download")
+    sleep 0.1 until logger.has_entry?(:info, "Waiting for first download")
+    client.go
+    expect(t_download.join(1)).not_to be_nil
+    expect(cache.pending?).to be_falsey
+    expect(t_wait.join(1)).not_to be_nil
   end
 
   it "doesn't block if the first download fails" do
-    client.delay = 0.5
+    client.delay = true
     client.error = StandardError.new("Failure")
     cache = build_cache
 
-    Thread.new { cache.download }
-
-    finished = false
-    Thread.new do
-      cache.wait_for_download
-      finished = true
+    error = nil
+    t_download = Thread.new do
+      begin
+        cache.download
+      rescue StandardError => e
+        error = e
+      end
     end
+    sleep 0.1 until cache.pending?
 
-    sleep(1)
-
+    t_wait = Thread.new do
+      cache.wait_for_download
+    end
+    client.go
+    expect(t_download.join(1)).not_to be_nil
+    expect(error).to be_kind_of(StandardError)
+    expect(t_wait.join(1)).not_to be_nil
     expect { cache.download }.to raise_error(StandardError, "Failure")
-    expect(finished).to eq(true)
   end
 
   it "doesn't block before downloading" do
