@@ -242,7 +242,7 @@ describe CopyTunerClient::Cache do
     CopyTunerClient.configure do |config|
       config.cache = cache
     end
-    expect(cache).to receive(:flush)
+    expect(cache).to receive(:flush).at_least(:once)
 
     CopyTunerClient.flush
   end
