@@ -11,7 +11,7 @@ describe CopyTunerClient::I18nBackend do
 
   before do
     @default_backend = I18n.backend
-    cache.stubs(:wait_for_download)
+    allow(cache).to receive(:wait_for_download)
   end
 
   after { I18n.backend = @default_backend }
@@ -19,12 +19,10 @@ describe CopyTunerClient::I18nBackend do
   subject { build_backend }
 
   it "reloads locale files and waits for the download to complete" do
-    I18n.stubs(:load_path => [])
+    expect(I18n).to receive(:load_path).and_return([])
+    expect(cache).to receive(:wait_for_download)
     subject.reload!
     subject.translate('en', 'test.key', :default => 'something')
-
-    expect(cache).to have_received(:wait_for_download)
-    expect(I18n).to have_received(:load_path)
   end
 
   it "includes the base i18n backend" do
@@ -41,8 +39,8 @@ describe CopyTunerClient::I18nBackend do
   end
 
   it "finds available locales from locale files and cache" do
-    YAML.stubs(:load_file => { 'es' => { 'key' => 'value' } })
-    I18n.stubs(:load_path => ["test.yml"])
+    allow(YAML).to receive(:load_file).and_return({ 'es' => { 'key' => 'value' } })
+    allow(I18n).to receive(:load_path).and_return(["test.yml"])
 
     cache['en.key'] = ''
     cache['fr.key'] = ''

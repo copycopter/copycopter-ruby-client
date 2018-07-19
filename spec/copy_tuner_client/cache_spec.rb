@@ -98,7 +98,7 @@ describe CopyTunerClient::Cache do
   it "handles connection errors when flushing" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:upload).raises(CopyTunerClient::ConnectionError.new(failure))
+    expect(client).to receive(:upload).and_raise(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
     cache['upload.key'] = 'upload'
 
@@ -110,7 +110,7 @@ describe CopyTunerClient::Cache do
   it "handles connection errors when downloading" do
     failure = "server is napping"
     logger = FakeLogger.new
-    client.stubs(:download).raises(CopyTunerClient::ConnectionError.new(failure))
+    expect(client).to receive(:download).and_raise(CopyTunerClient::ConnectionError.new(failure))
     cache = build_cache(:logger => logger)
 
     cache.download
@@ -120,43 +120,46 @@ describe CopyTunerClient::Cache do
 
   it "blocks until the first download is complete" do
     logger = FakeLogger.new
-    logger.stubs(:flush)
-    client.delay = 0.5
+    expect(logger).to receive(:flush)
+    client.delay = true
     cache = build_cache(:logger => logger)
 
-    Thread.new { cache.download }
+    t_download = Thread.new { cache.download }
+    sleep 0.1 until cache.pending?
 
-    finished = false
-    Thread.new do
+    t_wait = Thread.new do
       cache.wait_for_download
-      finished = true
     end
-
-    sleep(1)
-
-    expect(finished).to eq(true)
-    # FIXME 成功したり、失敗していたりするので、一旦コメントアウト。後で直します。
-    # logger.should have_entry(:info, "Waiting for first download")
-    # logger.should have_received(:flush)
+    sleep 0.1 until logger.has_entry?(:info, "Waiting for first download")
+    client.go
+    expect(t_download.join(1)).not_to be_nil
+    expect(cache.pending?).to be_falsey
+    expect(t_wait.join(1)).not_to be_nil
   end
 
   it "doesn't block if the first download fails" do
-    client.delay = 0.5
+    client.delay = true
     client.error = StandardError.new("Failure")
     cache = build_cache
 
-    Thread.new { cache.download }
-
-    finished = false
-    Thread.new do
-      cache.wait_for_download
-      finished = true
+    error = nil
+    t_download = Thread.new do
+      begin
+        cache.download
+      rescue StandardError => e
+        error = e
+      end
     end
+    sleep 0.1 until cache.pending?
 
-    sleep(1)
-
+    t_wait = Thread.new do
+      cache.wait_for_download
+    end
+    client.go
+    expect(t_download.join(1)).not_to be_nil
+    expect(error).to be_kind_of(StandardError)
+    expect(t_wait.join(1)).not_to be_nil
     expect { cache.download }.to raise_error(StandardError, "Failure")
-    expect(finished).to eq(true)
   end
 
   it "doesn't block before downloading" do
@@ -218,7 +221,7 @@ describe CopyTunerClient::Cache do
 
     before do
       mutex.lock
-      Mutex.stubs(:new => mutex)
+      allow(Mutex).to receive(:new).and_return(mutex)
     end
 
     it "synchronizes read access to keys between threads" do
@@ -239,12 +242,9 @@ describe CopyTunerClient::Cache do
     CopyTunerClient.configure do |config|
       config.cache = cache
     end
-    cache.stubs(:flush)
+    expect(cache).to receive(:flush).at_least(:once)
 
     CopyTunerClient.flush
-
-    # FIXME 不安定なので後ほど修正する。
-    # cache.should have_received(:flush)
   end
 
   describe "#export" do
@@ -260,11 +260,9 @@ describe CopyTunerClient::Cache do
       CopyTunerClient.configure do |config|
         config.cache = @cache
       end
-      @cache.stubs(:export)
+      expect(@cache).to receive(:export)
 
       CopyTunerClient.export
-
-      expect(@cache).to have_received(:export)
     end
 
     it "returns no yaml with no blurb keys" do
