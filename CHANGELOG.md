@@ -1,3 +1,7 @@
+## 0.4.10
+- changes
+  - Hide copyray bar on all media.
+
 ## 0.4.9
 - changes
   - Smaller toggle button.
