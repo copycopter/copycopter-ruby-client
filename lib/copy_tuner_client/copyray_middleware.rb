@@ -69,7 +69,7 @@ module CopyTunerClient
     end
 
     def css_tag
-      helpers.stylesheet_link_tag :copyray
+      helpers.stylesheet_link_tag :copyray, media: :all
     end
 
     def file?(headers)
