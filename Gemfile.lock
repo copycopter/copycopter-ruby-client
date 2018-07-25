@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    copy_tuner_client (0.4.9)
+    copy_tuner_client (0.4.10)
       i18n (>= 0.5.0)
       json
 
@@ -183,4 +183,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
