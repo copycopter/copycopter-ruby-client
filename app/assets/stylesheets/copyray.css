@@ -58,7 +58,7 @@
   outline: 1px solid rgba(255, 255, 255, 0.8);
   outline-offset: -1px;
   color: #666;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
   font-size: 13px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
@@ -118,7 +118,7 @@ a.copyray-toggle-button:hover {
   height: 40px;
   padding: 0 8px;
   background: #222;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 200;
   color: #fff;
   z-index: 2147483647;
@@ -133,7 +133,7 @@ a.copyray-toggle-button:hover {
   bottom: 40px;
   max-height: calc(100vh - 40px);
   background: #222;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #fff;
   z-index: 2147483647;
   overflow-y: auto;
@@ -187,7 +187,7 @@ a.copyray-toggle-button:hover {
   background-color: #555;
 }
 
-input[type="text"].copy-tuner-bar__search {
+input[type='text'].copy-tuner-bar__search {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -211,6 +211,6 @@ input[type="text"].copy-tuner-bar__search {
 
 @media screen and (max-width: 480px) {
   .hidden-on-mobile {
-    display: none;
+    display: none !important;
   }
 }
