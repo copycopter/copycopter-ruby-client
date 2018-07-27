@@ -1,3 +1,7 @@
+## 0.4.11
+- changes
+  - Fix hide toggle button on mobile device.
+
 ## 0.4.10
 - changes
   - Hide copyray bar on all media.
