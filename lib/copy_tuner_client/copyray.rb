@@ -6,11 +6,12 @@ module CopyTunerClient
     #   <!--COPYRAY views.home.index.message-->message
     def self.augment_template(source, key)
       augmented = if source.present?
-                    "<!--COPYRAY #{key}-->#{source}"
+                    escape = CopyTunerClient.configuration.html_escape && !key.end_with?('_html', '.html')
+                    "<!--COPYRAY #{key}-->#{escape ? ERB::Util.html_escape(source) : source}"
                   else
                     source
                   end
-      ActiveSupport::SafeBuffer === source ? ActiveSupport::SafeBuffer.new(augmented) : augmented
+      augmented.html_safe
     end
   end
 end

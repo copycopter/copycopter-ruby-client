@@ -28,11 +28,7 @@ module CopyTunerClient
       if CopyTunerClient.configuration.inline_translation
         content = (content.is_a?(Array) ? content : key.to_s)
       end
-      if content.respond_to?(:html_safe)
-        content.html_safe
-      else
-        content
-      end
+      content
     end
 
     # Returns locales availabile for this CopyTuner project.
