@@ -111,11 +111,31 @@ describe CopyTunerClient::I18nBackend do
     expect(cache['en.test.key']).to eq 'default %{interpolate}'
   end
 
+  it "marks strings as html safe" do
+    cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
+    backend = build_backend
+    expect(backend.translate('en', 'test.key')).to be_html_safe
+  end
+
   it "looks up an array of defaults" do
     cache['en.key.one'] = "Expected"
     backend = build_backend
     expect(backend.translate('en', 'key.three', :default => [:"key.two", :"key.one"])).
       to eq('Expected')
+  end
+
+  context "html_escape option is true" do
+    before do
+      CopyTunerClient.configure do |configuration|
+        configuration.html_escape = true
+      end
+    end
+
+    it "do not marks strings as html safe" do
+      cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
+      backend = build_backend
+      expect(backend.translate('en', 'test.key')).not_to be_html_safe
+    end
   end
 
   describe "with stored translations" do
