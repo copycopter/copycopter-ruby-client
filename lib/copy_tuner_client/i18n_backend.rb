@@ -28,8 +28,10 @@ module CopyTunerClient
       if CopyTunerClient.configuration.inline_translation
         content = (content.is_a?(Array) ? content : key.to_s)
       end
-      if content.respond_to?(:html_safe)
-        content.html_safe
+
+      if !CopyTunerClient.configuration.html_escape
+        # Backward compatible
+        content.respond_to?(:html_safe) ? content.html_safe : content
       else
         content
       end

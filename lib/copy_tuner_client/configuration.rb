@@ -131,6 +131,9 @@ module CopyTunerClient
     # @return [Array<Symbol>] Restrict blurb locales to upload
     attr_accessor :locales
 
+    # @return [Boolean] Html escape
+    attr_accessor :html_escape
+
     alias_method :secure?, :secure
 
     def copyray_js_injection_regexp_for_debug=(value)
@@ -158,6 +161,7 @@ module CopyTunerClient
       self.test_environments = %w(test cucumber)
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
       self.disable_copyray_comment_injection = false
+      self.html_escape = false
 
       @applied = false
     end

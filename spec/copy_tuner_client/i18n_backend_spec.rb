@@ -124,6 +124,20 @@ describe CopyTunerClient::I18nBackend do
       to eq('Expected')
   end
 
+  context "html_escape option is true" do
+    before do
+      CopyTunerClient.configure do |configuration|
+        configuration.html_escape = true
+      end
+    end
+
+    it "do not marks strings as html safe" do
+      cache['en.test.key'] = FakeHtmlSafeString.new("Hello")
+      backend = build_backend
+      expect(backend.translate('en', 'test.key')).not_to be_html_safe
+    end
+  end
+
   describe "with stored translations" do
     subject { build_backend }
 

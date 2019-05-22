@@ -16,7 +16,7 @@ if defined?(SimpleForm)
         defaults = object.class.lookup_ancestors.map do |klass|
           "#{attributes_scope}.#{klass.model_name.i18n_key}.#{reflection_or_attribute_name}"
         end
-        CopyTunerClient::Copyray.augment_template(source, defaults.shift).html_safe
+        CopyTunerClient::Copyray.augment_template(source, defaults.shift)
       else
         source
       end
