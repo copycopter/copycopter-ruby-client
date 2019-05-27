@@ -17,6 +17,7 @@ Create config/initializers/copy_tuner.rb
 CopyTunerClient.configure do |config|
   config.api_key = 'YOUR-API-KEY'
   config.host = 'COPY-TUNER-HOST-NAME'
+  config.html_escape = true
 
   # I18n keys and messages will be sent to server if the locale matches
   config.locales = [:ja, :en]
@@ -72,4 +73,3 @@ $ npm run build   # Compile to a <script> containing a self-executing function
     $ bundle exec rake build      # build gem to pkg/ dir
     $ bundle exec rake install    # install to local gem
     $ bundle exec rake release    # release gem to rubygems.org
-
