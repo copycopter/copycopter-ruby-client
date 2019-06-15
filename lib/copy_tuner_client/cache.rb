@@ -20,6 +20,7 @@ module CopyTunerClient
       @locales = Array(options[:locales]).map(&:to_s)
       # mutable states
       @blurbs = {}
+      @blank_keys = Set.new
       @queued = {}
       @started = false
       @downloaded = false
@@ -37,7 +38,7 @@ module CopyTunerClient
     # @param key [String] the key of the blurb to update
     # @param value [String] the new contents of the blurb
     def []=(key, value)
-      return if key =~ @exclude_key_regexp
+      return if key.match?(@exclude_key_regexp) || @blank_keys.membber?(key)
       return if @locales.present? && !@locales.member?(key.split('.').first)
       lock { @queued[key] = value }
     end
@@ -108,8 +109,11 @@ module CopyTunerClient
       @started = true
 
       res = client.download do |downloaded_blurbs|
-        downloaded_blurbs.reject! { |key, value| value == '' }
-        lock { @blurbs = downloaded_blurbs }
+        blank_blurbs, blurbs = downloaded_blurbs.partition { |_key, value| value == '' }
+        lock do
+          @blank_keys = Set.new(blank_blurbs.to_h.keys)
+          @blurbs = blurbs.to_h
+        end
       end
 
       @last_downloaded_at = Time.now.utc
