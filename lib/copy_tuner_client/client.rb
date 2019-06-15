@@ -16,6 +16,8 @@ module CopyTunerClient
                    Net::ProtocolError, SocketError, OpenSSL::SSL::SSLError,
                    Errno::ECONNREFUSED]
 
+    USER_AGENT = "copy_tuner_client #{CopyTunerClient::VERSION}"
+
     # Usually instantiated from {Configuration#apply}. Copies options.
     # @param options [Hash]
     # @option options [String] :api_key API key of the project to connect to
@@ -67,7 +69,7 @@ module CopyTunerClient
     # @raise [ConnectionError] if the connection fails
     def upload(data)
       connect(host) do |http|
-        response = http.post(uri('draft_blurbs'), data.to_json, 'Content-Type' => 'application/json')
+        response = http.post(uri('draft_blurbs'), data.to_json, 'Content-Type' => 'application/json', 'User-Agent' => USER_AGENT)
         check response
         log 'Uploaded missing translations'
       end
@@ -77,7 +79,7 @@ module CopyTunerClient
     # @raise [ConnectionError] if the connection fails
     def deploy
       connect(host) do |http|
-        response = http.post(uri('deploys'), '')
+        response = http.post(uri('deploys'), '', 'User-Agent' => USER_AGENT)
         check response
         log 'Deployed'
       end
