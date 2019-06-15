@@ -6,12 +6,14 @@ namespace :copy_tuner do
   end
 
   desc "Export CopyTuner blurbs to yaml."
-  task :export => :environment do
+  task :export, [:file_name] => :environment do |_, args|
+    args.with_defaults(file_name: 'copy_tuner.yml')
+
     CopyTunerClient.cache.sync
 
     if yml = CopyTunerClient.export
-      path = "config/locales/copy_tuner.yml"
-      File.new("#{Rails.root}/#{path}", 'w').write(yml)
+      path = Rails.root.join('config', 'locales', args[:file_name])
+      File.new(path, 'w').write(yml)
       puts "Successfully exported blurbs to #{path}."
     else
       raise "No blurbs have been cached."
