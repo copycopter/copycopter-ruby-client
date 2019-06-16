@@ -38,7 +38,8 @@ module CopyTunerClient
     # @param key [String] the key of the blurb to update
     # @param value [String] the new contents of the blurb
     def []=(key, value)
-      return if key.match?(@exclude_key_regexp) || @blank_keys.membber?(key)
+      return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
+      return if @blank_keys.member?(key)
       return if @locales.present? && !@locales.member?(key.split('.').first)
       lock { @queued[key] = value }
     end
