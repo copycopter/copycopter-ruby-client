@@ -95,6 +95,20 @@ describe CopyTunerClient::Cache do
     expect(cache['test.key']).to eq('test value')
   end
 
+  it "download included empty keys" do
+    client['en.test.key'] = 'test value'
+    client['en.test.empty'] = ''
+    cache = build_cache
+
+    cache.download
+
+    expect(cache['en.test.key']).to eq('test value')
+    expect(cache['en.test.empty']).to eq(nil)
+
+    cache['en.test.empty'] = ''
+    expect(cache.queued).to be_empty
+  end
+
   it "handles connection errors when flushing" do
     failure = "server is napping"
     logger = FakeLogger.new
