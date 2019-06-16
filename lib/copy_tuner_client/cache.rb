@@ -40,9 +40,11 @@ module CopyTunerClient
     # @param value [String] the new contents of the blurb
     def []=(key, value)
       return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
-      return if @blank_keys.member?(key)
       return if @locales.present? && !@locales.member?(key.split('.').first)
-      lock { @queued[key] = value }
+      lock do
+        return if @blank_keys.member?(key)
+        @queued[key] = value
+      end
     end
 
     # Keys for all blurbs stored on the server.
