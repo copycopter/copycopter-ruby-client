@@ -262,65 +262,33 @@ describe CopyTunerClient::Cache do
   end
 
   describe "#export" do
-    before do
-      save_blurbs
-      @cache = build_cache
-      @cache.download
-    end
+    subject { cache.export }
 
-    let(:save_blurbs) {}
+    let(:cache) do
+      cache = build_cache
+      cache.download
+      cache
+    end
 
     it "can be invoked from the top-level constant" do
       CopyTunerClient.configure do |config|
-        config.cache = @cache
+        config.cache = cache
       end
-      expect(@cache).to receive(:export)
-
+      expect(cache).to receive(:export)
       CopyTunerClient.export
     end
 
-    it "returns no yaml with no blurb keys" do
-      expect(@cache.export).to eq(nil)
+    it 'returns no yaml with no blurb keys' do
+      is_expected.to eq nil
     end
 
     context "with single-level blurb keys" do
-      let(:save_blurbs) do
+      before do
         client['key']       = 'test value'
         client['other_key'] = 'other test value'
       end
 
-      it "returns blurbs as yaml" do
-        exported = YAML.load(@cache.export)
-        expect(exported['key']).to eq('test value')
-        expect(exported['other_key']).to eq('other test value')
-      end
-    end
-
-    context "with multi-level blurb keys" do
-      let(:save_blurbs) do
-        client['en.test.key']       = 'en test value'
-        client['en.test.other_key'] = 'en other test value'
-        client['fr.test.key']       = 'fr test value'
-      end
-
-      it "returns blurbs as yaml" do
-        exported = YAML.load(@cache.export)
-        expect(exported['en']['test']['key']).to eq('en test value')
-        expect(exported['en']['test']['other_key']).to eq('en other test value')
-        expect(exported['fr']['test']['key']).to eq('fr test value')
-      end
-    end
-
-    context "with conflicting blurb keys" do
-      let(:save_blurbs) do
-        client['en.test']     = 'test value'
-        client['en.test.key'] = 'other test value'
-      end
-
-      it "retains the new key" do
-        exported = YAML.load(@cache.export)
-        expect(exported['en']['test']['key']).to eq('other test value')
-      end
+      it { is_expected.to eq "---\nkey: test value\nother_key: other test value\n" }
     end
   end
 end
