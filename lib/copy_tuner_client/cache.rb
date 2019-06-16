@@ -1,5 +1,6 @@
 require 'thread'
 require 'copy_tuner_client/client'
+require 'copy_tuner_client/dotted_hash'
 
 module CopyTunerClient
   # Manages synchronization of copy between {I18nBackend} and {Client}. Acts
@@ -53,30 +54,7 @@ module CopyTunerClient
     # Yaml representation of all blurbs
     # @return [String] yaml
     def export
-      keys = {}
-      lock do
-        @blurbs.sort.each do |(blurb_key, value)|
-          current = keys
-          yaml_keys = blurb_key.split('.')
-
-          0.upto(yaml_keys.size - 2) do |i|
-            key = yaml_keys[i]
-
-            # Overwrite en.key with en.sub.key
-            unless current[key].class == Hash
-              current[key] = {}
-            end
-
-            current = current[key]
-          end
-
-          current[yaml_keys.last] = value
-        end
-      end
-
-      unless keys.size < 1
-        keys.to_yaml
-      end
+      lock { @blurbs.present? ? DottedHash.to_yaml(@blurbs) : nil }
     end
 
     # Waits until the first download has finished.
