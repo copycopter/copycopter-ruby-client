@@ -19,7 +19,7 @@ module CopyTunerClient
 
     def invalid_keys(dotted_hash)
       all_keys = dotted_hash.keys
-      results = Hash.new {[]}
+      results = {}
 
       all_keys.sort.each do |key|
         invalid_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
