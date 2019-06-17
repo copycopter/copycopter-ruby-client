@@ -16,6 +16,12 @@ describe CopyTunerClient::DottedHash do
       it { is_expected.to eq({ 'key' => 'test value', 'other_key' => 'other value' }) }
     end
 
+    context 'array of key value pairs' do
+      let(:dotted_hash) { [['key', 'test value'], ['other_key', 'other value']] }
+
+      it { is_expected.to eq({ 'key' => 'test value', 'other_key' => 'other value' }) }
+    end
+
     context "with multi-level blurb keys" do
       let(:dotted_hash) do
         {

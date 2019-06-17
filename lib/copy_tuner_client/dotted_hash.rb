@@ -2,7 +2,7 @@ module CopyTunerClient
   module DottedHash
     def to_hash(dotted_hash)
       hash = {}
-      dotted_hash.transform_keys(&:to_s).sort.each do |key, value|
+      dotted_hash.to_h.transform_keys(&:to_s).sort.each do |key, value|
         _hash = key.split('.').reverse.inject(value) { |memo, key| { key => memo } }
         hash.deep_merge!(_hash)
       end
