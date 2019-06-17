@@ -22,28 +22,21 @@ namespace :copy_tuner do
 
   desc "Detect invalid keys."
   task :detect_invalid_keys => :environment do
-    keys = Set.new
-    invalid_keys = Hash.new {[]}
+    all_keys = CopyTunerClient.keys
+    results = Hash.new {[]}
 
-    CopyTunerClient.keys.sort.each do |key|
-      parts = key.split('.').inject([]) do |memo, k|
-        memo << (memo.present? ? [memo.last, k].join('.') : k)
+    all_keys.sort.each do |key|
+      invalid_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
+      if invalid_keys.present?
+        results[key] = invalid_keys
       end
-
-      already_key = parts.find { |k| keys.member?(k) }
-      if already_key.present?
-        invalid_keys[already_key] = invalid_keys[already_key].push(key)
-        next
-      end
-
-      keys.add(key)
     end
 
-    if invalid_keys.length > 0
-      pp invalid_keys
-      raise 'Exists invalid keys'
-    else
+    if results.empty?
       puts 'All success'
+    else
+      pp results
+      raise 'Exists invalid keys'
     end
   end
 end
