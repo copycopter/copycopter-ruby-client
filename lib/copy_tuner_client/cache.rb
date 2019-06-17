@@ -112,7 +112,7 @@ module CopyTunerClient
       flush
     end
 
-    attr_reader :last_downloaded_at, :last_uploaded_at, :queued
+    attr_reader :last_downloaded_at, :last_uploaded_at, :queued, :blurbs
 
     def inspect
       "#<CopyTunerClient::Cache:#{object_id}>"

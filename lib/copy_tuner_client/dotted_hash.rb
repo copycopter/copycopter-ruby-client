@@ -17,6 +17,20 @@ module CopyTunerClient
       to_hash(dotted_hash).to_yaml
     end
 
-    module_function :to_hash, :to_json, :to_yaml
+    def invalid_keys(dotted_hash)
+      all_keys = dotted_hash.keys
+      results = Hash.new {[]}
+
+      all_keys.sort.each do |key|
+        invalid_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
+        if invalid_keys.present?
+          results[key] = invalid_keys
+        end
+      end
+
+      results
+    end
+
+    module_function :to_hash, :to_json, :to_yaml, :invalid_keys
   end
 end
