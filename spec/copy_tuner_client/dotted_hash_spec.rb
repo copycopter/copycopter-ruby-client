@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe CopyTunerClient::DottedHash do
-  describe ".to_hash" do
-    subject { CopyTunerClient::DottedHash.to_hash(dotted_hash) }
+  describe ".to_h" do
+    subject { CopyTunerClient::DottedHash.to_h(dotted_hash) }
 
     context 'empty keys' do
       let(:dotted_hash) { {} }

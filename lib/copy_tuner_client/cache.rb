@@ -56,7 +56,7 @@ module CopyTunerClient
     # Yaml representation of all blurbs
     # @return [String] yaml
     def export
-      lock { @blurbs.present? ? DottedHash.to_yaml(@blurbs) : nil }
+      lock { @blurbs.present? ? DottedHash.to_h(@blurbs).to_yaml : nil }
     end
 
     # Waits until the first download has finished.
