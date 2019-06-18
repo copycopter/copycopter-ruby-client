@@ -45,10 +45,5 @@ module CopyTunerClient
     initializer "copy_tuner.assets.precompile", group: :all do |app|
       app.config.assets.precompile += ["copyray.js", "copyray.css"]
     end
-
-    # NOTE: 二重読み込みされているっぽいので外して様子見
-    # rake_tasks do
-    #   load "tasks/copy_tuner_client_tasks.rake"
-    # end
   end
 end
