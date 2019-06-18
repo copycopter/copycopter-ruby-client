@@ -9,20 +9,20 @@ module CopyTunerClient
       hash
     end
 
-    def invalid_keys(dotted_hash)
+    def conflict_keys(dotted_hash)
       all_keys = dotted_hash.keys
       results = {}
 
       all_keys.sort.each do |key|
-        invalid_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
-        if invalid_keys.present?
-          results[key] = invalid_keys
+        conflict_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
+        if conflict_keys.present?
+          results[key] = conflict_keys
         end
       end
 
       results
     end
 
-    module_function :to_h, :invalid_keys
+    module_function :to_h, :conflict_keys
   end
 end

@@ -60,8 +60,8 @@ describe CopyTunerClient::DottedHash do
     end
   end
 
-  describe ".invalid_keys" do
-    subject { CopyTunerClient::DottedHash.invalid_keys(dotted_hash) }
+  describe ".conflict_keys" do
+    subject { CopyTunerClient::DottedHash.conflict_keys(dotted_hash) }
 
     context 'valid keys' do
       let(:dotted_hash) do

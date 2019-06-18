@@ -21,13 +21,13 @@ namespace :copy_tuner do
   end
 
   desc "Detect invalid keys."
-  task :detect_invalid_keys => :environment do
-    invalid_keys = CopyTunerClient::DottedHash.invalid_keys(CopyTunerClient.cache.blurbs)
+  task :detect_conflict_keys => :environment do
+    conflict_keys = CopyTunerClient::DottedHash.conflict_keys(CopyTunerClient.cache.blurbs)
 
-    if invalid_keys.empty?
+    if conflict_keys.empty?
       puts 'All success'
     else
-      pp invalid_keys
+      pp conflict_keys
       raise 'Exists invalid keys'
     end
   end
