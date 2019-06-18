@@ -26,10 +26,6 @@ module CopyTunerClient
     cache.export
   end
 
-  def self.keys
-    cache.keys
-  end
-
   # Flush queued changed synchronously
   def self.flush
     cache.flush
