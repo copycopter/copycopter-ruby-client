@@ -1,5 +1,6 @@
 ## 0.5.0
 - Drop support for ruby 2.3
+- Add tt helper
 - Add copy_tuner:detect_conflict_keys task
 - Do not re-upload empty keys
 - Fix dual loading tasks
