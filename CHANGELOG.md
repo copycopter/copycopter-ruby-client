@@ -1,3 +1,9 @@
+## 0.5.0
+- Not support ruby 2.3
+- Add copy_tuner:detect_conflict_keys task
+- Do not re-upload empty keys
+- Fix dual loading tasks
+
 ## 0.4.11
 - changes
   - Fix hide toggle button on mobile device.
