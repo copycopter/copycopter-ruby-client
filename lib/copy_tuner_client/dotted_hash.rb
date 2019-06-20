@@ -15,8 +15,9 @@ module CopyTunerClient
 
       all_keys.each_with_index do |key, index|
         prefix = "#{key}."
-        range = (index + 1)..-1
-        conflict_keys = all_keys.slice(range).take_while { |k| k.start_with?(prefix) }
+        conflict_keys = ((index + 1)..Float::INFINITY)
+          .take_while { |i| all_keys[i]&.start_with?(prefix) }
+          .map { |i| all_keys[i] }
 
         if conflict_keys.present?
           results[key] = conflict_keys
