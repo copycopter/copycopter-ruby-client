@@ -87,8 +87,8 @@ describe CopyTunerClient::DottedHash do
 
       it do
         is_expected.to eq({
-          'ja.hoge.test' => %w[ja.hoge.test.hoge ja.hoge.test.fuga],
           'ja.fuga.test' => %w[ja.fuga.test.hoge],
+          'ja.hoge.test' => %w[ja.hoge.test.fuga ja.hoge.test.hoge],
         })
       end
     end

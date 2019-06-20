@@ -10,11 +10,14 @@ module CopyTunerClient
     end
 
     def conflict_keys(dotted_hash)
-      all_keys = dotted_hash.keys
+      all_keys = dotted_hash.keys.sort
       results = {}
 
-      all_keys.sort.each do |key|
-        conflict_keys = all_keys.find_all { |k| k.start_with?("#{key}.") }
+      all_keys.each_with_index do |key, index|
+        prefix = "#{key}."
+        range = (index + 1)..-1
+        conflict_keys = all_keys.slice(range).take_while { |k| k.start_with?(prefix) }
+
         if conflict_keys.present?
           results[key] = conflict_keys
         end
