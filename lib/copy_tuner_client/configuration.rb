@@ -255,7 +255,7 @@ module CopyTunerClient
         process_guard.start
       end
 
-      if test? and !disable_test_translation
+      if !(test? && disable_test_translation)
         logger.info "Download translation now"
         cache.download
       end

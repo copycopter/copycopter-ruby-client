@@ -5,6 +5,7 @@
 - Fix dual loading tasks
 - Remove config.copyray_js_injection_regexp_for_debug
 - Remove config.copyray_js_injection_regexp_for_precompiled
+- Download translation when initialization
 
 ## 0.4.11
 - changes
