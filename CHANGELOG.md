@@ -3,6 +3,8 @@
 - Add copy_tuner:detect_conflict_keys task
 - Do not re-upload empty keys
 - Fix dual loading tasks
+- Remove config.copyray_js_injection_regexp_for_debug
+- Remove config.copyray_js_injection_regexp_for_precompiled
 
 ## 0.4.11
 - changes

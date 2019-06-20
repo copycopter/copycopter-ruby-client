@@ -119,12 +119,6 @@ module CopyTunerClient
     # @return [String] The S3 host to connect to (defaults to +copy-tuner-us.s3.amazonaws.com+).
     attr_accessor :s3_host
 
-    # @return [Regexp] Copyray js injection pattern for debug
-    attr_accessor :copyray_js_injection_regexp_for_debug
-
-    # @return [Regexp] Copyray js injection pattern for precompiled
-    attr_accessor :copyray_js_injection_regexp_for_precompiled
-
     # @return [Boolean] To disable Copyray comment injection, set true
     attr_accessor :disable_copyray_comment_injection
 
@@ -135,14 +129,6 @@ module CopyTunerClient
     attr_accessor :html_escape
 
     alias_method :secure?, :secure
-
-    def copyray_js_injection_regexp_for_debug=(value)
-      logger.warn 'DEPRECATION WARNING: copyray_js_injection_regexp_for_debug is deprecated'
-    end
-
-    def copyray_js_injection_regexp_for_precompiled=(value)
-      logger.warn 'DEPRECATION WARNING: copyray_js_injection_regexp_for_precompiled is deprecated'
-    end
 
     # Instantiated from {CopyTunerClient.configure}. Sets defaults.
     def initialize
