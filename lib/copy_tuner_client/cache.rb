@@ -1,5 +1,6 @@
 require 'thread'
 require 'copy_tuner_client/client'
+require 'copy_tuner_client/dotted_hash'
 
 module CopyTunerClient
   # Manages synchronization of copy between {I18nBackend} and {Client}. Acts
@@ -20,6 +21,7 @@ module CopyTunerClient
       @locales = Array(options[:locales]).map(&:to_s)
       # mutable states
       @blurbs = {}
+      @blank_keys = Set.new
       @queued = {}
       @started = false
       @downloaded = false
@@ -37,9 +39,12 @@ module CopyTunerClient
     # @param key [String] the key of the blurb to update
     # @param value [String] the new contents of the blurb
     def []=(key, value)
-      return if key =~ @exclude_key_regexp
+      return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
       return if @locales.present? && !@locales.member?(key.split('.').first)
-      lock { @queued[key] = value }
+      lock do
+        return if @blank_keys.member?(key)
+        @queued[key] = value
+      end
     end
 
     # Keys for all blurbs stored on the server.
@@ -51,30 +56,7 @@ module CopyTunerClient
     # Yaml representation of all blurbs
     # @return [String] yaml
     def export
-      keys = {}
-      lock do
-        @blurbs.sort.each do |(blurb_key, value)|
-          current = keys
-          yaml_keys = blurb_key.split('.')
-
-          0.upto(yaml_keys.size - 2) do |i|
-            key = yaml_keys[i]
-
-            # Overwrite en.key with en.sub.key
-            unless current[key].class == Hash
-              current[key] = {}
-            end
-
-            current = current[key]
-          end
-
-          current[yaml_keys.last] = value
-        end
-      end
-
-      unless keys.size < 1
-        keys.to_yaml
-      end
+      lock { @blurbs.present? ? DottedHash.to_h(@blurbs).to_yaml : nil }
     end
 
     # Waits until the first download has finished.
@@ -108,8 +90,11 @@ module CopyTunerClient
       @started = true
 
       res = client.download do |downloaded_blurbs|
-        downloaded_blurbs.reject! { |key, value| value == '' }
-        lock { @blurbs = downloaded_blurbs }
+        blank_blurbs, blurbs = downloaded_blurbs.partition { |_key, value| value == '' }
+        lock do
+          @blank_keys = Set.new(blank_blurbs.to_h.keys)
+          @blurbs = blurbs.to_h
+        end
       end
 
       @last_downloaded_at = Time.now.utc
@@ -127,7 +112,7 @@ module CopyTunerClient
       flush
     end
 
-    attr_reader :last_downloaded_at, :last_uploaded_at, :queued
+    attr_reader :last_downloaded_at, :last_uploaded_at, :queued, :blurbs
 
     def inspect
       "#<CopyTunerClient::Cache:#{object_id}>"

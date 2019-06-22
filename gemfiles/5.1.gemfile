@@ -2,6 +2,6 @@
 
 source "http://rubygems.org"
 
-gem "rails", "4.0.13"
+gem "rails", "5.1.7"
 
 gemspec :path => "../"

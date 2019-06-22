@@ -31,6 +31,9 @@ module CopyTunerClient
             alias_method :translate_without_copyray_comment, :translate
             alias_method :translate, :translate_with_copyray_comment
             alias :t :translate
+            alias :tt :translate_without_copyray_comment
+          else
+            alias :tt :translate
           end
         end
       end
@@ -44,10 +47,6 @@ module CopyTunerClient
 
     initializer "copy_tuner.assets.precompile", group: :all do |app|
       app.config.assets.precompile += ["copyray.js", "copyray.css"]
-    end
-
-    rake_tasks do
-      load "tasks/copy_tuner_client_tasks.rake"
     end
   end
 end
