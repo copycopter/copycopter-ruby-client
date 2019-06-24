@@ -4,16 +4,16 @@ require 'cucumber/rake/task'
 require 'rspec/core/rake_task'
 require 'yard'
 
-desc 'Default: run the specs and features.'
-task :default => [:spec, :cucumber]
+desc 'Default: run the specs.'
+task default: [:spec]
 
 desc 'Test the copy_tuner_client plugin.'
 RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = ['--color', "--format progress"]
+  t.rspec_opts = ['--color', '--format progress']
   t.pattern = 'spec/copy_tuner_client/**/*_spec.rb'
 end
 
-desc "Run cucumber features"
+desc 'Run cucumber features'
 Cucumber::Rake::Task.new do |t|
   t.cucumber_opts = [
     '--tags', '~@wip',
@@ -22,5 +22,5 @@ Cucumber::Rake::Task.new do |t|
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb']
+  t.files = ['lib/**/*.rb']
 end
