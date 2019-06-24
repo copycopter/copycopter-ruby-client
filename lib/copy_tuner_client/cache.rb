@@ -42,7 +42,7 @@ module CopyTunerClient
       return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
       return if @locales.present? && !@locales.member?(key.split('.').first)
       lock do
-        return if @blank_keys.member?(key)
+        return if @blank_keys.member?(key) || @blurbs.key?(key)
         @queued[key] = value
       end
     end
