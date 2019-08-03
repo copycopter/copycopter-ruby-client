@@ -1,4 +1,3 @@
-require 'thread'
 require 'copy_tuner_client/client'
 require 'copy_tuner_client/dotted_hash'
 
@@ -40,9 +39,12 @@ module CopyTunerClient
     # @param value [String] the new contents of the blurb
     def []=(key, value)
       return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
+      return unless key.include?('.')
       return if @locales.present? && !@locales.member?(key.split('.').first)
+
       lock do
         return if @blank_keys.member?(key) || @blurbs.key?(key)
+
         @queued[key] = value
       end
     end
@@ -61,17 +63,15 @@ module CopyTunerClient
 
     # Waits until the first download has finished.
     def wait_for_download
-      if pending?
-        logger.info 'Waiting for first download'
+      return unless pending?
 
-        if logger.respond_to? :flush
-          logger.flush
-        end
+      logger.info 'Waiting for first download'
 
-        while pending?
-          sleep 0.1
-        end
+      if logger.respond_to? :flush
+        logger.flush
       end
+
+      sleep 0.1 while pending?
     end
 
     def flush
@@ -82,8 +82,8 @@ module CopyTunerClient
       @last_uploaded_at = Time.now.utc
 
       res
-    rescue ConnectionError => error
-      logger.error error.message
+    rescue ConnectionError => e
+      logger.error e.message
     end
 
     def download
@@ -100,8 +100,8 @@ module CopyTunerClient
       @last_downloaded_at = Time.now.utc
 
       res
-    rescue ConnectionError => error
-      logger.error error.message
+    rescue ConnectionError => e
+      logger.error e.message
     ensure
       @downloaded = true
     end
