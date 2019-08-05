@@ -16,6 +16,7 @@ describe CopyTunerClient::Copyray do
       before do
         CopyTunerClient.configure do |configuration|
           configuration.html_escape = false
+          configuration.client = FakeClient.new
         end
       end
 
@@ -36,6 +37,7 @@ describe CopyTunerClient::Copyray do
       before do
         CopyTunerClient.configure do |configuration|
           configuration.html_escape = true
+          configuration.client = FakeClient.new
         end
       end
 

@@ -9,7 +9,7 @@ describe CopyTunerClient::Cache do
     CopyTunerClient::Cache.new(client, default_config.update(config))
   end
 
-  it "provides access to downloaded data" do
+  it 'provides access to downloaded data' do
     client['en.test.key']       = 'expected'
     client['en.test.other_key'] = 'expected'
 
@@ -18,17 +18,17 @@ describe CopyTunerClient::Cache do
     cache.download
 
     expect(cache['en.test.key']).to eq('expected')
-    expect(cache.keys).to match_array(%w(en.test.key en.test.other_key))
+    expect(cache.keys).to match_array(%w[en.test.key en.test.other_key])
   end
 
-  it "exclude data if exclude_key_regexp is set" do
+  it 'exclude data if exclude_key_regexp is set' do
     cache = build_cache(exclude_key_regexp: /^en\.test\.other_key$/)
     cache['en.test.key']       = 'expected'
     cache['en.test.other_key'] = 'expected'
 
     cache.download
 
-    expect(cache.queued.keys).to match_array(%w(en.test.key))
+    expect(cache.queued.keys).to match_array(%w[en.test.key])
   end
 
   it "doesn't upload without changes" do
@@ -37,7 +37,15 @@ describe CopyTunerClient::Cache do
     expect(client).not_to be_uploaded
   end
 
-  it "uploads changes when flushed" do
+  it "Don't upload incorrect key" do
+    cache = build_cache
+    cache['ja'] = 'incorrect key'
+
+    cache.flush
+    expect(client).not_to be_uploaded
+  end
+
+  it 'uploads changes when flushed' do
     cache = build_cache
     cache['test.key'] = 'test value'
 
@@ -46,7 +54,7 @@ describe CopyTunerClient::Cache do
     expect(client.uploaded).to eq({ 'test.key' => 'test value' })
   end
 
-  it "uploads empties when nil is assigned" do
+  it 'uploads empties when nil is assigned' do
     cache = build_cache
     cache['test.key'] = nil
 
@@ -62,7 +70,7 @@ describe CopyTunerClient::Cache do
 
     cache.flush
 
-    expect(client.uploaded).to eq({'en.test.key' => 'uploaded en', 'ja.test.key' => 'uploaded ja'})
+    expect(client.uploaded).to eq({ 'en.test.key' => 'uploaded en', 'ja.test.key' => 'uploaded ja' })
   end
 
   it 'upload with locale filter' do
@@ -72,10 +80,10 @@ describe CopyTunerClient::Cache do
 
     cache.flush
 
-    expect(client.uploaded).to eq({'en.test.key' => 'uploaded'})
+    expect(client.uploaded).to eq({ 'en.test.key' => 'uploaded' })
   end
 
-  it "downloads changes" do
+  it 'downloads changes' do
     client['test.key'] = 'test value'
     cache = build_cache
 
@@ -84,7 +92,7 @@ describe CopyTunerClient::Cache do
     expect(cache['test.key']).to eq('test value')
   end
 
-  it "downloads and uploads when synced" do
+  it 'downloads and uploads when synced' do
     cache = build_cache
     client['test.key'] = 'test value'
     cache['other.key'] = 'other value'
@@ -95,7 +103,7 @@ describe CopyTunerClient::Cache do
     expect(cache['test.key']).to eq('test value')
   end
 
-  it "download included empty keys" do
+  it 'download included empty keys' do
     client['en.test.key'] = 'test value'
     client['en.test.empty'] = ''
     cache = build_cache
@@ -109,7 +117,7 @@ describe CopyTunerClient::Cache do
     expect(cache.queued).to be_empty
   end
 
-  it "Do not upload downloaded keys" do
+  it 'Do not upload downloaded keys' do
     client['en.test.key'] = 'test value'
     cache = build_cache
 
@@ -119,11 +127,11 @@ describe CopyTunerClient::Cache do
     expect(cache.queued).to be_empty
   end
 
-  it "handles connection errors when flushing" do
-    failure = "server is napping"
+  it 'handles connection errors when flushing' do
+    failure = 'server is napping'
     logger = FakeLogger.new
     expect(client).to receive(:upload).and_raise(CopyTunerClient::ConnectionError.new(failure))
-    cache = build_cache(:logger => logger)
+    cache = build_cache(logger: logger)
     cache['upload.key'] = 'upload'
 
     cache.flush
@@ -131,22 +139,22 @@ describe CopyTunerClient::Cache do
     expect(logger).to have_entry(:error, failure)
   end
 
-  it "handles connection errors when downloading" do
-    failure = "server is napping"
+  it 'handles connection errors when downloading' do
+    failure = 'server is napping'
     logger = FakeLogger.new
     expect(client).to receive(:download).and_raise(CopyTunerClient::ConnectionError.new(failure))
-    cache = build_cache(:logger => logger)
+    cache = build_cache(logger: logger)
 
     cache.download
 
     expect(logger).to have_entry(:error, failure)
   end
 
-  it "blocks until the first download is complete" do
+  it 'blocks until the first download is complete' do
     logger = FakeLogger.new
     expect(logger).to receive(:flush)
     client.delay = true
-    cache = build_cache(:logger => logger)
+    cache = build_cache(logger: logger)
 
     t_download = Thread.new { cache.download }
     sleep 0.1 until cache.pending?
@@ -154,7 +162,7 @@ describe CopyTunerClient::Cache do
     t_wait = Thread.new do
       cache.wait_for_download
     end
-    sleep 0.1 until logger.has_entry?(:info, "Waiting for first download")
+    sleep 0.1 until logger.has_entry?(:info, 'Waiting for first download')
     client.go
     expect(t_download.join(1)).not_to be_nil
     expect(cache.pending?).to be_falsey
@@ -163,7 +171,7 @@ describe CopyTunerClient::Cache do
 
   it "doesn't block if the first download fails" do
     client.delay = true
-    client.error = StandardError.new("Failure")
+    client.error = StandardError.new('Failure')
     cache = build_cache
 
     error = nil
@@ -183,12 +191,12 @@ describe CopyTunerClient::Cache do
     expect(t_download.join(1)).not_to be_nil
     expect(error).to be_kind_of(StandardError)
     expect(t_wait.join(1)).not_to be_nil
-    expect { cache.download }.to raise_error(StandardError, "Failure")
+    expect { cache.download }.to raise_error(StandardError, 'Failure')
   end
 
   it "doesn't block before downloading" do
     logger = FakeLogger.new
-    cache = build_cache(:logger => logger)
+    cache = build_cache(logger: logger)
 
     finished = false
     Thread.new do
@@ -199,7 +207,7 @@ describe CopyTunerClient::Cache do
     sleep(1)
 
     expect(finished).to eq(true)
-    expect(logger).not_to have_entry(:info, "Waiting for first download")
+    expect(logger).not_to have_entry(:info, 'Waiting for first download')
   end
 
   it "doesn't return blank copy" do
@@ -211,13 +219,13 @@ describe CopyTunerClient::Cache do
     expect(cache['en.test.key']).to be_nil
   end
 
-  describe "given locked mutex" do
+  describe 'given locked mutex' do
     RSpec::Matchers.define :finish_after_unlocking do |mutex|
       match do |thread|
         sleep(0.1)
 
         if thread.status === false
-          violated("finished before unlocking")
+          violated('finished before unlocking')
         else
           mutex.unlock
           sleep(0.1)
@@ -225,7 +233,7 @@ describe CopyTunerClient::Cache do
           if thread.status === false
             true
           else
-            violated("still running after unlocking")
+            violated('still running after unlocking')
           end
         end
       end
@@ -248,20 +256,20 @@ describe CopyTunerClient::Cache do
       allow(Mutex).to receive(:new).and_return(mutex)
     end
 
-    it "synchronizes read access to keys between threads" do
+    it 'synchronizes read access to keys between threads' do
       expect(Thread.new { cache['test.key'] }).to finish_after_unlocking(mutex)
     end
 
-    it "synchronizes read access to the key list between threads" do
+    it 'synchronizes read access to the key list between threads' do
       expect(Thread.new { cache.keys }).to finish_after_unlocking(mutex)
     end
 
-    it "synchronizes write access to keys between threads" do
+    it 'synchronizes write access to keys between threads' do
       expect(Thread.new { cache['test.key'] = 'value' }).to finish_after_unlocking(mutex)
     end
   end
 
-  it "flushes from the top level" do
+  it 'flushes from the top level' do
     cache = build_cache
     CopyTunerClient.configure do |config|
       config.cache = cache
@@ -271,7 +279,7 @@ describe CopyTunerClient::Cache do
     CopyTunerClient.flush
   end
 
-  describe "#export" do
+  describe '#export' do
     subject { cache.export }
 
     let(:cache) do
@@ -280,7 +288,7 @@ describe CopyTunerClient::Cache do
       cache
     end
 
-    it "can be invoked from the top-level constant" do
+    it 'can be invoked from the top-level constant' do
       CopyTunerClient.configure do |config|
         config.cache = cache
       end
@@ -292,7 +300,7 @@ describe CopyTunerClient::Cache do
       is_expected.to eq nil
     end
 
-    context "with single-level blurb keys" do
+    context 'with single-level blurb keys' do
       before do
         client['key']       = 'test value'
         client['other_key'] = 'other test value'

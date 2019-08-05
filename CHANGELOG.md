@@ -1,3 +1,7 @@
+## 0.5.2
+
+- Do not upload invalid keys
+
 ## 0.5.1
 
 - Do not upload downloaded keys

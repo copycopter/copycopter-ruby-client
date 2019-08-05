@@ -1,0 +1,2 @@
+inherit_gem:
+  sgcop: ruby/rubocop.yml

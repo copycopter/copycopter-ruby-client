@@ -128,6 +128,7 @@ describe CopyTunerClient::I18nBackend do
     before do
       CopyTunerClient.configure do |configuration|
         configuration.html_escape = true
+        configuration.client = FakeClient.new
       end
     end
 

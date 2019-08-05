@@ -5,7 +5,8 @@ describe CopyTunerClient do
     config[:logger] ||= FakeLogger.new
     default_config = CopyTunerClient::Configuration.new.to_hash
     default_config[:s3_host] = 'copy-tuner.com'
-    CopyTunerClient::Client.new(default_config.update(config))
+    client = CopyTunerClient::Client.new(default_config.update(config))
+    client
   end
 
   def add_project
@@ -197,6 +198,7 @@ describe CopyTunerClient do
 
   it "deploys from the top-level constant" do
     client = build_client
+    allow(client).to receive(:download)
     CopyTunerClient.configure do |config|
       config.client = client
     end
