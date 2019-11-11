@@ -2,4 +2,4 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'sgcop', github: 'SonicGarden/sgcop'
+gem 'sgcop', git: 'git://github.com/SonicGarden/sgcop.git'
