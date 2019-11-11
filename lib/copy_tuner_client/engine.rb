@@ -13,7 +13,13 @@ module CopyTunerClient
         ActionView::Helpers::TranslationHelper.class_eval do
           def translate_with_copyray_comment(key, options = {})
             source = translate_without_copyray_comment(key, options)
-            if !CopyTunerClient.configuration.disable_copyray_comment_injection && (options[:rescue_format] == :html || options[:rescue_format].nil?)
+            # TODO: 0.6.0以降で options[:rescue_format] == text を消す
+            if CopyTunerClient.configuration.disable_copyray_comment_injection || options[:rescue_format] == :text
+              if options[:rescue_format] == :text
+                ActiveSupport::Deprecation.warn('rescue_format option is deprecated in copy_tuner_client@0.6.0')
+              end
+              source
+            else
               separator = options[:separator] || I18n.default_separator
               scope = options[:scope]
               normalized_key =
@@ -23,8 +29,6 @@ module CopyTunerClient
                   I18n.normalize_keys(nil, key, scope, separator).join(separator)
                 end
               CopyTunerClient::Copyray.augment_template(source, normalized_key)
-            else
-              source
             end
           end
           if CopyTunerClient.configuration.enable_middleware?
