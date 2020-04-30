@@ -27,7 +27,10 @@ jobs:
           "gemfiles/6.0.gemfile",
         ]
     steps:
-    - run: apt update -y; apt install -y libsqlite3-dev
+    - name: Install packages
+      run: |
+        sudo apt update -y
+        sudo apt install -y libsqlite3-dev
     - uses: actions/checkout@v2
     - uses: actions/cache@v1
       with:
