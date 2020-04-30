@@ -1,3 +1,8 @@
+## 0.6.0
+
+- Drop support for ruby 2.4
+- Drop support for rails 5.1
+
 ## 0.5.2
 
 - Do not upload invalid keys

@@ -14,7 +14,6 @@ on:
 
 jobs:
   rspec:
-
     runs-on: ubuntu-latest
     env:
       BUNDLE_JOBS: 4
@@ -23,14 +22,19 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [2.6, 2.7]
+        gemfile: [
+          "gemfiles/5.2.gemfile",
+          "gemfiles/6.0.gemfile",
+        ]
     steps:
+    - run: apt update -y; apt install -y libsqlite3-dev
     - uses: actions/checkout@v2
     - uses: actions/cache@v1
       with:
         path: /home/runner/bundle
-        key: bundle-${{ matrix.ruby }}-${{ hashFiles('**/*.gemspec') }}
+        key: bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ hashFiles(matrix.gemfile) }}-${{ hashFiles('**/*.gemspec') }}
         restore-keys: |
-          bundle-${{ matrix.ruby }}-
+          bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -38,6 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         bundle config path /home/runner/bundle
+        bundle config --global gemfile ${{ matrix.gemfile }}
         bundle install
         bundle update
         bundle clean
