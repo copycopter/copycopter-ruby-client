@@ -1,3 +1,7 @@
+## 0.6.1
+
+- Fix ruby@2.7 keyword warning
+
 ## 0.6.0
 
 - Drop support for ruby 2.4
