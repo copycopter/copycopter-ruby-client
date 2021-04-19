@@ -1,3 +1,7 @@
+## 0.6.2
+
+- Add arguments to export task
+
 ## 0.6.1
 
 - Fix ruby@2.7 keyword warning
