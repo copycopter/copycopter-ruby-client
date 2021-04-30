@@ -1,3 +1,7 @@
+## 0.7.0
+
+- Add config.upload_disabled_environments
+
 ## 0.6.2
 
 - Add arguments to export task
