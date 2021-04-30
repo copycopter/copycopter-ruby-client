@@ -57,6 +57,9 @@ module CopyTunerClient
     # @return [Array<String>] A list of environments in which the server should not be contacted
     attr_accessor :test_environments
 
+    # @return [Array<String>] A list of environments in which the server should not be upload
+    attr_accessor :upload_disabled_environments
+
     # @return [String] The name of the environment the application is running in
     attr_accessor :environment_name
 
@@ -145,6 +148,7 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = true
       self.test_environments = %w(test cucumber)
+      self.upload_disabled_environments = []
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
       self.disable_copyray_comment_injection = false
       self.html_escape = false
@@ -163,7 +167,7 @@ module CopyTunerClient
     # Returns a hash of all configurable options
     # @return [Hash] configuration attributes
     def to_hash
-      base_options = { :public => public? }
+      base_options = { public: public?, upload_disabled: upload_disabled? }
 
       OPTIONS.inject(base_options) do |hash, option|
         hash.merge option.to_sym => send(option)
@@ -198,7 +202,11 @@ module CopyTunerClient
     # Determines if the content will fetched from the server
     # @return [Boolean] Returns +true+ if in a test environment, +false+ otherwise.
     def test?
-      test_environments.include? environment_name
+      test_environments.include?(environment_name)
+    end
+
+    def upload_disabled?
+      upload_disabled_environments.include?(environment_name)
     end
 
     # Determines if the configuration has been applied (internal)

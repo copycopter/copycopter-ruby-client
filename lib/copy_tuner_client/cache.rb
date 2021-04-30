@@ -17,6 +17,7 @@ module CopyTunerClient
       @logger = options[:logger]
       @mutex = Mutex.new
       @exclude_key_regexp = options[:exclude_key_regexp]
+      @upload_disabled = options[:upload_disabled]
       @locales = Array(options[:locales]).map(&:to_s)
       # mutable states
       @blurbs = {}
@@ -41,6 +42,7 @@ module CopyTunerClient
       return if @exclude_key_regexp && key.match?(@exclude_key_regexp)
       return unless key.include?('.')
       return if @locales.present? && !@locales.member?(key.split('.').first)
+      return if @upload_disabled
 
       lock do
         return if @blank_keys.member?(key) || @blurbs.key?(key)
