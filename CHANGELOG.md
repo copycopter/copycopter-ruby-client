@@ -1,3 +1,7 @@
+## 0.8.0
+
+- Change the default value of config.upload_disabled_environments
+
 ## 0.7.0
 
 - Add config.upload_disabled_environments

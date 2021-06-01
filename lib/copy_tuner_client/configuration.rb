@@ -148,7 +148,7 @@ module CopyTunerClient
       self.sync_interval_staging = 0
       self.secure = true
       self.test_environments = %w(test cucumber)
-      self.upload_disabled_environments = []
+      self.upload_disabled_environments = %w[production staging]
       self.s3_host = 'copy-tuner-data-prod.s3.amazonaws.com'
       self.disable_copyray_comment_injection = false
       self.html_escape = false
