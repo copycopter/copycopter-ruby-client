@@ -37,14 +37,14 @@ module CopyTunerClient
       if CopyTunerClient::TranslationLog.initialized?
         json = CopyTunerClient::TranslationLog.translations.to_json
         # Use block to avoid back reference \?
-        html.sub('</body>') { "<div id='copy-tuner-data' data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div></body>" }
+        append_to_html_body(html, "<div id='copy-tuner-data' data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div>")
       else
         html
       end
     end
 
     def inject_copy_tuner_bar(html)
-      html.sub(/<body[^>]*>/) { "#{Regexp.last_match}\n#{render_copy_tuner_bar}" }
+      append_to_html_body(html, render_copy_tuner_bar)
     end
 
     def render_copy_tuner_bar
@@ -59,17 +59,23 @@ module CopyTunerClient
     end
 
     def append_css(html)
-      html.sub(/<body[^>]*>/) { "#{Regexp.last_match}\n#{css_tag}" }
+      append_to_html_body(html, css_tag)
     end
 
     def append_js(html)
-      html.sub(%r{</body>}) do
-       "#{helpers.javascript_include_tag(:copyray)}\n#{Regexp.last_match}"
-      end
+      append_to_html_body(html, helpers.javascript_include_tag(:copyray))
     end
 
     def css_tag
       helpers.stylesheet_link_tag :copyray, media: :all
+    end
+
+    def append_to_html_body(html, content)
+      content = content.html_safe if content.respond_to?(:html_safe)
+      return html unless html.include?('</body>')
+
+      position = html.rindex('</body>')
+      html.insert(position, content + "\n")
     end
 
     def file?(headers)

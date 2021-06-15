@@ -1,3 +1,7 @@
+## 0.8.1
+
+- Fix bug in `CopyrayMiddleware`
+
 ## 0.8.0
 
 - Change the default value of config.upload_disabled_environments
