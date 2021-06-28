@@ -19,7 +19,7 @@ module CopyTunerClient
     def self.install_hook
       I18n.class_eval do
         class << self
-          def translate_with_copy_tuner_hook(key, **options)
+          def translate_with_copy_tuner_hook(key = nil, **options)
             scope = options[:scope]
             scope = scope.dup if scope.is_a?(Array) || scope.is_a?(String)
             result = translate_without_copy_tuner_hook(key, **options)
