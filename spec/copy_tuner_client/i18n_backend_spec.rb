@@ -139,6 +139,13 @@ describe CopyTunerClient::I18nBackend do
     end
   end
 
+  context 'non-string key' do
+    it 'Not to be registered in the cache' do
+      expect { subject.translate('en', {}) }.to throw_symbol(:exception)
+      expect(cache).not_to have_key 'en.{}'
+    end
+  end
+
   describe "with stored translations" do
     subject { build_backend }
 

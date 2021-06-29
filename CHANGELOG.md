@@ -1,3 +1,7 @@
+## 0.9.0
+
+- Do not upload invalid type keys
+
 ## 0.8.1
 
 - Fix bug in `CopyrayMiddleware`
