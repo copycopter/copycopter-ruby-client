@@ -1,3 +1,7 @@
+## 0.10.0
+
+- Add copy_tuner:detect_html_incompatible_keys task
+
 ## 0.9.0
 
 - Do not upload invalid type keys
