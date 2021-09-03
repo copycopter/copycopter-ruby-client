@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5.0'
   s.add_dependency 'i18n', '>= 0.5.0'
   s.add_dependency 'json'
+  s.add_dependency 'nokogiri'
   s.add_development_dependency 'rails', '~> 5.2.4.2'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '3.8.0' # NOTE: 3.9.0だとundefined method `synchronize'でコケるテストがある

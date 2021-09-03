@@ -25,8 +25,21 @@ namespace :copy_tuner do
     if conflict_keys.empty?
       puts 'All success'
     else
-      pp conflict_keys
-      raise 'Exists invalid keys'
+      puts conflict_keys.sort.join("\n")
+      exit 1
+    end
+  end
+
+  desc "Detect html incompatible keys."
+  task :detect_html_incompatible_keys => :environment do
+    require 'copy_tuner_client/i18n_compat'
+    html_incompatible_blurbs = CopyTunerClient::I18nCompat.select_html_incompatible_blurbs(CopyTunerClient.cache.blurbs)
+
+    if html_incompatible_blurbs.empty?
+      puts 'All success'
+    else
+      puts html_incompatible_blurbs.keys.sort.join("\n")
+      exit 1
     end
   end
 end
