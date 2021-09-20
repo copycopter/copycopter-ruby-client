@@ -61,12 +61,15 @@ $ npm run build   # Compile to a <script> containing a self-executing function
 
 ### default spec
 
-    $ bundle exec rake
+```
+$ bundle exec rspec
+```
 
-### Appraisal for Multi Version Rails spec
+### testing against all target rails versions
 
-    $ bundle exec appraisal install
-    $ bundle exec rake appraisal
+```
+$ ./test.sh
+```
 
 ## release gem
 
