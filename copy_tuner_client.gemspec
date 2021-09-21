@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'i18n', '>= 0.5.0'
   s.add_dependency 'json'
   s.add_dependency 'nokogiri'
-  s.add_development_dependency 'rails', '~> 5.2.4.2'
+  s.add_development_dependency 'rails', '~> 6.1'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec', '3.8.0' # NOTE: 3.9.0だとundefined method `synchronize'でコケるテストがある
+  s.add_development_dependency 'rspec'
   s.add_development_dependency 'sham_rack'
   s.add_development_dependency 'sinatra'
   s.add_development_dependency 'sqlite3'
