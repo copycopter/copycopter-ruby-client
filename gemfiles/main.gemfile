@@ -1,5 +1,5 @@
 source "http://rubygems.org"
 
-gem "rails", github: "rails/rails"
+gem "rails", github: "rails/rails", branch: "main"
 
 gemspec :path => "../"
