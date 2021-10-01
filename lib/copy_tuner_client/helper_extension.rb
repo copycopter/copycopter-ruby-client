@@ -5,11 +5,7 @@ module CopyTunerClient
         mod.class_eval do
           def translate_with_copyray_comment(key, **options)
             source = translate_without_copyray_comment(key, **options)
-            # TODO: 0.6.0以降で options[:rescue_format] == text を消す
-            if CopyTunerClient.configuration.disable_copyray_comment_injection || options[:rescue_format] == :text
-              if options[:rescue_format] == :text
-                ActiveSupport::Deprecation.warn('rescue_format option is deprecated in copy_tuner_client@0.6.0')
-              end
+            if CopyTunerClient.configuration.disable_copyray_comment_injection
               source
             else
               separator = options[:separator] || I18n.default_separator
