@@ -1,3 +1,6 @@
+## 0.11.0
+- Remove deprecated rescue_format option
+
 ## 0.10.0
 
 - Add copy_tuner:detect_html_incompatible_keys task
