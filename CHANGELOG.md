@@ -1,5 +1,7 @@
 ## 0.11.0
+
 - Remove deprecated rescue_format option
+- Fix ruby@2.7 keyword warning
 
 ## 0.10.0
 
