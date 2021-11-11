@@ -1,3 +1,7 @@
+## 0.12.0
+
+- Add `config.ignored_keys` and `config.ignored_error_handle`
+
 ## 0.11.0
 
 - Remove deprecated rescue_format option

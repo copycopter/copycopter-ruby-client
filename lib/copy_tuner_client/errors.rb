@@ -9,4 +9,7 @@ module CopyTunerClient
   # server does not recognize. Polling is aborted when this error is raised.
   class InvalidApiKey < StandardError
   end
+
+  class IgnoredKey < StandardError
+  end
 end
