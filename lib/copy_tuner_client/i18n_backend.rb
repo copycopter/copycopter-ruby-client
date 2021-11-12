@@ -65,6 +65,12 @@ module CopyTunerClient
 
       parts = I18n.normalize_keys(locale, key, scope, options[:separator])
       key_with_locale = parts.join('.')
+      key_without_locale = parts[1..].join('.')
+
+      if CopyTunerClient::configuration.ignored_keys.include?(key_without_locale)
+        CopyTunerClient::configuration.ignored_key_handler.call(IgnoredKey.new("Ignored key: #{key_without_locale}"))
+      end
+
       content = cache[key_with_locale] || super
       cache[key_with_locale] = nil if content.nil?
       content
