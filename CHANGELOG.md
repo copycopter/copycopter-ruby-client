@@ -1,6 +1,6 @@
 ## 0.12.0
 
-- Add `config.ignored_keys` and `config.ignored_error_handle`
+- Add `config.ignored_keys` and `config.ignored_key_handler`
 
 ## 0.11.0
 

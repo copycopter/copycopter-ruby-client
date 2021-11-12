@@ -68,7 +68,7 @@ module CopyTunerClient
       key_without_locale = parts[1..].join('.')
 
       if CopyTunerClient::configuration.ignored_keys.include?(key_without_locale)
-        CopyTunerClient::configuration.ignored_error_handle.call(IgnoredKey.new("Ignored key: #{key_without_locale}"))
+        CopyTunerClient::configuration.ignored_key_handler.call(IgnoredKey.new("Ignored key: #{key_without_locale}"))
       end
 
       content = cache[key_with_locale] || super
