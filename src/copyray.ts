@@ -14,15 +14,17 @@ const findBlurbs = () => {
     comments.push(curNode)
   }
 
-  return comments
-    // @ts-expect-error TS2531
-    .filter((comment) => comment.nodeValue.startsWith('COPYRAY'))
-    .map((comment) => {
-      // @ts-expect-error TS2488
-      const [, key] = comment.nodeValue.match(/^COPYRAY (\S*)$/)
-      const element = comment.parentNode
-      return { key, element }
-    })
+  return (
+    comments
+      // @ts-expect-error TS2531
+      .filter((comment) => comment.nodeValue.startsWith('COPYRAY'))
+      .map((comment) => {
+        // @ts-expect-error TS2488
+        const [, key] = comment.nodeValue.match(/^COPYRAY (\S*)$/)
+        const element = comment.parentNode
+        return { key, element }
+      })
+  )
 }
 
 export default class Copyray {
