@@ -152,11 +152,6 @@ is-core-module@^2.8.1:
   dependencies:
     has "^1.0.3"
 
-keycode-js@^1.0.0:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/keycode-js/-/keycode-js-1.0.4.tgz#3c56ce1363169291fa6fcc255190a87e81fa6667"
-  integrity sha512-kGZKTIlTtbZSb8NyBDb7xU/LlZf+bsHiAjb595M3flVPbSUCknGK/w2KXs8r9sVCcwwafQcrAGWDt7d38ajemw==
-
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"

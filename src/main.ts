@@ -1,4 +1,3 @@
-import KeyCode from 'keycode-js';
 import Copyray from './copyray';
 import { isMac } from './util';
 
@@ -18,7 +17,7 @@ const start = () => {
   const copyray = new Copyray(copyTunerUrl, data);
 
   document.addEventListener('keydown', (event) => {
-    if (copyray.isShowing && event.keyCode === KeyCode.KEY_ESCAPE) {
+    if (copyray.isShowing && ['Escape', 'Esc'].includes(event.key)) {
       copyray.hide();
       return;
     }
@@ -26,7 +25,7 @@ const start = () => {
     if (
       ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) &&
       event.shiftKey &&
-      event.keyCode === KeyCode.KEY_K
+      event.key === 'k'
     ) {
       copyray.toggle();
     }
