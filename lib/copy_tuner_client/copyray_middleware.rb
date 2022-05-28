@@ -12,8 +12,6 @@ module CopyTunerClient
       if html_headers?(status, headers) && body = response_body(response)
         body = append_css(body)
         body = append_js(body)
-        body = append_translation_logs(body)
-        body = inject_copy_tuner_bar(body)
         content_length = body.bytesize.to_s
         headers['Content-Length'] = content_length
         # maintains compatibility with other middlewares
@@ -33,36 +31,24 @@ module CopyTunerClient
       ActionController::Base.helpers
     end
 
-    def append_translation_logs(html)
-      if CopyTunerClient::TranslationLog.initialized?
-        json = CopyTunerClient::TranslationLog.translations.to_json
-        # Use block to avoid back reference \?
-        append_to_html_body(html, "<div id='copy-tuner-data' data-copy-tuner-translation-log='#{ERB::Util.html_escape json}' data-copy-tuner-url='#{CopyTunerClient.configuration.project_url}'></div>")
-      else
-        html
-      end
-    end
-
-    def inject_copy_tuner_bar(html)
-      append_to_html_body(html, render_copy_tuner_bar)
-    end
-
-    def render_copy_tuner_bar
-      if ApplicationController.respond_to?(:render)
-        # Rails 5
-        ApplicationController.render(:partial => "/copy_tuner_bar").html_safe
-      else
-        # Rails <= 4.2
-        ac = ActionController::Base.new
-        ac.render_to_string(:partial => '/copy_tuner_bar').html_safe
-      end
-    end
-
     def append_css(html)
       append_to_html_body(html, css_tag)
     end
 
     def append_js(html)
+      json =
+        if CopyTunerClient::TranslationLog.initialized?
+          CopyTunerClient::TranslationLog.translations.to_json
+        else
+          '{}'
+        end
+
+      append_to_html_body(html, helpers.javascript_tag(<<~SCRIPT))
+        window.CopyTuner = {
+          url: '#{CopyTunerClient.configuration.project_url}',
+          data: #{json},
+        }
+      SCRIPT
       append_to_html_body(html, helpers.javascript_include_tag(:main))
     end
 

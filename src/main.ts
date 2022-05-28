@@ -2,18 +2,37 @@
 import Copyray from './copyray'
 import { isMac } from './util'
 
+declare global {
+  interface Window {
+    CopyTuner: {
+      url: string
+      // TODO: type
+      data: object
+    }
+  }
+}
+
 import './copyray.css'
 
-const start = () => {
-  const dataElement = document.querySelector<HTMLDivElement>('#copy-tuner-data')
-  if (!dataElement) {
-    console.error('Not found #copy-tuner-data')
-    return
-  }
+// NOTE: 元々railsから出力されいてたマークアップに合わせてひとまず、、
+const appendCopyTunerBar = (url: string) => {
+  const bar = document.createElement('div')
+  bar.id = 'copy-tuner-bar'
+  bar.classList.add('copy-tuner-hidden')
+  bar.innerHTML = `
+    <a class="copy-tuner-bar-button" target="_blank" href="${url}">CopyTuner</a>
+    <a href="/copytuner" target="_blank" class="copy-tuner-bar-button">Sync</a>
+    <a href="javascript:void(0)" class="copy-tuner-bar-open-log copy-tuner-bar-button js-copy-tuner-bar-open-log">Translations in this page</a>
+    <input type="text" class="copy-tuner-bar__search js-copy-tuner-bar-search" placeholder="search">
+  `
+  document.body.append(bar)
+}
 
-  const copyTunerUrl = dataElement.dataset.copyTunerUrl
-  const data = JSON.parse(document.querySelector<HTMLDivElement>('#copy-tuner-data')!.dataset.copyTunerTranslationLog!)
-  const copyray = new Copyray(copyTunerUrl, data)
+const start = () => {
+  const { url, data } = window.CopyTuner
+
+  appendCopyTunerBar(url)
+  const copyray = new Copyray(url, data)
 
   document.addEventListener('keydown', (event) => {
     // @ts-expect-error TS2339
@@ -35,5 +54,5 @@ const start = () => {
 if (document.readyState === 'complete' || document.readyState !== 'loading') {
   start()
 } else {
-  document.addEventListener('DOMContentLoaded', start)
+  document.addEventListener('DOMContentLoaded', () => start())
 }

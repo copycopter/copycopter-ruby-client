@@ -352,15 +352,22 @@ class Copyray {
   }
 }
 var copyray = "";
+const appendCopyTunerBar = (url) => {
+  const bar = document.createElement("div");
+  bar.id = "copy-tuner-bar";
+  bar.classList.add("copy-tuner-hidden");
+  bar.innerHTML = `
+    <a class="copy-tuner-bar-button" target="_blank" href="${url}">CopyTuner</a>
+    <a href="/copytuner" target="_blank" class="copy-tuner-bar-button">Sync</a>
+    <a href="javascript:void(0)" class="copy-tuner-bar-open-log copy-tuner-bar-button js-copy-tuner-bar-open-log">Translations in this page</a>
+    <input type="text" class="copy-tuner-bar__search js-copy-tuner-bar-search" placeholder="search">
+  `;
+  document.body.append(bar);
+};
 const start = () => {
-  const dataElement = document.querySelector("#copy-tuner-data");
-  if (!dataElement) {
-    console.error("Not found #copy-tuner-data");
-    return;
-  }
-  const copyTunerUrl = dataElement.dataset.copyTunerUrl;
-  const data = JSON.parse(document.querySelector("#copy-tuner-data").dataset.copyTunerTranslationLog);
-  const copyray2 = new Copyray(copyTunerUrl, data);
+  const { url, data } = window.CopyTuner;
+  appendCopyTunerBar(url);
+  const copyray2 = new Copyray(url, data);
   document.addEventListener("keydown", (event) => {
     if (copyray2.isShowing && ["Escape", "Esc"].includes(event.key)) {
       copyray2.hide();
@@ -377,5 +384,5 @@ const start = () => {
 if (document.readyState === "complete" || document.readyState !== "loading") {
   start();
 } else {
-  document.addEventListener("DOMContentLoaded", start);
+  document.addEventListener("DOMContentLoaded", () => start());
 }
