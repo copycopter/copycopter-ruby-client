@@ -65,12 +65,6 @@ $ npm run build   # Compile to a <script> containing a self-executing function
 $ bundle exec rspec
 ```
 
-### testing against all target rails versions
-
-```
-$ ./test.sh
-```
-
 ## release gem
 
     $ bundle exec rake build      # build gem to pkg/ dir
