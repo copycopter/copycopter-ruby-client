@@ -14,10 +14,14 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@sonicgarden/eslint-plugin": "^0.4.11",
+    "@sonicgarden/prettier-config": "^0.0.1",
+    "eslint": "^8.16.0",
     "lodash.debounce": "^4.0.8",
     "typescript": "^4.7.2",
     "vite": "^2.9.9"
   },
+  "prettier": "@sonicgarden/prettier-config",
   "volta": {
     "node": "16.15.0",
     "yarn": "1.22.18"

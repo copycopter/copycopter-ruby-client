@@ -1,46 +1,38 @@
-import Copyray from './copyray';
-import { isMac } from './util';
+/* eslint-disable no-console */
+import Copyray from './copyray'
+import { isMac } from './util'
 
 import './copyray.css'
 
 const start = () => {
-  const dataElement = document.querySelector<HTMLDivElement>('#copy-tuner-data');
+  const dataElement = document.querySelector<HTMLDivElement>('#copy-tuner-data')
   if (!dataElement) {
     console.error('Not found #copy-tuner-data')
     return
   }
 
-  const copyTunerUrl = dataElement.dataset.copyTunerUrl;
-  const data = JSON.parse(
-    document.querySelector<HTMLDivElement>('#copy-tuner-data')!.dataset.copyTunerTranslationLog!
-  );
-  const copyray = new Copyray(copyTunerUrl, data);
+  const copyTunerUrl = dataElement.dataset.copyTunerUrl
+  const data = JSON.parse(document.querySelector<HTMLDivElement>('#copy-tuner-data')!.dataset.copyTunerTranslationLog!)
+  const copyray = new Copyray(copyTunerUrl, data)
 
   document.addEventListener('keydown', (event) => {
     if (copyray.isShowing && ['Escape', 'Esc'].includes(event.key)) {
-      copyray.hide();
-      return;
+      copyray.hide()
+      return
     }
 
-    if (
-      ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) &&
-      event.shiftKey &&
-      event.key === 'k'
-    ) {
-      copyray.toggle();
+    if (((isMac && event.metaKey) || (!isMac && event.ctrlKey)) && event.shiftKey && event.key === 'k') {
+      copyray.toggle()
     }
-  });
+  })
 
   if (console) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `Ready to Copyray. Press ${isMac ? 'cmd+shift+k' : 'ctrl+shift+k'} to scan your UI.`,
-    );
+    console.log(`Ready to Copyray. Press ${isMac ? 'cmd+shift+k' : 'ctrl+shift+k'} to scan your UI.`)
   }
-};
+}
 
 if (document.readyState === 'complete' || document.readyState !== 'loading') {
-  start();
+  start()
 } else {
-  document.addEventListener('DOMContentLoaded', start);
+  document.addEventListener('DOMContentLoaded', start)
 }
