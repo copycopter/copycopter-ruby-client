@@ -2,11 +2,18 @@ import KeyCode from 'keycode-js';
 import Copyray from './copyray';
 import { isMac } from './util';
 
+import './copyray.css'
+
 const start = () => {
-  const dataElement = document.getElementById('copy-tuner-data');
+  const dataElement = document.querySelector<HTMLDivElement>('#copy-tuner-data');
+  if (!dataElement) {
+    console.error('Not found #copy-tuner-data')
+    return
+  }
+
   const copyTunerUrl = dataElement.dataset.copyTunerUrl;
   const data = JSON.parse(
-    document.getElementById('copy-tuner-data').dataset.copyTunerTranslationLog,
+    document.querySelector<HTMLDivElement>('#copy-tuner-data')!.dataset.copyTunerTranslationLog!
   );
   const copyray = new Copyray(copyTunerUrl, data);
 
@@ -31,8 +38,6 @@ const start = () => {
       `Ready to Copyray. Press ${isMac ? 'cmd+shift+k' : 'ctrl+shift+k'} to scan your UI.`,
     );
   }
-
-  window.copyray = copyray;
 };
 
 if (document.readyState === 'complete' || document.readyState !== 'loading') {
