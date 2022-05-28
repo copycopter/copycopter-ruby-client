@@ -63,11 +63,11 @@ module CopyTunerClient
     end
 
     def append_js(html)
-      append_to_html_body(html, helpers.javascript_include_tag(:copyray))
+      append_to_html_body(html, helpers.javascript_include_tag(:main))
     end
 
     def css_tag
-      helpers.stylesheet_link_tag :copyray, media: :all
+      helpers.stylesheet_link_tag :style, media: :screen
     end
 
     def append_to_html_body(html, content)
