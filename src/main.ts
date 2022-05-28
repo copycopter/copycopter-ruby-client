@@ -16,6 +16,7 @@ const start = () => {
   const copyray = new Copyray(copyTunerUrl, data)
 
   document.addEventListener('keydown', (event) => {
+    // @ts-expect-error TS2339
     if (copyray.isShowing && ['Escape', 'Esc'].includes(event.key)) {
       copyray.hide()
       return

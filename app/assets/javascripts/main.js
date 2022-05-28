@@ -1,198 +1,4 @@
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-var KeyCode = {};
-KeyCode.KEY_CANCEL = 3;
-KeyCode.KEY_HELP = 6;
-KeyCode.KEY_BACK_SPACE = 8;
-KeyCode.KEY_TAB = 9;
-KeyCode.KEY_CLEAR = 12;
-KeyCode.KEY_RETURN = 13;
-KeyCode.KEY_ENTER = 14;
-KeyCode.KEY_SHIFT = 16;
-KeyCode.KEY_CONTROL = 17;
-KeyCode.KEY_ALT = 18;
-KeyCode.KEY_PAUSE = 19;
-KeyCode.KEY_CAPS_LOCK = 20;
-KeyCode.KEY_ESCAPE = 27;
-KeyCode.KEY_SPACE = 32;
-KeyCode.KEY_PAGE_UP = 33;
-KeyCode.KEY_PAGE_DOWN = 34;
-KeyCode.KEY_END = 35;
-KeyCode.KEY_HOME = 36;
-KeyCode.KEY_LEFT = 37;
-KeyCode.KEY_UP = 38;
-KeyCode.KEY_RIGHT = 39;
-KeyCode.KEY_DOWN = 40;
-KeyCode.KEY_PRINTSCREEN = 44;
-KeyCode.KEY_INSERT = 45;
-KeyCode.KEY_DELETE = 46;
-KeyCode.KEY_0 = 48;
-KeyCode.KEY_1 = 49;
-KeyCode.KEY_2 = 50;
-KeyCode.KEY_3 = 51;
-KeyCode.KEY_4 = 52;
-KeyCode.KEY_5 = 53;
-KeyCode.KEY_6 = 54;
-KeyCode.KEY_7 = 55;
-KeyCode.KEY_8 = 56;
-KeyCode.KEY_9 = 57;
-KeyCode.KEY_SEMICOLON = 59;
-KeyCode.KEY_EQUALS = 61;
-KeyCode.KEY_A = 65;
-KeyCode.KEY_B = 66;
-KeyCode.KEY_C = 67;
-KeyCode.KEY_D = 68;
-KeyCode.KEY_E = 69;
-KeyCode.KEY_F = 70;
-KeyCode.KEY_G = 71;
-KeyCode.KEY_H = 72;
-KeyCode.KEY_I = 73;
-KeyCode.KEY_J = 74;
-KeyCode.KEY_K = 75;
-KeyCode.KEY_L = 76;
-KeyCode.KEY_M = 77;
-KeyCode.KEY_N = 78;
-KeyCode.KEY_O = 79;
-KeyCode.KEY_P = 80;
-KeyCode.KEY_Q = 81;
-KeyCode.KEY_R = 82;
-KeyCode.KEY_S = 83;
-KeyCode.KEY_T = 84;
-KeyCode.KEY_U = 85;
-KeyCode.KEY_V = 86;
-KeyCode.KEY_W = 87;
-KeyCode.KEY_X = 88;
-KeyCode.KEY_Y = 89;
-KeyCode.KEY_Z = 90;
-KeyCode.KEY_LEFT_CMD = 91;
-KeyCode.KEY_RIGHT_CMD = 93;
-KeyCode.KEY_CONTEXT_MENU = 93;
-KeyCode.KEY_NUMPAD0 = 96;
-KeyCode.KEY_NUMPAD1 = 97;
-KeyCode.KEY_NUMPAD2 = 98;
-KeyCode.KEY_NUMPAD3 = 99;
-KeyCode.KEY_NUMPAD4 = 100;
-KeyCode.KEY_NUMPAD5 = 101;
-KeyCode.KEY_NUMPAD6 = 102;
-KeyCode.KEY_NUMPAD7 = 103;
-KeyCode.KEY_NUMPAD8 = 104;
-KeyCode.KEY_NUMPAD9 = 105;
-KeyCode.KEY_MULTIPLY = 106;
-KeyCode.KEY_ADD = 107;
-KeyCode.KEY_SEPARATOR = 108;
-KeyCode.KEY_SUBTRACT = 109;
-KeyCode.KEY_DECIMAL = 110;
-KeyCode.KEY_DIVIDE = 111;
-KeyCode.KEY_F1 = 112;
-KeyCode.KEY_F2 = 113;
-KeyCode.KEY_F3 = 114;
-KeyCode.KEY_F4 = 115;
-KeyCode.KEY_F5 = 116;
-KeyCode.KEY_F6 = 117;
-KeyCode.KEY_F7 = 118;
-KeyCode.KEY_F8 = 119;
-KeyCode.KEY_F9 = 120;
-KeyCode.KEY_F10 = 121;
-KeyCode.KEY_F11 = 122;
-KeyCode.KEY_F12 = 123;
-KeyCode.KEY_F13 = 124;
-KeyCode.KEY_F14 = 125;
-KeyCode.KEY_F15 = 126;
-KeyCode.KEY_F16 = 127;
-KeyCode.KEY_F17 = 128;
-KeyCode.KEY_F18 = 129;
-KeyCode.KEY_F19 = 130;
-KeyCode.KEY_F20 = 131;
-KeyCode.KEY_F21 = 132;
-KeyCode.KEY_F22 = 133;
-KeyCode.KEY_F23 = 134;
-KeyCode.KEY_F24 = 135;
-KeyCode.KEY_NUM_LOCK = 144;
-KeyCode.KEY_SCROLL_LOCK = 145;
-KeyCode.KEY_COMMA = 188;
-KeyCode.KEY_PERIOD = 190;
-KeyCode.KEY_SLASH = 191;
-KeyCode.KEY_BACK_QUOTE = 192;
-KeyCode.KEY_OPEN_BRACKET = 219;
-KeyCode.KEY_BACK_SLASH = 220;
-KeyCode.KEY_CLOSE_BRACKET = 221;
-KeyCode.KEY_QUOTE = 222;
-KeyCode.KEY_META = 224;
-var keycodeJs = KeyCode;
-const isMac = navigator.platform.toUpperCase().indexOf("MAC") !== -1;
-const isVisible = (element) => !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
-const getOffset = (elment) => {
-  const box = elment.getBoundingClientRect();
-  return {
-    top: box.top + (window.pageYOffset - document.documentElement.clientTop),
-    left: box.left + (window.pageXOffset - document.documentElement.clientLeft)
-  };
-};
-const computeBoundingBox = (element) => {
-  if (!isVisible(element)) {
-    return null;
-  }
-  const boxFrame = getOffset(element);
-  boxFrame.right = boxFrame.left + element.offsetWidth;
-  boxFrame.bottom = boxFrame.top + element.offsetHeight;
-  return {
-    left: boxFrame.left,
-    top: boxFrame.top,
-    width: boxFrame.right - boxFrame.left,
-    height: boxFrame.bottom - boxFrame.top
-  };
-};
-const ZINDEX = 2e9;
-class Specimen {
-  constructor(element, key, callback) {
-    this.element = element;
-    this.key = key;
-    this.callback = callback;
-  }
-  show() {
-    this.box = this.makeBox();
-    if (this.box === null)
-      return;
-    this.box.addEventListener("click", () => {
-      this.callback(this.key);
-    });
-    document.body.appendChild(this.box);
-  }
-  remove() {
-    if (!this.box) {
-      return;
-    }
-    this.box.remove();
-    this.box = null;
-  }
-  makeBox() {
-    const box = document.createElement("div");
-    box.classList.add("copyray-specimen");
-    box.classList.add("Specimen");
-    const bounds = computeBoundingBox(this.element);
-    if (bounds === null)
-      return null;
-    Object.keys(bounds).forEach((key) => {
-      const value = bounds[key];
-      box.style[key] = `${value}px`;
-    });
-    box.style.zIndex = ZINDEX;
-    const { position, top, left } = getComputedStyle(this.element);
-    if (position === "fixed") {
-      this.box.style.position = "fixed";
-      this.box.style.top = `${top}px`;
-      this.box.style.left = `${left}px`;
-    }
-    box.appendChild(this.makeLabel());
-    return box;
-  }
-  makeLabel() {
-    const div = document.createElement("div");
-    div.classList.add("copyray-specimen-handle");
-    div.classList.add("Specimen");
-    div.textContent = this.key;
-    return div;
-  }
-}
 var FUNC_ERROR_TEXT = "Expected a function";
 var NAN = 0 / 0;
 var symbolTag = "[object Symbol]";
@@ -327,7 +133,7 @@ class CopytunerBar {
     this.callback = callback;
     this.searchBoxElement = element.querySelector(".js-copy-tuner-bar-search");
     this.logMenuElement = this.makeLogMenu();
-    this.element.appendChild(this.logMenuElement);
+    this.element.append(this.logMenuElement);
     this.addHandler();
   }
   addHandler() {
@@ -358,10 +164,10 @@ class CopytunerBar {
     const table = document.createElement("table");
     const tbody = document.createElement("tbody");
     tbody.classList.remove("is-not-initialized");
-    Object.keys(this.data).sort().forEach((key) => {
+    for (const key of Object.keys(this.data).sort()) {
       const value = this.data[key];
       if (value === "") {
-        return;
+        continue;
       }
       const td1 = document.createElement("td");
       td1.textContent = key;
@@ -373,22 +179,97 @@ class CopytunerBar {
       tr.addEventListener("click", ({ currentTarget }) => {
         this.callback(currentTarget.dataset.key);
       });
-      tr.appendChild(td1);
-      tr.appendChild(td2);
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    div.appendChild(table);
+      tr.append(td1);
+      tr.append(td2);
+      tbody.append(tr);
+    }
+    table.append(tbody);
+    div.append(table);
     return div;
   }
   onKeyup({ target }) {
     const keyword = target.value.trim();
     this.showLogMenu();
-    const rows = Array.from(this.logMenuElement.getElementsByTagName("tr"));
-    rows.forEach((row) => {
-      const isShow = keyword === "" || Array.from(row.getElementsByTagName("td")).some((td) => td.textContent.includes(keyword));
+    const rows = [...this.logMenuElement.querySelectorAll("tr")];
+    for (const row of rows) {
+      const isShow = keyword === "" || [...row.querySelectorAll("td")].some((td) => td.textContent.includes(keyword));
       row.classList.toggle(HIDDEN_CLASS, !isShow);
+    }
+  }
+}
+const isMac = navigator.platform.toUpperCase().includes("MAC");
+const isVisible = (element) => !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length > 0);
+const getOffset = (elment) => {
+  const box = elment.getBoundingClientRect();
+  return {
+    top: box.top + (window.pageYOffset - document.documentElement.clientTop),
+    left: box.left + (window.pageXOffset - document.documentElement.clientLeft)
+  };
+};
+const computeBoundingBox = (element) => {
+  if (!isVisible(element)) {
+    return null;
+  }
+  const boxFrame = getOffset(element);
+  boxFrame.right = boxFrame.left + element.offsetWidth;
+  boxFrame.bottom = boxFrame.top + element.offsetHeight;
+  return {
+    left: boxFrame.left,
+    top: boxFrame.top,
+    width: boxFrame.right - boxFrame.left,
+    height: boxFrame.bottom - boxFrame.top
+  };
+};
+const ZINDEX = 2e9;
+class Specimen {
+  constructor(element, key, callback) {
+    this.element = element;
+    this.key = key;
+    this.callback = callback;
+  }
+  show() {
+    this.box = this.makeBox();
+    if (this.box === null)
+      return;
+    this.box.addEventListener("click", () => {
+      this.callback(this.key);
     });
+    document.body.append(this.box);
+  }
+  remove() {
+    if (!this.box) {
+      return;
+    }
+    this.box.remove();
+    this.box = null;
+  }
+  makeBox() {
+    const box = document.createElement("div");
+    box.classList.add("copyray-specimen");
+    box.classList.add("Specimen");
+    const bounds = computeBoundingBox(this.element);
+    if (bounds === null)
+      return null;
+    for (const key of Object.keys(bounds)) {
+      const value = bounds[key];
+      box.style[key] = `${value}px`;
+    }
+    box.style.zIndex = ZINDEX;
+    const { position, top, left } = getComputedStyle(this.element);
+    if (position === "fixed") {
+      this.box.style.position = "fixed";
+      this.box.style.top = `${top}px`;
+      this.box.style.left = `${left}px`;
+    }
+    box.append(this.makeLabel());
+    return box;
+  }
+  makeLabel() {
+    const div = document.createElement("div");
+    div.classList.add("copyray-specimen-handle");
+    div.classList.add("Specimen");
+    div.textContent = this.key;
+    return div;
   }
 }
 const findBlurbs = () => {
@@ -414,15 +295,15 @@ class Copyray {
     this.overlay = this.makeOverlay();
     this.toggleButton = this.makeToggleButton();
     this.boundOpen = this.open.bind(this);
-    this.copyTunerBar = new CopytunerBar(document.getElementById("copy-tuner-bar"), this.data, this.boundOpen);
+    this.copyTunerBar = new CopytunerBar(document.querySelector("#copy-tuner-bar"), this.data, this.boundOpen);
   }
   show() {
     this.reset();
-    document.body.appendChild(this.overlay);
+    document.body.append(this.overlay);
     this.makeSpecimens();
-    this.specimens.forEach((specimen) => {
+    for (const specimen of this.specimens) {
       specimen.show();
-    });
+    }
     this.copyTunerBar.show();
     this.isShowing = true;
   }
@@ -443,9 +324,9 @@ class Copyray {
     window.open(`${this.baseUrl}/blurbs/${key}/edit`);
   }
   makeSpecimens() {
-    findBlurbs().forEach(({ element, key }) => {
+    for (const { element, key } of findBlurbs()) {
       this.specimens.push(new Specimen(element, key, this.boundOpen));
-    });
+    }
   }
   makeToggleButton() {
     const element = document.createElement("a");
@@ -455,7 +336,7 @@ class Copyray {
     element.classList.add("copyray-toggle-button");
     element.classList.add("hidden-on-mobile");
     element.textContent = "Open CopyTuner";
-    document.body.appendChild(element);
+    document.body.append(element);
     return element;
   }
   makeOverlay() {
@@ -465,9 +346,9 @@ class Copyray {
     return div;
   }
   reset() {
-    this.specimens.forEach((specimen) => {
+    for (const specimen of this.specimens) {
       specimen.remove();
-    });
+    }
   }
 }
 var copyray = "";
@@ -481,11 +362,11 @@ const start = () => {
   const data = JSON.parse(document.querySelector("#copy-tuner-data").dataset.copyTunerTranslationLog);
   const copyray2 = new Copyray(copyTunerUrl, data);
   document.addEventListener("keydown", (event) => {
-    if (copyray2.isShowing && event.keyCode === keycodeJs.KEY_ESCAPE) {
+    if (copyray2.isShowing && ["Escape", "Esc"].includes(event.key)) {
       copyray2.hide();
       return;
     }
-    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.keyCode === keycodeJs.KEY_K) {
+    if ((isMac && event.metaKey || !isMac && event.ctrlKey) && event.shiftKey && event.key === "k") {
       copyray2.toggle();
     }
   });

@@ -18,8 +18,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    // NOTE: 移行が終わるまでの暫定対応
-    "allowJs": true,
   },
   "include": [
     "client",
