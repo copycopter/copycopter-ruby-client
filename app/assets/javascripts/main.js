@@ -440,8 +440,7 @@ class Copyray {
     }
   }
   open(key) {
-    const url = `${this.baseUrl}/blurbs/${key}/edit`;
-    window.open(url, null, "width=700, height=600");
+    window.open(`${this.baseUrl}/blurbs/${key}/edit`);
   }
   makeSpecimens() {
     findBlurbs().forEach(({ element, key }) => {
