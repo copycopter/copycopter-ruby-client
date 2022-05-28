@@ -39,7 +39,9 @@ describe CopyTunerClient::I18nBackend do
   end
 
   it "finds available locales from locale files and cache" do
+    # TODO: ruby@2.7サポート終わったらこっちは不要
     allow(YAML).to receive(:load_file).and_return({ 'es' => { 'key' => 'value' } })
+    allow(YAML).to receive(:unsafe_load_file).and_return({ 'es' => { 'key' => 'value' } })
     allow(I18n).to receive(:load_path).and_return(["test.yml"])
 
     cache['en.key'] = ''
