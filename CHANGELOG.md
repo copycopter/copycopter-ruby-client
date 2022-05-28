@@ -1,3 +1,7 @@
+## 0.13.0
+
+- Drop support for ruby 2.6
+
 ## 0.12.0
 
 - Add `config.ignored_keys` and `config.ignored_key_handler`
