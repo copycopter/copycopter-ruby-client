@@ -47,13 +47,14 @@ bundle exec rake copy_tuner:export
 Development
 =================
 
-## JavaScript
+## クライアント用コード
 
-`app/assets/javascripts/copyray.js`を直接編集したらダメよ。
+`src`以下を編集してください。
+`app/assets/*`を直接編集したらダメよ！
 
 ```
-$ npm run watch   # Watch files for changes
-$ npm run build   # Compile to a <script> containing a self-executing function
+$ yarn dev   # 開発時
+$ yarn build   # ビルド
 ```
 
 
@@ -63,12 +64,6 @@ $ npm run build   # Compile to a <script> containing a self-executing function
 
 ```
 $ bundle exec rspec
-```
-
-### testing against all target rails versions
-
-```
-$ ./test.sh
 ```
 
 ## release gem

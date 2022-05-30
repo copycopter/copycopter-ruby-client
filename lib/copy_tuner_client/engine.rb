@@ -12,7 +12,7 @@ module CopyTunerClient
     initializer :initialize_copy_tuner_hook_methods, :after => :load_config_initializers do |app|
       ActiveSupport.on_load(:action_view) do
         CopyTunerClient::HelperExtension.hook_translation_helper(
-          ActionView::Helpers::TranslationHelper, 
+          ActionView::Helpers::TranslationHelper,
           middleware_enabled: CopyTunerClient.configuration.enable_middleware?
         )
       end
@@ -25,7 +25,7 @@ module CopyTunerClient
     end
 
     initializer "copy_tuner.assets.precompile", group: :all do |app|
-      app.config.assets.precompile += ["copyray.js", "copyray.css"]
+      app.config.assets.precompile += ['main.js', 'style.css']
     end
   end
 end

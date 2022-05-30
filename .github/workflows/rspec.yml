@@ -22,15 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.6, 2.7, 3.0]
-        gemfile: ["5.2", "6.0", "6.1", "main"]
+        ruby: [2.7, "3.0", 3.1]
+        gemfile: ["6.1", "7.0", "main"]
         exclude:
-          - ruby: 2.6
-            gemfile: main
-          - ruby: 3.0
-            gemfile: 5.2
-          - ruby: 3.0
-            gemfile: "6.0"
+          - ruby: "3.1"
+            gemfile: "6.1"
     steps:
       - name: Install packages
         run: |
