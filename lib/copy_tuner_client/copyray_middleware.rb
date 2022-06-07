@@ -49,7 +49,7 @@ module CopyTunerClient
           data: #{json},
         }
       SCRIPT
-      append_to_html_body(html, helpers.javascript_include_tag(:main))
+      append_to_html_body(html, helpers.javascript_include_tag(:main, type: 'module'))
     end
 
     def css_tag
